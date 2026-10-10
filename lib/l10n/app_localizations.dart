@@ -1303,6 +1303,30 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다'**
   String get stepsCertExpiry;
+
+  /// No description provided for @homeOpenVsCode.
+  ///
+  /// In ko, this message translates to:
+  /// **'VS Code로 열기'**
+  String get homeOpenVsCode;
+
+  /// No description provided for @vscodeNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'VS Code를 찾지 못했습니다'**
+  String get vscodeNotFound;
+
+  /// No description provided for @vscodeDownload.
+  ///
+  /// In ko, this message translates to:
+  /// **'받기'**
+  String get vscodeDownload;
+
+  /// No description provided for @vscodeOpenFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'VS Code를 열지 못했습니다'**
+  String get vscodeOpenFailed;
 }
 
 class _AppLocalizationsDelegate

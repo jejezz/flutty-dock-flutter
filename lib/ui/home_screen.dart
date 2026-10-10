@@ -1,9 +1,11 @@
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../app_identity.dart';
 import '../core/command_log.dart';
+import '../core/vscode.dart';
 import '../devices/mobile_device.dart';
 import '../install/install_controller.dart';
 import '../install/install_plan.dart';
@@ -111,6 +113,21 @@ class _ProjectSection extends StatelessWidget {
   final InstallController controller;
   final VoidCallback onOpen;
 
+  Future<void> _openInVsCode(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final result = await controller.openInVsCode();
+    if (result == VsCodeResult.opened) return;
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(result == VsCodeResult.notFound ? l10n.vscodeNotFound : l10n.vscodeOpenFailed),
+        action: result == VsCodeResult.notFound
+            ? SnackBarAction(label: l10n.vscodeDownload, onPressed: () => launchUrl(vscodeDownloadUrl))
+            : null,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -158,7 +175,12 @@ class _ProjectSection extends StatelessWidget {
                           ],
                         ),
                       ),
-                      TextButton(onPressed: onOpen, child: Text(l10n.homeProjectChange)),
+                      Column(
+                        children: [
+                          TextButton(onPressed: onOpen, child: Text(l10n.homeProjectChange)),
+                          TextButton(onPressed: () => _openInVsCode(context), child: Text(l10n.homeOpenVsCode)),
+                        ],
+                      ),
                     ],
                   ),
           ),

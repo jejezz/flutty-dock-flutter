@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/command_runner.dart';
+import '../core/vscode.dart';
 import '../devices/device_service.dart';
 import '../doctor/checks.dart';
 import '../doctor/diagnostics.dart';
@@ -11,11 +12,18 @@ import '../devices/mobile_device.dart';
 import '../flutter/flutter_project.dart';
 import 'install_plan.dart';
 
+enum VsCodeResult { opened, notFound, failed }
+
 enum StepStatus { pending, running, done, failed, cancelled }
 
 /// 프로젝트·기기·모드를 고르고 계획을 실행하는 화면의 상태.
 class InstallController extends ChangeNotifier {
-  InstallController({required this.runner, required this.deviceService, this.diagnosticsService});
+  InstallController({
+    required this.runner,
+    required this.deviceService,
+    this.diagnosticsService,
+    this.vscodeCommand = vscodeOpenCommand,
+  });
 
   static const _projectKey = 'last_project';
   static const _teamKey = 'ios_team_id';
@@ -24,6 +32,9 @@ class InstallController extends ChangeNotifier {
   final CommandRunner runner;
   final DeviceService deviceService;
   final DiagnosticsService? diagnosticsService;
+
+  /// VS Code로 폴더를 여는 명령을 찾는다. 테스트에서 바꾼다.
+  final Future<List<String>?> Function(String dir, {required String path}) vscodeCommand;
 
   SharedPreferences? _prefs;
   FlutterProject? project;
@@ -190,6 +201,16 @@ class InstallController extends ChangeNotifier {
     running = false;
     _handle = null;
     notifyListeners();
+  }
+
+  /// 프로젝트 폴더를 VS Code로 연다. 명령은 기록 탭에도 남는다.
+  Future<VsCodeResult> openInVsCode() async {
+    final p = project;
+    if (p == null) return VsCodeResult.notFound;
+    final command = await vscodeCommand(p.path, path: await runner.path);
+    if (command == null) return VsCodeResult.notFound;
+    final r = await runner.run(command);
+    return r.ok ? VsCodeResult.opened : VsCodeResult.failed;
   }
 
   void cancel() => _handle?.cancel();

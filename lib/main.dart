@@ -16,11 +16,13 @@ import 'about/extra_licenses.dart';
 import 'app_identity.dart';
 import 'core/command_log.dart';
 import 'core/command_runner.dart';
+import 'core/window_bounds.dart';
 import 'devices/device_service.dart';
 import 'doctor/diagnostics.dart';
 import 'install/install_controller.dart';
 import 'l10n/app_localizations.dart';
 import 'settings/app_settings.dart';
+import 'settings/window_prefs.dart';
 import 'theme/app_theme.dart';
 import 'ui/home_screen.dart';
 import 'update/update_scope.dart';
@@ -34,17 +36,26 @@ Future<void> main() async {
 
   if (_isDesktop) {
     await windowManager.ensureInitialized();
-    // 편집기 옆에 세워 두는 도킹형 세로 창 (Branch Dock과 같은 크기).
-    const options = WindowOptions(
-      size: Size(440, 960),
-      minimumSize: Size(380, 560),
-      center: true,
+    final windowPrefs = await WindowPrefs.load();
+    final saved = await restorableWindowBounds(windowPrefs);
+    // Windows는 runner(main.cpp)가 첫 크기와 위치를 정한다. Dart 쪽 setSize/center는
+    // devicePixelRatio 오차로 창을 화면 오른쪽 밖에 놓을 수 있다.
+    final options = WindowOptions(
+      size: Platform.isWindows ? null : dockDefaultSize,
+      minimumSize: dockMinimumSize,
       title: AppIdentity.displayName,
     );
     await windowManager.waitUntilReadyToShow(options, () async {
+      // 사용자가 편집기 옆에 맞춰 둔 크기와 위치를 되살린다.
+      if (usableBounds(saved)) {
+        await windowManager.setBounds(saved);
+      } else if (!Platform.isWindows) {
+        await windowManager.center();
+      }
       await windowManager.show();
       await windowManager.focus();
     });
+    windowManager.addListener(WindowBoundsSaver(windowPrefs));
   }
 
   final settings = await AppSettings.load();

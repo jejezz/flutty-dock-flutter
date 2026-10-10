@@ -711,4 +711,16 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get stepsCertExpiry =>
       '1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다';
+
+  @override
+  String get homeOpenVsCode => 'VS Code로 열기';
+
+  @override
+  String get vscodeNotFound => 'VS Code를 찾지 못했습니다';
+
+  @override
+  String get vscodeDownload => '받기';
+
+  @override
+  String get vscodeOpenFailed => 'VS Code를 열지 못했습니다';
 }

@@ -48,6 +48,7 @@ dependencies:
       path: updater
   file_selector: ^1.1.0
   desktop_drop: ^0.8.4
+  screen_retriever: ^0.2.2
 
 dev_dependencies:
   flutter_test:

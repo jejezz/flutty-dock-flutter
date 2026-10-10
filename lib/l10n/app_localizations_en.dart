@@ -728,4 +728,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get stepsCertExpiry =>
       '1. Xcode → Settings → Accounts → Manage Certificates: create a new Apple Development certificate\n2. Press Check again';
+
+  @override
+  String get homeOpenVsCode => 'Open in VS Code';
+
+  @override
+  String get vscodeNotFound => 'VS Code wasn\'t found';
+
+  @override
+  String get vscodeDownload => 'Get it';
+
+  @override
+  String get vscodeOpenFailed => 'Couldn\'t open VS Code';
 }
