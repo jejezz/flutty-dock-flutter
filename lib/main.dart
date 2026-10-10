@@ -15,6 +15,7 @@ import 'about/app_menu_bar.dart';
 import 'about/extra_licenses.dart';
 import 'app_identity.dart';
 import 'l10n/app_localizations.dart';
+import 'secrets/secrets_screen.dart';
 import 'settings/app_settings.dart';
 import 'settings/settings_menus.dart';
 import 'theme/app_theme.dart';
@@ -152,6 +153,13 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(AppIdentity.displayName),
         actions: [
+          // macOS 릴리스 서명용 시크릿 — Windows 릴리스는 시크릿이 필요 없어 숨긴다.
+          if (SecretsScreen.available)
+            IconButton(
+              tooltip: l10n.secretsTooltip,
+              icon: const Icon(Icons.key_rounded),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SecretsScreen())),
+            ),
           const ThemeMenuButton(),
           const LanguageMenuButton(),
           IconButton(

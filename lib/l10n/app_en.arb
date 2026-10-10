@@ -114,5 +114,82 @@
   },
   "updateQuitAndInstall": "Quit and install",
   "updateBusyTitle": "Can't update right now",
-  "updateBusyBody": "A task is in progress. Please try again when it has finished."
+  "updateBusyBody": "A task is in progress. Please try again when it has finished.",
+  "secretsTooltip": "Release secrets",
+  "secretsTitle": "Register release secrets",
+  "secretsIntro": "Registers the GitHub Actions secrets that the macOS release workflow uses for signing and notarization, through gh. Values are not stored in this app.",
+  "secretsRepoLabel": "Repository (owner/repo)",
+  "secretsPickFolder": "Read from a project folder",
+  "secretsRefresh": "Refresh registration status",
+  "secretsRepoInvalid": "Use the owner/repo form",
+  "secretsFolderNoRemote": "No GitHub remote (origin) found in that folder",
+  "secretsGhMissing": "GitHub CLI (gh) isn't installed. Install it in a terminal with:",
+  "secretsGhNotLoggedIn": "gh isn't signed in. Run this in a terminal:",
+  "secretsListFailed": "Couldn't read the registration status. Check the repository name and your access",
+  "secretStatusRegistered": "Registered · {date}",
+  "@secretStatusRegistered": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "secretStatusMissing": "Not registered",
+  "secretStatusUnknown": "Unknown",
+  "secretSet": "Register",
+  "secretOverwrite": "Overwrite",
+  "secretPickFile": "Choose file…",
+  "secretNoFile": "No file chosen",
+  "secretFileLoaded": "{name} · {bytes} bytes",
+  "@secretFileLoaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "secretGenerate": "Generate",
+  "secretGenerated": "A random value was generated (not shown)",
+  "secretViaStdin": "The value is passed on standard input, not as a command argument, so it never appears in the command log.",
+  "secretIssueEmpty": "Enter a value",
+  "secretIssueEmail": "Not an email address",
+  "secretIssueTeamId": "A Team ID is 10 uppercase letters or digits",
+  "secretSaved": "Registered {name}",
+  "@secretSaved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "secretFailed": "Couldn't register {name}",
+  "@secretFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "secretOverwriteTitle": "Overwrite {name}?",
+  "@secretOverwriteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "secretOverwriteBody": "This replaces the registered value with the new one. It can't be undone.",
+  "secretHelpP12": "Choose the 'Developer ID Application' certificate exported as .p12 from Keychain Access. The app registers it as base64.",
+  "secretHelpP12Password": "The password you set when exporting the .p12.",
+  "secretHelpKeychain": "A temporary keychain password CI uses only during the build. Any value works, so it can be generated for you.",
+  "secretHelpAppleId": "The Apple ID email used for notarization.",
+  "secretHelpApplePassword": "An app-specific password, not your account password.",
+  "secretHelpTeamId": "The 10-character Team ID from Membership details at developer.apple.com/account.",
+  "secretOpenAppleId": "Open appleid.apple.com",
+  "secretOpenDeveloper": "Open developer.apple.com/account",
+  "commandBarEmpty": "No commands run yet",
+  "commonCancel": "Cancel"
 }

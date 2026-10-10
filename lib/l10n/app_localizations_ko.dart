@@ -182,4 +182,136 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get updateBusyBody => '작업이 진행 중입니다. 끝난 뒤에 다시 시도해 주세요.';
+
+  @override
+  String get secretsTooltip => '릴리스 시크릿';
+
+  @override
+  String get secretsTitle => '릴리스 시크릿 등록';
+
+  @override
+  String get secretsIntro =>
+      'macOS 릴리스 워크플로가 서명·공증에 쓰는 GitHub Actions 시크릿을 gh로 등록합니다. 값은 이 앱에 저장되지 않습니다.';
+
+  @override
+  String get secretsRepoLabel => '저장소 (owner/repo)';
+
+  @override
+  String get secretsPickFolder => '프로젝트 폴더에서 읽기';
+
+  @override
+  String get secretsRefresh => '등록 상태 새로 고침';
+
+  @override
+  String get secretsRepoInvalid => 'owner/repo 형식으로 입력하세요';
+
+  @override
+  String get secretsFolderNoRemote => '이 폴더에서 GitHub 원격(origin)을 찾지 못했습니다';
+
+  @override
+  String get secretsGhMissing => 'GitHub CLI(gh)가 없습니다. 터미널에서 이 명령으로 설치하세요:';
+
+  @override
+  String get secretsGhNotLoggedIn => 'gh에 로그인하지 않았습니다. 터미널에서 이 명령을 실행하세요:';
+
+  @override
+  String get secretsListFailed => '등록 상태를 읽지 못했습니다. 저장소 이름과 권한을 확인하세요';
+
+  @override
+  String secretStatusRegistered(String date) {
+    return '등록됨 · $date';
+  }
+
+  @override
+  String get secretStatusMissing => '미등록';
+
+  @override
+  String get secretStatusUnknown => '확인 안 됨';
+
+  @override
+  String get secretSet => '등록';
+
+  @override
+  String get secretOverwrite => '덮어쓰기';
+
+  @override
+  String get secretPickFile => '파일 선택…';
+
+  @override
+  String get secretNoFile => '선택한 파일 없음';
+
+  @override
+  String secretFileLoaded(String name, int bytes) {
+    return '$name · $bytes바이트';
+  }
+
+  @override
+  String get secretGenerate => '무작위 생성';
+
+  @override
+  String get secretGenerated => '무작위 값을 만들었습니다 (화면에 표시하지 않음)';
+
+  @override
+  String get secretViaStdin => '값은 명령 인자가 아니라 표준 입력으로 전달되어 명령 기록에 남지 않습니다.';
+
+  @override
+  String get secretIssueEmpty => '값을 입력하세요';
+
+  @override
+  String get secretIssueEmail => '이메일 형식이 아닙니다';
+
+  @override
+  String get secretIssueTeamId => 'Team ID는 영문 대문자·숫자 10자입니다';
+
+  @override
+  String secretSaved(String name) {
+    return '$name 등록했습니다';
+  }
+
+  @override
+  String secretFailed(String name) {
+    return '$name 등록에 실패했습니다';
+  }
+
+  @override
+  String secretOverwriteTitle(String name) {
+    return '$name을(를) 덮어쓸까요?';
+  }
+
+  @override
+  String get secretOverwriteBody => '이미 등록된 값을 새 값으로 바꿉니다. 되돌릴 수 없습니다.';
+
+  @override
+  String get secretHelpP12 =>
+      '키체인 접근에서 \'Developer ID Application\' 인증서를 .p12로 내보낸 파일을 고르세요. 앱이 base64로 바꿔 등록합니다.';
+
+  @override
+  String get secretHelpP12Password => '.p12를 내보낼 때 지정한 암호입니다.';
+
+  @override
+  String get secretHelpKeychain =>
+      'CI가 빌드 중에만 쓰는 임시 키체인 암호입니다. 아무 값이나 괜찮아서 무작위로 만들어 드립니다.';
+
+  @override
+  String get secretHelpAppleId => '공증(notarization)에 쓰는 Apple ID 이메일입니다.';
+
+  @override
+  String get secretHelpApplePassword =>
+      '앱 암호(app-specific password)입니다. 계정 비밀번호가 아닙니다.';
+
+  @override
+  String get secretHelpTeamId =>
+      'developer.apple.com/account의 Membership details에 있는 10자리 Team ID입니다.';
+
+  @override
+  String get secretOpenAppleId => 'appleid.apple.com 열기';
+
+  @override
+  String get secretOpenDeveloper => 'developer.apple.com/account 열기';
+
+  @override
+  String get commandBarEmpty => '아직 실행한 명령이 없습니다';
+
+  @override
+  String get commonCancel => '취소';
 }

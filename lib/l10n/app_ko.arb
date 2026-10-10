@@ -131,5 +131,82 @@
   },
   "updateQuitAndInstall": "종료하고 설치",
   "updateBusyTitle": "지금은 업데이트할 수 없습니다",
-  "updateBusyBody": "작업이 진행 중입니다. 끝난 뒤에 다시 시도해 주세요."
+  "updateBusyBody": "작업이 진행 중입니다. 끝난 뒤에 다시 시도해 주세요.",
+  "secretsTooltip": "릴리스 시크릿",
+  "secretsTitle": "릴리스 시크릿 등록",
+  "secretsIntro": "macOS 릴리스 워크플로가 서명·공증에 쓰는 GitHub Actions 시크릿을 gh로 등록합니다. 값은 이 앱에 저장되지 않습니다.",
+  "secretsRepoLabel": "저장소 (owner/repo)",
+  "secretsPickFolder": "프로젝트 폴더에서 읽기",
+  "secretsRefresh": "등록 상태 새로 고침",
+  "secretsRepoInvalid": "owner/repo 형식으로 입력하세요",
+  "secretsFolderNoRemote": "이 폴더에서 GitHub 원격(origin)을 찾지 못했습니다",
+  "secretsGhMissing": "GitHub CLI(gh)가 없습니다. 터미널에서 이 명령으로 설치하세요:",
+  "secretsGhNotLoggedIn": "gh에 로그인하지 않았습니다. 터미널에서 이 명령을 실행하세요:",
+  "secretsListFailed": "등록 상태를 읽지 못했습니다. 저장소 이름과 권한을 확인하세요",
+  "secretStatusRegistered": "등록됨 · {date}",
+  "@secretStatusRegistered": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "secretStatusMissing": "미등록",
+  "secretStatusUnknown": "확인 안 됨",
+  "secretSet": "등록",
+  "secretOverwrite": "덮어쓰기",
+  "secretPickFile": "파일 선택…",
+  "secretNoFile": "선택한 파일 없음",
+  "secretFileLoaded": "{name} · {bytes}바이트",
+  "@secretFileLoaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "secretGenerate": "무작위 생성",
+  "secretGenerated": "무작위 값을 만들었습니다 (화면에 표시하지 않음)",
+  "secretViaStdin": "값은 명령 인자가 아니라 표준 입력으로 전달되어 명령 기록에 남지 않습니다.",
+  "secretIssueEmpty": "값을 입력하세요",
+  "secretIssueEmail": "이메일 형식이 아닙니다",
+  "secretIssueTeamId": "Team ID는 영문 대문자·숫자 10자입니다",
+  "secretSaved": "{name} 등록했습니다",
+  "@secretSaved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "secretFailed": "{name} 등록에 실패했습니다",
+  "@secretFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "secretOverwriteTitle": "{name}을(를) 덮어쓸까요?",
+  "@secretOverwriteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "secretOverwriteBody": "이미 등록된 값을 새 값으로 바꿉니다. 되돌릴 수 없습니다.",
+  "secretHelpP12": "키체인 접근에서 'Developer ID Application' 인증서를 .p12로 내보낸 파일을 고르세요. 앱이 base64로 바꿔 등록합니다.",
+  "secretHelpP12Password": ".p12를 내보낼 때 지정한 암호입니다.",
+  "secretHelpKeychain": "CI가 빌드 중에만 쓰는 임시 키체인 암호입니다. 아무 값이나 괜찮아서 무작위로 만들어 드립니다.",
+  "secretHelpAppleId": "공증(notarization)에 쓰는 Apple ID 이메일입니다.",
+  "secretHelpApplePassword": "앱 암호(app-specific password)입니다. 계정 비밀번호가 아닙니다.",
+  "secretHelpTeamId": "developer.apple.com/account의 Membership details에 있는 10자리 Team ID입니다.",
+  "secretOpenAppleId": "appleid.apple.com 열기",
+  "secretOpenDeveloper": "developer.apple.com/account 열기",
+  "commandBarEmpty": "아직 실행한 명령이 없습니다",
+  "commonCancel": "취소"
 }

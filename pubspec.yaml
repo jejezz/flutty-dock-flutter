@@ -46,6 +46,7 @@ dependencies:
       url: https://github.com/jejezz/application-release-templates
       ref: updater-v0.1.0
       path: updater
+  file_selector: ^1.1.0
 
 dev_dependencies:
   flutter_test:
