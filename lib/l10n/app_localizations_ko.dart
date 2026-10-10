@@ -787,4 +787,11 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get toolPathAdb => 'adb (Android SDK platform-tools)';
+
+  @override
+  String get homeDevicesCauses => '기기가 안 보이는 이유일 수 있는 것';
+
+  @override
+  String get stepsNoDevice =>
+      '1. USB 케이블로 폰을 연결합니다 (충전 전용 케이블은 안 됩니다)\n2. 잠금을 풀고, iPhone은 \'이 컴퓨터를 신뢰\', Android는 \'USB 디버깅 허용\'을 누릅니다\n3. 위의 새로 고침을 누릅니다';
 }

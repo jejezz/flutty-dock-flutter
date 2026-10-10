@@ -505,5 +505,7 @@
   "toolPathAuto": "Automatic",
   "toolPathCustom": "Custom",
   "toolPathFlutter": "flutter",
-  "toolPathAdb": "adb (Android SDK platform-tools)"
+  "toolPathAdb": "adb (Android SDK platform-tools)",
+  "homeDevicesCauses": "Possible reasons no device shows up",
+  "stepsNoDevice": "1. Connect the phone with a USB cable (a charge-only cable won't work)\n2. Unlock it, then tap 'Trust This Computer' on an iPhone or 'Allow USB debugging' on Android\n3. Press refresh above"
 }

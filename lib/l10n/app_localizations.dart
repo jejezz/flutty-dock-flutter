@@ -1435,6 +1435,18 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'adb (Android SDK platform-tools)'**
   String get toolPathAdb;
+
+  /// No description provided for @homeDevicesCauses.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기가 안 보이는 이유일 수 있는 것'**
+  String get homeDevicesCauses;
+
+  /// No description provided for @stepsNoDevice.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. USB 케이블로 폰을 연결합니다 (충전 전용 케이블은 안 됩니다)\n2. 잠금을 풀고, iPhone은 \'이 컴퓨터를 신뢰\', Android는 \'USB 디버깅 허용\'을 누릅니다\n3. 위의 새로 고침을 누릅니다'**
+  String get stepsNoDevice;
 }
 
 class _AppLocalizationsDelegate
