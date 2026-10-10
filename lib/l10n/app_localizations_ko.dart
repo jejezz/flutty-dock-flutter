@@ -465,4 +465,250 @@ class AppLocalizationsKo extends AppLocalizations {
   String hintMissingCommand(String command) {
     return '$command 명령을 찾지 못했습니다. 설치하고 PATH에 있는지 확인하세요';
   }
+
+  @override
+  String get tabInstall => '설치';
+
+  @override
+  String get tabDevices => '기기';
+
+  @override
+  String get tabSigning => '서명';
+
+  @override
+  String get tabDoctor => '점검';
+
+  @override
+  String get tabLog => '기록';
+
+  @override
+  String get bannerNextStep => '지금 할 일';
+
+  @override
+  String get bannerShowSteps => '해결 방법 보기';
+
+  @override
+  String get doctorRun => '다시 점검';
+
+  @override
+  String get doctorRunning => '점검 중…';
+
+  @override
+  String get doctorNever => '아직 점검하지 않았습니다';
+
+  @override
+  String doctorCollected(String time) {
+    return '$time에 점검함';
+  }
+
+  @override
+  String get doctorAllGood => '문제가 없습니다';
+
+  @override
+  String get signingTeams => '서명 Team';
+
+  @override
+  String get signingTeamsHelp =>
+      '키체인에 개인 키가 있는 인증서의 Team입니다. 누르면 이 Team으로 서명합니다';
+
+  @override
+  String get signingNoTeams => '사용할 수 있는 개발 인증서가 없습니다';
+
+  @override
+  String get signingCerts => '개발 인증서';
+
+  @override
+  String get signingProfiles => '이 프로젝트의 프로파일';
+
+  @override
+  String get signingNoProfiles => '아직 없습니다 — 첫 빌드에서 Xcode가 자동으로 만듭니다';
+
+  @override
+  String get signingShortLived => '7일 프로파일';
+
+  @override
+  String get signingNoKey => '개인 키 없음';
+
+  @override
+  String signingDaysLeft(String days) {
+    return '$days일 남음';
+  }
+
+  @override
+  String get signingExpired => '만료됨';
+
+  @override
+  String get signingAndroid => 'Android 릴리스 서명';
+
+  @override
+  String get signingMacOnly => 'iOS 서명 점검은 macOS에서만 합니다';
+
+  @override
+  String get logClear => '기록 지우기';
+
+  @override
+  String get logEmpty => '아직 실행한 명령이 없습니다';
+
+  @override
+  String get logRunning => '실행 중';
+
+  @override
+  String logExit(String code) {
+    return '종료 코드 $code';
+  }
+
+  @override
+  String checkFlutterOk(String version) {
+    return 'Flutter $version';
+  }
+
+  @override
+  String get checkFlutterFail => 'flutter를 찾지 못했습니다';
+
+  @override
+  String checkXcodeOk(String version) {
+    return 'Xcode $version';
+  }
+
+  @override
+  String get checkXcodeFail => 'Xcode를 찾지 못했습니다';
+
+  @override
+  String checkAdbOk(String version) {
+    return 'adb $version';
+  }
+
+  @override
+  String get checkAdbWarn => 'adb를 찾지 못했습니다 (Android 설치에 필요)';
+
+  @override
+  String checkConnectionOk(String name) {
+    return '$name: USB로 연결됨';
+  }
+
+  @override
+  String checkConnectionFail(String name) {
+    return '$name: USB가 아니라 무선으로 연결됨';
+  }
+
+  @override
+  String get checkDeveloperModeOk => 'iPhone 개발자 모드 켜짐';
+
+  @override
+  String get checkDeveloperModeFail => 'iPhone 개발자 모드가 꺼져 있음';
+
+  @override
+  String get checkAndroidAuthOk => 'USB 디버깅 승인됨';
+
+  @override
+  String get checkAndroidAuthFail => 'USB 디버깅을 승인하지 않음';
+
+  @override
+  String checkCertificateOk(String count) {
+    return '개발 인증서 $count개 (개인 키 있음)';
+  }
+
+  @override
+  String get checkCertificateFail => '사용할 수 있는 Apple Development 인증서가 없음';
+
+  @override
+  String checkCertExpiryOk(String name, String days) {
+    return '$name · $days일 남음';
+  }
+
+  @override
+  String checkCertExpiryWarn(String name, String days) {
+    return '$name · $days일 뒤 만료';
+  }
+
+  @override
+  String checkCertExpiryFail(String name) {
+    return '$name · 만료됨';
+  }
+
+  @override
+  String checkTeamOk(String team) {
+    return '서명 Team $team';
+  }
+
+  @override
+  String get checkTeamFail => '서명할 Team ID가 정해지지 않음';
+
+  @override
+  String checkTeamWarn(String team) {
+    return 'Team $team의 인증서가 이 Mac에 없음';
+  }
+
+  @override
+  String checkProfileOk(String bundle, String days) {
+    return '$bundle 프로파일 · $days일 남음';
+  }
+
+  @override
+  String checkProfileWarn(String bundle, String days) {
+    return '$bundle 프로파일이 곧 만료됨 ($days일 남음)';
+  }
+
+  @override
+  String checkProfileFail(String bundle) {
+    return '$bundle 프로파일이 만료됨';
+  }
+
+  @override
+  String checkProfileInfo(String bundle) {
+    return '$bundle 프로파일 없음 — 첫 빌드에서 자동으로 만들어짐';
+  }
+
+  @override
+  String get checkProfileShort => '무료 계정의 7일 프로파일입니다. 만료되면 다시 빌드해서 설치하세요';
+
+  @override
+  String get checkAndroidSigningDebugKey =>
+      '키스토어 설정 없음 — debug 키로 서명 (개인 기기 설치용으로 충분)';
+
+  @override
+  String get checkAndroidSigningKeystore => '릴리스 키스토어로 서명';
+
+  @override
+  String get checkAndroidSigningMissing => 'key.properties가 가리키는 키스토어 파일이 없음';
+
+  @override
+  String get stepsWireless =>
+      '1. iPhone을 USB 케이블로 Mac에 연결합니다\n2. 잠금을 풀고 \'이 컴퓨터를 신뢰\'를 누릅니다\n3. 기기 새로 고침을 누르고 USB 표시가 뜨는지 확인합니다';
+
+  @override
+  String get stepsDeveloperMode =>
+      '1. iPhone: 설정 → 개인정보 보호 및 보안 → 개발자 모드\n2. 켜고 재시동합니다\n3. 재시동 후 나오는 확인 창에서 \'켜기\'를 누릅니다';
+
+  @override
+  String get stepsAndroidAuth =>
+      '1. 폰을 USB로 연결하고 잠금을 풉니다\n2. \'USB 디버깅 허용\' 창에서 이 컴퓨터를 허용합니다\n3. 창이 안 뜨면 개발자 옵션에서 USB 디버깅을 켭니다';
+
+  @override
+  String get stepsTeamId =>
+      '1. developer.apple.com/account → Membership details에서 Team ID(10자)를 확인합니다\n2. 빌드 영역의 Apple Team ID에 입력합니다\n3. 서명 탭에서 인증서의 Team을 눌러 고를 수도 있습니다';
+
+  @override
+  String get stepsCertificate =>
+      '1. Xcode → Settings → Accounts에서 Apple ID로 로그인합니다\n2. Manage Certificates → + → Apple Development을 추가합니다\n3. 다시 점검을 누릅니다';
+
+  @override
+  String get stepsFlutterMissing =>
+      '1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter/bin을 PATH에 추가합니다 (~/.zshrc)\n3. 앱을 다시 열고 점검을 누릅니다';
+
+  @override
+  String get stepsXcodeMissing =>
+      '1. App Store에서 Xcode를 설치합니다\n2. 터미널에서 sudo xcode-select -s /Applications/Xcode.app 를 실행합니다\n3. Xcode를 한 번 열어 라이선스에 동의합니다';
+
+  @override
+  String get stepsAdbMissing =>
+      '1. Android SDK platform-tools를 설치합니다 (Android Studio SDK Manager)\n2. platform-tools 폴더를 PATH에 추가합니다\n3. 다시 점검을 누릅니다';
+
+  @override
+  String get stepsAndroidKeystore =>
+      '1. android/key.properties의 storeFile 경로를 확인합니다\n2. 파일이 없으면 키스토어를 다시 만들거나 경로를 고칩니다\n3. 개인 설치만 한다면 key.properties를 쓰지 않아도 debug 키로 서명됩니다';
+
+  @override
+  String get stepsCertExpiry =>
+      '1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다';
 }

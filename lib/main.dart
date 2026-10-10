@@ -17,6 +17,7 @@ import 'app_identity.dart';
 import 'core/command_log.dart';
 import 'core/command_runner.dart';
 import 'devices/device_service.dart';
+import 'doctor/diagnostics.dart';
 import 'install/install_controller.dart';
 import 'l10n/app_localizations.dart';
 import 'settings/app_settings.dart';
@@ -72,7 +73,11 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   final _navigatorKey = GlobalKey<NavigatorState>();
   final _log = CommandLog();
   late final _runner = CommandRunner(_log);
-  late final _controller = InstallController(runner: _runner, deviceService: ProcessDeviceService(_runner));
+  late final _controller = InstallController(
+    runner: _runner,
+    deviceService: ProcessDeviceService(_runner),
+    diagnosticsService: ProcessDiagnosticsService(_runner),
+  );
 
   @override
   void initState() {

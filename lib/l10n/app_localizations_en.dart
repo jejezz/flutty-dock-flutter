@@ -479,4 +479,253 @@ class AppLocalizationsEn extends AppLocalizations {
   String hintMissingCommand(String command) {
     return 'The $command command wasn\'t found. Install it and make sure it is on PATH';
   }
+
+  @override
+  String get tabInstall => 'Install';
+
+  @override
+  String get tabDevices => 'Devices';
+
+  @override
+  String get tabSigning => 'Signing';
+
+  @override
+  String get tabDoctor => 'Doctor';
+
+  @override
+  String get tabLog => 'Log';
+
+  @override
+  String get bannerNextStep => 'Next step';
+
+  @override
+  String get bannerShowSteps => 'Show how to fix';
+
+  @override
+  String get doctorRun => 'Check again';
+
+  @override
+  String get doctorRunning => 'Checking…';
+
+  @override
+  String get doctorNever => 'Not checked yet';
+
+  @override
+  String doctorCollected(String time) {
+    return 'Checked at $time';
+  }
+
+  @override
+  String get doctorAllGood => 'No problems found';
+
+  @override
+  String get signingTeams => 'Signing team';
+
+  @override
+  String get signingTeamsHelp =>
+      'Teams of certificates whose private key is in your keychain. Tap one to sign with it';
+
+  @override
+  String get signingNoTeams => 'No usable development certificate';
+
+  @override
+  String get signingCerts => 'Development certificates';
+
+  @override
+  String get signingProfiles => 'Profiles for this project';
+
+  @override
+  String get signingNoProfiles =>
+      'None yet — Xcode creates one on the first build';
+
+  @override
+  String get signingShortLived => '7-day profile';
+
+  @override
+  String get signingNoKey => 'No private key';
+
+  @override
+  String signingDaysLeft(String days) {
+    return '$days days left';
+  }
+
+  @override
+  String get signingExpired => 'Expired';
+
+  @override
+  String get signingAndroid => 'Android release signing';
+
+  @override
+  String get signingMacOnly => 'iOS signing checks run on macOS only';
+
+  @override
+  String get logClear => 'Clear log';
+
+  @override
+  String get logEmpty => 'No commands run yet';
+
+  @override
+  String get logRunning => 'Running';
+
+  @override
+  String logExit(String code) {
+    return 'Exit code $code';
+  }
+
+  @override
+  String checkFlutterOk(String version) {
+    return 'Flutter $version';
+  }
+
+  @override
+  String get checkFlutterFail => 'flutter wasn\'t found';
+
+  @override
+  String checkXcodeOk(String version) {
+    return 'Xcode $version';
+  }
+
+  @override
+  String get checkXcodeFail => 'Xcode wasn\'t found';
+
+  @override
+  String checkAdbOk(String version) {
+    return 'adb $version';
+  }
+
+  @override
+  String get checkAdbWarn => 'adb wasn\'t found (needed to install on Android)';
+
+  @override
+  String checkConnectionOk(String name) {
+    return '$name: connected over USB';
+  }
+
+  @override
+  String checkConnectionFail(String name) {
+    return '$name: connected wirelessly, not over USB';
+  }
+
+  @override
+  String get checkDeveloperModeOk => 'Developer Mode is on';
+
+  @override
+  String get checkDeveloperModeFail => 'Developer Mode is off on the iPhone';
+
+  @override
+  String get checkAndroidAuthOk => 'USB debugging approved';
+
+  @override
+  String get checkAndroidAuthFail => 'USB debugging not approved';
+
+  @override
+  String checkCertificateOk(String count) {
+    return '$count development certificate(s) with a private key';
+  }
+
+  @override
+  String get checkCertificateFail => 'No usable Apple Development certificate';
+
+  @override
+  String checkCertExpiryOk(String name, String days) {
+    return '$name · $days days left';
+  }
+
+  @override
+  String checkCertExpiryWarn(String name, String days) {
+    return '$name · expires in $days days';
+  }
+
+  @override
+  String checkCertExpiryFail(String name) {
+    return '$name · expired';
+  }
+
+  @override
+  String checkTeamOk(String team) {
+    return 'Signing team $team';
+  }
+
+  @override
+  String get checkTeamFail => 'No signing Team ID chosen';
+
+  @override
+  String checkTeamWarn(String team) {
+    return 'No certificate for team $team on this Mac';
+  }
+
+  @override
+  String checkProfileOk(String bundle, String days) {
+    return '$bundle profile · $days days left';
+  }
+
+  @override
+  String checkProfileWarn(String bundle, String days) {
+    return '$bundle profile expires soon ($days days left)';
+  }
+
+  @override
+  String checkProfileFail(String bundle) {
+    return '$bundle profile expired';
+  }
+
+  @override
+  String checkProfileInfo(String bundle) {
+    return 'No $bundle profile yet — it is created automatically on the first build';
+  }
+
+  @override
+  String get checkProfileShort =>
+      'A 7-day profile from a free account. When it expires, build and install again';
+
+  @override
+  String get checkAndroidSigningDebugKey =>
+      'No keystore configured — signed with the debug key (fine for installing on your own device)';
+
+  @override
+  String get checkAndroidSigningKeystore => 'Signed with the release keystore';
+
+  @override
+  String get checkAndroidSigningMissing =>
+      'The keystore file key.properties points to is missing';
+
+  @override
+  String get stepsWireless =>
+      '1. Connect the iPhone to the Mac with a USB cable\n2. Unlock it and tap \'Trust This Computer\'\n3. Press Refresh devices and check the USB badge appears';
+
+  @override
+  String get stepsDeveloperMode =>
+      '1. On the iPhone: Settings → Privacy & Security → Developer Mode\n2. Turn it on and restart\n3. After the restart, tap \'Turn On\' in the confirmation prompt';
+
+  @override
+  String get stepsAndroidAuth =>
+      '1. Connect the phone over USB and unlock it\n2. Allow this computer in the \'Allow USB debugging\' prompt\n3. If no prompt appears, enable USB debugging in Developer options';
+
+  @override
+  String get stepsTeamId =>
+      '1. Find the Team ID (10 characters) at developer.apple.com/account → Membership details\n2. Enter it in Apple Team ID under Build\n3. Or tap a team of your certificates in the Signing tab';
+
+  @override
+  String get stepsCertificate =>
+      '1. Xcode → Settings → Accounts: sign in with your Apple ID\n2. Manage Certificates → + → add Apple Development\n3. Press Check again';
+
+  @override
+  String get stepsFlutterMissing =>
+      '1. Install the Flutter SDK from flutter.dev\n2. Add flutter/bin to PATH (~/.zshrc)\n3. Reopen the app and press Check again';
+
+  @override
+  String get stepsXcodeMissing =>
+      '1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license';
+
+  @override
+  String get stepsAdbMissing =>
+      '1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again';
+
+  @override
+  String get stepsAndroidKeystore =>
+      '1. Check the storeFile path in android/key.properties\n2. If the file is gone, recreate the keystore or fix the path\n3. For personal installs you can drop key.properties — the debug key signs the build';
+
+  @override
+  String get stepsCertExpiry =>
+      '1. Xcode → Settings → Accounts → Manage Certificates: create a new Apple Development certificate\n2. Press Check again';
 }

@@ -11,7 +11,14 @@ import '../l10n/app_localizations.dart';
 import '../secrets/secrets_screen.dart';
 import '../settings/settings_menus.dart';
 import '../theme/app_theme.dart';
+import 'banner.dart';
 import 'command_text.dart';
+import 'check_text.dart';
+import 'devices_tab.dart';
+import 'doctor_tab.dart';
+import 'log_tab.dart';
+import 'signing_tab.dart';
+import 'widgets.dart';
 
 /// VS Code 옆에 세워 두는 화면: 프로젝트 → 기기 → 빌드 → 실행할 명령과 진행.
 class HomeScreen extends StatelessWidget {
@@ -29,80 +36,73 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppIdentity.displayName),
-        actions: [
-          // macOS 릴리스 서명용 시크릿 — Windows 릴리스는 시크릿이 필요 없어 숨긴다.
-          if (SecretsScreen.available)
-            IconButton(
-              tooltip: l10n.secretsTooltip,
-              icon: const Icon(Icons.key_rounded),
-              onPressed: () =>
-                  Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SecretsScreen())),
+    return DefaultTabController(
+      length: 5,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(AppIdentity.displayName),
+          actions: [
+            // macOS 릴리스 서명용 시크릿 — Windows 릴리스는 시크릿이 필요 없어 숨긴다.
+            if (SecretsScreen.available)
+              IconButton(
+                tooltip: l10n.secretsTooltip,
+                icon: const Icon(Icons.key_rounded),
+                onPressed: () =>
+                    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SecretsScreen())),
+              ),
+            const ThemeMenuButton(),
+            const LanguageMenuButton(),
+            IconButton(tooltip: l10n.aboutTooltip, icon: const Icon(Icons.info_outline_rounded), onPressed: onAbout),
+            const SizedBox(width: AppSpacing.sm),
+          ],
+        ),
+        body: DropTarget(
+          onDragDone: (d) {
+            if (d.files.isNotEmpty) controller.openProject(d.files.first.path);
+          },
+          child: ListenableBuilder(
+            listenable: controller,
+            builder: (context, _) => Column(
+              children: [
+                NextStepBanner(controller: controller),
+                TabBar(
+                  // 도킹 폭(380~440)에서 다섯 탭이 한 줄에 균등하게 들어간다.
+                  labelPadding: EdgeInsets.zero,
+                  tabs: [
+                    Tab(text: l10n.tabInstall),
+                    Tab(text: l10n.tabDevices),
+                    Tab(text: l10n.tabSigning),
+                    Tab(text: l10n.tabDoctor),
+                    Tab(text: l10n.tabLog),
+                  ],
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      ListView(
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        children: [
+                          _ProjectSection(controller: controller, onOpen: _open),
+                          const SizedBox(height: AppSpacing.lg),
+                          _BuildSection(controller: controller),
+                          const SizedBox(height: AppSpacing.lg),
+                          _OutputSection(log: log),
+                        ],
+                      ),
+                      DevicesTab(controller: controller),
+                      SigningTab(controller: controller),
+                      DoctorTab(controller: controller),
+                      LogTab(log: log),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          const ThemeMenuButton(),
-          const LanguageMenuButton(),
-          IconButton(tooltip: l10n.aboutTooltip, icon: const Icon(Icons.info_outline_rounded), onPressed: onAbout),
-          const SizedBox(width: AppSpacing.sm),
-        ],
-      ),
-      body: DropTarget(
-        onDragDone: (d) {
-          if (d.files.isNotEmpty) controller.openProject(d.files.first.path);
-        },
-        child: ListenableBuilder(
-          listenable: controller,
-          builder: (context, _) => ListView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            children: [
-              _ProjectSection(controller: controller, onOpen: _open),
-              const SizedBox(height: AppSpacing.lg),
-              _DeviceSection(controller: controller),
-              const SizedBox(height: AppSpacing.lg),
-              _BuildSection(controller: controller),
-              const SizedBox(height: AppSpacing.lg),
-              _OutputSection(log: log),
-            ],
           ),
         ),
       ),
     );
   }
-}
-
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle(this.text, {this.trailing});
-
-  final String text;
-  final Widget? trailing;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-    child: Row(
-      children: [
-        Expanded(child: Text(text, style: Theme.of(context).textTheme.titleSmall)),
-        ?trailing,
-      ],
-    ),
-  );
-}
-
-class _Chip extends StatelessWidget {
-  const _Chip(this.label);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(AppRadius.chip),
-    ),
-    child: Text(label, style: const TextStyle(fontSize: 11)),
-  );
 }
 
 class _ProjectSection extends StatelessWidget {
@@ -119,7 +119,7 @@ class _ProjectSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionTitle(l10n.homeProjectTitle),
+        SectionTitle(l10n.homeProjectTitle),
         Card(
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.md),
@@ -151,8 +151,8 @@ class _ProjectSection extends StatelessWidget {
                             Wrap(
                               spacing: AppSpacing.xs,
                               children: [
-                                if (p.hasIos) _Chip(l10n.homePlatformIos),
-                                if (p.hasAndroid) _Chip(l10n.homePlatformAndroid),
+                                if (p.hasIos) InfoChip(l10n.homePlatformIos),
+                                if (p.hasAndroid) InfoChip(l10n.homePlatformAndroid),
                               ],
                             ),
                           ],
@@ -169,70 +169,6 @@ class _ProjectSection extends StatelessWidget {
             child: Text(
               l10n.homeProjectNotFlutter(controller.projectError!),
               style: TextStyle(color: theme.colorScheme.error, fontSize: 12),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _DeviceSection extends StatelessWidget {
-  const _DeviceSection({required this.controller});
-
-  final InstallController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionTitle(
-          l10n.homeDevicesTitle,
-          trailing: controller.loadingDevices
-              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-              : IconButton(
-                  tooltip: l10n.homeDevicesRefresh,
-                  visualDensity: VisualDensity.compact,
-                  icon: const Icon(Icons.refresh_rounded, size: 18),
-                  onPressed: controller.refreshDevices,
-                ),
-        ),
-        if (controller.devices.isEmpty)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Text(l10n.homeDevicesNone, style: theme.textTheme.bodySmall),
-            ),
-          )
-        else
-          Card(
-            child: RadioGroup<String>(
-              groupValue: controller.selectedId,
-              onChanged: (id) {
-                final d = controller.devices.where((d) => d.id == id).firstOrNull;
-                if (d != null) controller.select(d);
-              },
-              child: Column(
-                children: [
-                  for (final d in controller.devices)
-                    RadioListTile<String>(
-                      value: d.id,
-                      dense: true,
-                      title: Text(d.name, style: AppFonts.userContent),
-                      subtitle: Text(
-                        [
-                          d.platform == DevicePlatform.ios ? l10n.homePlatformIos : l10n.homePlatformAndroid,
-                          if (d.osVersion != null) d.osVersion!,
-                          if (d.model != null && d.model != d.name) d.model!,
-                        ].join(' · '),
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                      secondary: _Chip(d.isUsb ? l10n.homeLinkUsb : l10n.homeLinkWireless),
-                    ),
-                ],
-              ),
             ),
           ),
       ],
@@ -266,26 +202,6 @@ class _BuildSectionState extends State<_BuildSection> {
     StepKind.run => l10n.homeStepRun,
   };
 
-  String _blockerText(AppLocalizations l10n, Blocker b) => switch (b) {
-    Blocker.noProject => l10n.blockerNoProject,
-    Blocker.noDevice => l10n.blockerNoDevice,
-    Blocker.platformMissing => l10n.blockerPlatformMissing,
-    Blocker.iosNeedsMac => l10n.blockerIosNeedsMac,
-    Blocker.wireless => l10n.blockerWireless,
-    Blocker.developerModeOff => l10n.blockerDeveloperModeOff,
-    Blocker.androidUnauthorized => l10n.blockerAndroidUnauthorized,
-    Blocker.needsTeamId => l10n.blockerNeedsTeamId,
-  };
-
-  String _hintText(AppLocalizations l10n, FailureHint h) => switch (h) {
-    FailureHint.useUsb => l10n.hintUseUsb,
-    FailureHint.unlockDevice => l10n.hintUnlockDevice,
-    FailureHint.developerMode => l10n.hintDeveloperMode,
-    FailureHint.signing => l10n.hintSigning,
-    FailureHint.trustComputer => l10n.hintTrustComputer,
-    FailureHint.noAdb => l10n.hintNoAdb,
-  };
-
   Widget _statusIcon(StepStatus? s, ThemeData theme) => switch (s) {
     StepStatus.running => const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
     StepStatus.done => const Icon(Icons.check_circle_rounded, size: 16, color: AppColors.success),
@@ -305,7 +221,7 @@ class _BuildSectionState extends State<_BuildSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionTitle(l10n.homeBuildTitle),
+        SectionTitle(l10n.homeBuildTitle),
         SegmentedButton<BuildMode>(
           segments: [
             ButtonSegment(value: BuildMode.debug, label: Text(l10n.homeModeDebug)),
@@ -330,20 +246,8 @@ class _BuildSectionState extends State<_BuildSection> {
           ),
         ],
         const SizedBox(height: AppSpacing.lg),
-        for (final b in plan.blockers)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.warning_amber_rounded, size: 16, color: AppColors.warning),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(child: Text(_blockerText(l10n, b), style: theme.textTheme.bodySmall)),
-              ],
-            ),
-          ),
         if (plan.steps.isNotEmpty) ...[
-          _SectionTitle(l10n.homeStepsTitle),
+          SectionTitle(l10n.homeStepsTitle),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
@@ -418,7 +322,7 @@ class _BuildSectionState extends State<_BuildSection> {
         else if (c.hint != null)
           Padding(
             padding: const EdgeInsets.only(top: AppSpacing.sm),
-            child: Text(_hintText(l10n, c.hint!), style: TextStyle(color: theme.colorScheme.error)),
+            child: Text(failureHintText(l10n, c.hint!), style: TextStyle(color: theme.colorScheme.error)),
           ),
       ],
     );
@@ -444,7 +348,7 @@ class _OutputSection extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _SectionTitle(l10n.homeOutputTitle),
+            SectionTitle(l10n.homeOutputTitle),
             Container(
               width: double.infinity,
               constraints: const BoxConstraints(maxHeight: 260),

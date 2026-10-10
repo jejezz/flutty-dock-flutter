@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/command_runner.dart';
 import '../devices/device_service.dart';
+import '../doctor/checks.dart';
+import '../doctor/diagnostics.dart';
 import '../devices/mobile_device.dart';
 import '../flutter/flutter_project.dart';
 import 'install_plan.dart';
@@ -13,7 +15,7 @@ enum StepStatus { pending, running, done, failed, cancelled }
 
 /// 프로젝트·기기·모드를 고르고 계획을 실행하는 화면의 상태.
 class InstallController extends ChangeNotifier {
-  InstallController({required this.runner, required this.deviceService});
+  InstallController({required this.runner, required this.deviceService, this.diagnosticsService});
 
   static const _projectKey = 'last_project';
   static const _teamKey = 'ios_team_id';
@@ -21,6 +23,7 @@ class InstallController extends ChangeNotifier {
 
   final CommandRunner runner;
   final DeviceService deviceService;
+  final DiagnosticsService? diagnosticsService;
 
   SharedPreferences? _prefs;
   FlutterProject? project;
@@ -30,6 +33,9 @@ class InstallController extends ChangeNotifier {
   String? selectedId;
   BuildMode mode = BuildMode.release;
   String? teamId;
+
+  Diagnostics? diagnostics;
+  bool diagnosing = false;
 
   bool running = false;
   List<StepStatus> statuses = const [];
@@ -46,8 +52,41 @@ class InstallController extends ChangeNotifier {
     return null;
   }
 
-  InstallPlan get plan =>
-      buildInstallPlan(project: project, device: device, mode: mode, teamId: teamId, hostIsMac: Platform.isMacOS);
+  /// 입력한 Team ID → 프로젝트의 Team ID → 키체인에 쓸 수 있는 인증서가 하나뿐이면 그 Team 순서.
+  String? get effectiveTeamId {
+    if (teamId != null) return teamId;
+    if (project?.iosTeamId != null) return project!.iosTeamId;
+    final teams = diagnostics?.usableTeams ?? const <String>{};
+    return teams.length == 1 ? teams.single : null;
+  }
+
+  InstallPlan get plan => buildInstallPlan(
+    project: project,
+    device: device,
+    mode: mode,
+    teamId: effectiveTeamId,
+    hostIsMac: Platform.isMacOS,
+  );
+
+  List<CheckItem> get checks => buildChecks(
+    diagnostics: diagnostics,
+    project: project,
+    device: device,
+    teamId: effectiveTeamId,
+    hostIsMac: Platform.isMacOS,
+    now: DateTime.now(),
+  );
+
+  /// 도구·인증서·프로파일·키스토어를 다시 읽는다.
+  Future<void> runDiagnostics() async {
+    final service = diagnosticsService;
+    if (service == null || diagnosing) return;
+    diagnosing = true;
+    notifyListeners();
+    diagnostics = await service.collect(project);
+    diagnosing = false;
+    notifyListeners();
+  }
 
   Future<void> init() async {
     try {
@@ -60,7 +99,7 @@ class InstallController extends ChangeNotifier {
       // 기억해 둔 값은 편의일 뿐이다.
     }
     notifyListeners();
-    await refreshDevices();
+    await Future.wait([refreshDevices(), runDiagnostics()]);
   }
 
   Future<bool> openProject(String dir) async {
@@ -73,6 +112,7 @@ class InstallController extends ChangeNotifier {
       await _prefs?.setString(_projectKey, dir);
     }
     notifyListeners();
+    if (found != null) await runDiagnostics();
     return found != null;
   }
 

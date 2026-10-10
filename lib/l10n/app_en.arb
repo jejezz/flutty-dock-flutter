@@ -251,5 +251,209 @@
         "type": "String"
       }
     }
-  }
+  },
+  "tabInstall": "Install",
+  "tabDevices": "Devices",
+  "tabSigning": "Signing",
+  "tabDoctor": "Doctor",
+  "tabLog": "Log",
+  "bannerNextStep": "Next step",
+  "bannerShowSteps": "Show how to fix",
+  "doctorRun": "Check again",
+  "doctorRunning": "Checking…",
+  "doctorNever": "Not checked yet",
+  "doctorCollected": "Checked at {time}",
+  "@doctorCollected": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "doctorAllGood": "No problems found",
+  "signingTeams": "Signing team",
+  "signingTeamsHelp": "Teams of certificates whose private key is in your keychain. Tap one to sign with it",
+  "signingNoTeams": "No usable development certificate",
+  "signingCerts": "Development certificates",
+  "signingProfiles": "Profiles for this project",
+  "signingNoProfiles": "None yet — Xcode creates one on the first build",
+  "signingShortLived": "7-day profile",
+  "signingNoKey": "No private key",
+  "signingDaysLeft": "{days} days left",
+  "@signingDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "signingExpired": "Expired",
+  "signingAndroid": "Android release signing",
+  "signingMacOnly": "iOS signing checks run on macOS only",
+  "logClear": "Clear log",
+  "logEmpty": "No commands run yet",
+  "logRunning": "Running",
+  "logExit": "Exit code {code}",
+  "@logExit": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "checkFlutterOk": "Flutter {version}",
+  "@checkFlutterOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "checkFlutterFail": "flutter wasn't found",
+  "checkXcodeOk": "Xcode {version}",
+  "@checkXcodeOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "checkXcodeFail": "Xcode wasn't found",
+  "checkAdbOk": "adb {version}",
+  "@checkAdbOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "checkAdbWarn": "adb wasn't found (needed to install on Android)",
+  "checkConnectionOk": "{name}: connected over USB",
+  "@checkConnectionOk": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "checkConnectionFail": "{name}: connected wirelessly, not over USB",
+  "@checkConnectionFail": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "checkDeveloperModeOk": "Developer Mode is on",
+  "checkDeveloperModeFail": "Developer Mode is off on the iPhone",
+  "checkAndroidAuthOk": "USB debugging approved",
+  "checkAndroidAuthFail": "USB debugging not approved",
+  "checkCertificateOk": "{count} development certificate(s) with a private key",
+  "@checkCertificateOk": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "checkCertificateFail": "No usable Apple Development certificate",
+  "checkCertExpiryOk": "{name} · {days} days left",
+  "@checkCertExpiryOk": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "checkCertExpiryWarn": "{name} · expires in {days} days",
+  "@checkCertExpiryWarn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "checkCertExpiryFail": "{name} · expired",
+  "@checkCertExpiryFail": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "checkTeamOk": "Signing team {team}",
+  "@checkTeamOk": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "checkTeamFail": "No signing Team ID chosen",
+  "checkTeamWarn": "No certificate for team {team} on this Mac",
+  "@checkTeamWarn": {
+    "placeholders": {
+      "team": {
+        "type": "String"
+      }
+    }
+  },
+  "checkProfileOk": "{bundle} profile · {days} days left",
+  "@checkProfileOk": {
+    "placeholders": {
+      "bundle": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "checkProfileWarn": "{bundle} profile expires soon ({days} days left)",
+  "@checkProfileWarn": {
+    "placeholders": {
+      "bundle": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "checkProfileFail": "{bundle} profile expired",
+  "@checkProfileFail": {
+    "placeholders": {
+      "bundle": {
+        "type": "String"
+      }
+    }
+  },
+  "checkProfileInfo": "No {bundle} profile yet — it is created automatically on the first build",
+  "@checkProfileInfo": {
+    "placeholders": {
+      "bundle": {
+        "type": "String"
+      }
+    }
+  },
+  "checkProfileShort": "A 7-day profile from a free account. When it expires, build and install again",
+  "checkAndroidSigningDebugKey": "No keystore configured — signed with the debug key (fine for installing on your own device)",
+  "checkAndroidSigningKeystore": "Signed with the release keystore",
+  "checkAndroidSigningMissing": "The keystore file key.properties points to is missing",
+  "stepsWireless": "1. Connect the iPhone to the Mac with a USB cable\n2. Unlock it and tap 'Trust This Computer'\n3. Press Refresh devices and check the USB badge appears",
+  "stepsDeveloperMode": "1. On the iPhone: Settings → Privacy & Security → Developer Mode\n2. Turn it on and restart\n3. After the restart, tap 'Turn On' in the confirmation prompt",
+  "stepsAndroidAuth": "1. Connect the phone over USB and unlock it\n2. Allow this computer in the 'Allow USB debugging' prompt\n3. If no prompt appears, enable USB debugging in Developer options",
+  "stepsTeamId": "1. Find the Team ID (10 characters) at developer.apple.com/account → Membership details\n2. Enter it in Apple Team ID under Build\n3. Or tap a team of your certificates in the Signing tab",
+  "stepsCertificate": "1. Xcode → Settings → Accounts: sign in with your Apple ID\n2. Manage Certificates → + → add Apple Development\n3. Press Check again",
+  "stepsFlutterMissing": "1. Install the Flutter SDK from flutter.dev\n2. Add flutter/bin to PATH (~/.zshrc)\n3. Reopen the app and press Check again",
+  "stepsXcodeMissing": "1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license",
+  "stepsAdbMissing": "1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again",
+  "stepsAndroidKeystore": "1. Check the storeFile path in android/key.properties\n2. If the file is gone, recreate the keystore or fix the path\n3. For personal installs you can drop key.properties — the debug key signs the build",
+  "stepsCertExpiry": "1. Xcode → Settings → Accounts → Manage Certificates: create a new Apple Development certificate\n2. Press Check again"
 }

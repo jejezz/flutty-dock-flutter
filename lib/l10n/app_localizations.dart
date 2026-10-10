@@ -907,6 +907,402 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'{command} 명령을 찾지 못했습니다. 설치하고 PATH에 있는지 확인하세요'**
   String hintMissingCommand(String command);
+
+  /// No description provided for @tabInstall.
+  ///
+  /// In ko, this message translates to:
+  /// **'설치'**
+  String get tabInstall;
+
+  /// No description provided for @tabDevices.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기'**
+  String get tabDevices;
+
+  /// No description provided for @tabSigning.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명'**
+  String get tabSigning;
+
+  /// No description provided for @tabDoctor.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검'**
+  String get tabDoctor;
+
+  /// No description provided for @tabLog.
+  ///
+  /// In ko, this message translates to:
+  /// **'기록'**
+  String get tabLog;
+
+  /// No description provided for @bannerNextStep.
+  ///
+  /// In ko, this message translates to:
+  /// **'지금 할 일'**
+  String get bannerNextStep;
+
+  /// No description provided for @bannerShowSteps.
+  ///
+  /// In ko, this message translates to:
+  /// **'해결 방법 보기'**
+  String get bannerShowSteps;
+
+  /// No description provided for @doctorRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 점검'**
+  String get doctorRun;
+
+  /// No description provided for @doctorRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검 중…'**
+  String get doctorRunning;
+
+  /// No description provided for @doctorNever.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 점검하지 않았습니다'**
+  String get doctorNever;
+
+  /// No description provided for @doctorCollected.
+  ///
+  /// In ko, this message translates to:
+  /// **'{time}에 점검함'**
+  String doctorCollected(String time);
+
+  /// No description provided for @doctorAllGood.
+  ///
+  /// In ko, this message translates to:
+  /// **'문제가 없습니다'**
+  String get doctorAllGood;
+
+  /// No description provided for @signingTeams.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명 Team'**
+  String get signingTeams;
+
+  /// No description provided for @signingTeamsHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'키체인에 개인 키가 있는 인증서의 Team입니다. 누르면 이 Team으로 서명합니다'**
+  String get signingTeamsHelp;
+
+  /// No description provided for @signingNoTeams.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용할 수 있는 개발 인증서가 없습니다'**
+  String get signingNoTeams;
+
+  /// No description provided for @signingCerts.
+  ///
+  /// In ko, this message translates to:
+  /// **'개발 인증서'**
+  String get signingCerts;
+
+  /// No description provided for @signingProfiles.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 프로젝트의 프로파일'**
+  String get signingProfiles;
+
+  /// No description provided for @signingNoProfiles.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 없습니다 — 첫 빌드에서 Xcode가 자동으로 만듭니다'**
+  String get signingNoProfiles;
+
+  /// No description provided for @signingShortLived.
+  ///
+  /// In ko, this message translates to:
+  /// **'7일 프로파일'**
+  String get signingShortLived;
+
+  /// No description provided for @signingNoKey.
+  ///
+  /// In ko, this message translates to:
+  /// **'개인 키 없음'**
+  String get signingNoKey;
+
+  /// No description provided for @signingDaysLeft.
+  ///
+  /// In ko, this message translates to:
+  /// **'{days}일 남음'**
+  String signingDaysLeft(String days);
+
+  /// No description provided for @signingExpired.
+  ///
+  /// In ko, this message translates to:
+  /// **'만료됨'**
+  String get signingExpired;
+
+  /// No description provided for @signingAndroid.
+  ///
+  /// In ko, this message translates to:
+  /// **'Android 릴리스 서명'**
+  String get signingAndroid;
+
+  /// No description provided for @signingMacOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'iOS 서명 점검은 macOS에서만 합니다'**
+  String get signingMacOnly;
+
+  /// No description provided for @logClear.
+  ///
+  /// In ko, this message translates to:
+  /// **'기록 지우기'**
+  String get logClear;
+
+  /// No description provided for @logEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 실행한 명령이 없습니다'**
+  String get logEmpty;
+
+  /// No description provided for @logRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 중'**
+  String get logRunning;
+
+  /// No description provided for @logExit.
+  ///
+  /// In ko, this message translates to:
+  /// **'종료 코드 {code}'**
+  String logExit(String code);
+
+  /// No description provided for @checkFlutterOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flutter {version}'**
+  String checkFlutterOk(String version);
+
+  /// No description provided for @checkFlutterFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'flutter를 찾지 못했습니다'**
+  String get checkFlutterFail;
+
+  /// No description provided for @checkXcodeOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Xcode {version}'**
+  String checkXcodeOk(String version);
+
+  /// No description provided for @checkXcodeFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'Xcode를 찾지 못했습니다'**
+  String get checkXcodeFail;
+
+  /// No description provided for @checkAdbOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb {version}'**
+  String checkAdbOk(String version);
+
+  /// No description provided for @checkAdbWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb를 찾지 못했습니다 (Android 설치에 필요)'**
+  String get checkAdbWarn;
+
+  /// No description provided for @checkConnectionOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}: USB로 연결됨'**
+  String checkConnectionOk(String name);
+
+  /// No description provided for @checkConnectionFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}: USB가 아니라 무선으로 연결됨'**
+  String checkConnectionFail(String name);
+
+  /// No description provided for @checkDeveloperModeOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone 개발자 모드 켜짐'**
+  String get checkDeveloperModeOk;
+
+  /// No description provided for @checkDeveloperModeFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone 개발자 모드가 꺼져 있음'**
+  String get checkDeveloperModeFail;
+
+  /// No description provided for @checkAndroidAuthOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'USB 디버깅 승인됨'**
+  String get checkAndroidAuthOk;
+
+  /// No description provided for @checkAndroidAuthFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'USB 디버깅을 승인하지 않음'**
+  String get checkAndroidAuthFail;
+
+  /// No description provided for @checkCertificateOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'개발 인증서 {count}개 (개인 키 있음)'**
+  String checkCertificateOk(String count);
+
+  /// No description provided for @checkCertificateFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용할 수 있는 Apple Development 인증서가 없음'**
+  String get checkCertificateFail;
+
+  /// No description provided for @checkCertExpiryOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · {days}일 남음'**
+  String checkCertExpiryOk(String name, String days);
+
+  /// No description provided for @checkCertExpiryWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · {days}일 뒤 만료'**
+  String checkCertExpiryWarn(String name, String days);
+
+  /// No description provided for @checkCertExpiryFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · 만료됨'**
+  String checkCertExpiryFail(String name);
+
+  /// No description provided for @checkTeamOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명 Team {team}'**
+  String checkTeamOk(String team);
+
+  /// No description provided for @checkTeamFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명할 Team ID가 정해지지 않음'**
+  String get checkTeamFail;
+
+  /// No description provided for @checkTeamWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'Team {team}의 인증서가 이 Mac에 없음'**
+  String checkTeamWarn(String team);
+
+  /// No description provided for @checkProfileOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'{bundle} 프로파일 · {days}일 남음'**
+  String checkProfileOk(String bundle, String days);
+
+  /// No description provided for @checkProfileWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'{bundle} 프로파일이 곧 만료됨 ({days}일 남음)'**
+  String checkProfileWarn(String bundle, String days);
+
+  /// No description provided for @checkProfileFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'{bundle} 프로파일이 만료됨'**
+  String checkProfileFail(String bundle);
+
+  /// No description provided for @checkProfileInfo.
+  ///
+  /// In ko, this message translates to:
+  /// **'{bundle} 프로파일 없음 — 첫 빌드에서 자동으로 만들어짐'**
+  String checkProfileInfo(String bundle);
+
+  /// No description provided for @checkProfileShort.
+  ///
+  /// In ko, this message translates to:
+  /// **'무료 계정의 7일 프로파일입니다. 만료되면 다시 빌드해서 설치하세요'**
+  String get checkProfileShort;
+
+  /// No description provided for @checkAndroidSigningDebugKey.
+  ///
+  /// In ko, this message translates to:
+  /// **'키스토어 설정 없음 — debug 키로 서명 (개인 기기 설치용으로 충분)'**
+  String get checkAndroidSigningDebugKey;
+
+  /// No description provided for @checkAndroidSigningKeystore.
+  ///
+  /// In ko, this message translates to:
+  /// **'릴리스 키스토어로 서명'**
+  String get checkAndroidSigningKeystore;
+
+  /// No description provided for @checkAndroidSigningMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'key.properties가 가리키는 키스토어 파일이 없음'**
+  String get checkAndroidSigningMissing;
+
+  /// No description provided for @stepsWireless.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. iPhone을 USB 케이블로 Mac에 연결합니다\n2. 잠금을 풀고 \'이 컴퓨터를 신뢰\'를 누릅니다\n3. 기기 새로 고침을 누르고 USB 표시가 뜨는지 확인합니다'**
+  String get stepsWireless;
+
+  /// No description provided for @stepsDeveloperMode.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. iPhone: 설정 → 개인정보 보호 및 보안 → 개발자 모드\n2. 켜고 재시동합니다\n3. 재시동 후 나오는 확인 창에서 \'켜기\'를 누릅니다'**
+  String get stepsDeveloperMode;
+
+  /// No description provided for @stepsAndroidAuth.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. 폰을 USB로 연결하고 잠금을 풉니다\n2. \'USB 디버깅 허용\' 창에서 이 컴퓨터를 허용합니다\n3. 창이 안 뜨면 개발자 옵션에서 USB 디버깅을 켭니다'**
+  String get stepsAndroidAuth;
+
+  /// No description provided for @stepsTeamId.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. developer.apple.com/account → Membership details에서 Team ID(10자)를 확인합니다\n2. 빌드 영역의 Apple Team ID에 입력합니다\n3. 서명 탭에서 인증서의 Team을 눌러 고를 수도 있습니다'**
+  String get stepsTeamId;
+
+  /// No description provided for @stepsCertificate.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Xcode → Settings → Accounts에서 Apple ID로 로그인합니다\n2. Manage Certificates → + → Apple Development을 추가합니다\n3. 다시 점검을 누릅니다'**
+  String get stepsCertificate;
+
+  /// No description provided for @stepsFlutterMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter/bin을 PATH에 추가합니다 (~/.zshrc)\n3. 앱을 다시 열고 점검을 누릅니다'**
+  String get stepsFlutterMissing;
+
+  /// No description provided for @stepsXcodeMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. App Store에서 Xcode를 설치합니다\n2. 터미널에서 sudo xcode-select -s /Applications/Xcode.app 를 실행합니다\n3. Xcode를 한 번 열어 라이선스에 동의합니다'**
+  String get stepsXcodeMissing;
+
+  /// No description provided for @stepsAdbMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Android SDK platform-tools를 설치합니다 (Android Studio SDK Manager)\n2. platform-tools 폴더를 PATH에 추가합니다\n3. 다시 점검을 누릅니다'**
+  String get stepsAdbMissing;
+
+  /// No description provided for @stepsAndroidKeystore.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. android/key.properties의 storeFile 경로를 확인합니다\n2. 파일이 없으면 키스토어를 다시 만들거나 경로를 고칩니다\n3. 개인 설치만 한다면 key.properties를 쓰지 않아도 debug 키로 서명됩니다'**
+  String get stepsAndroidKeystore;
+
+  /// No description provided for @stepsCertExpiry.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다'**
+  String get stepsCertExpiry;
 }
 
 class _AppLocalizationsDelegate
