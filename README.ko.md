@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" width="720" alt="Flutty Dock 데모: Flutter 프로젝트를 고르고 USB로 연결된 폰에 release 버전을 빌드해 설치">
+  <img src="docs/screenshots/demo.gif" width="720" alt="Flutty Dock 데모: Android 폰과 iPhone의 Debug·Release 명령, 기기·서명·점검 탭을 보고 빌드 &amp; 설치를 시작해 출력이 흐르는 모습">
 </p>
 
 ## 기능

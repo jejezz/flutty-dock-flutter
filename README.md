@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" width="720" alt="Flutty Dock demo: pick a Flutter project, then build and install the release version on a USB-connected phone">
+  <img src="docs/screenshots/demo.gif" width="720" alt="Flutty Dock demo: the commands for Debug and Release on an Android phone and an iPhone, the device, Signing and Doctor tabs, then Build &amp; install starting with its output">
 </p>
 
 ## Features

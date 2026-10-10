@@ -71,10 +71,14 @@ Future<void> main() async {
 }
 
 class App extends StatefulWidget {
-  const App({super.key, required this.settings, this.updates});
+  const App({super.key, required this.settings, this.updates, this.deviceService, this.diagnosticsService});
 
   final AppSettings settings;
   final UpdateService? updates;
+
+  /// 기기 목록·점검을 대신할 구현. 기본은 실제 기기와 이 Mac을 읽는다 (README 데모 녹화에서 가짜를 넣는다).
+  final DeviceService? deviceService;
+  final DiagnosticsService? diagnosticsService;
 
   @override
   State<App> createState() => _AppState();
@@ -86,8 +90,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   late final _runner = CommandRunner(_log);
   late final _controller = InstallController(
     runner: _runner,
-    deviceService: ProcessDeviceService(_runner),
-    diagnosticsService: ProcessDiagnosticsService(_runner),
+    deviceService: widget.deviceService ?? ProcessDeviceService(_runner),
+    diagnosticsService: widget.diagnosticsService ?? ProcessDiagnosticsService(_runner),
   );
 
   @override
