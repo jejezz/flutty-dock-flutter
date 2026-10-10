@@ -58,7 +58,7 @@ List<CheckItem> buildChecks({
   }
 
   if (hostIsMac) {
-    final usable = d.certs.where((c) => c.hasPrivateKey).toList();
+    final usable = d.distinctCerts.where((c) => c.hasPrivateKey).toList();
     items.add(
       CheckItem(CheckId.certificate, usable.isNotEmpty ? CheckStatus.ok : CheckStatus.fail, {
         'count': '${usable.length}',

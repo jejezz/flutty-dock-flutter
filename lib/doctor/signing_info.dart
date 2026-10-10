@@ -15,6 +15,27 @@ class SigningCert {
   int? daysLeft(DateTime now) => expires?.difference(now).inDays;
 }
 
+/// 이름과 Team이 같은 인증서는 하나로 합친다.
+///
+/// 키체인에는 같은 이름의 개발 인증서가 여러 장 있을 수 있다(만료일만 다름). 목록과 점검에는 쓸 수 있는 쪽 하나만
+/// 보여 준다: 개인 키가 있는 것을 먼저, 그다음 만료가 가장 늦은 것. 순서는 처음 나온 순서를 따른다.
+List<SigningCert> uniqueCerts(List<SigningCert> certs) {
+  final best = <String, SigningCert>{};
+  for (final c in certs) {
+    final key = '${c.teamId}\u0000${c.name}';
+    final current = best[key];
+    if (current == null || _better(c, current)) best[key] = c;
+  }
+  return best.values.toList();
+}
+
+bool _better(SigningCert a, SigningCert b) {
+  if (a.hasPrivateKey != b.hasPrivateKey) return a.hasPrivateKey;
+  final ae = a.expires, be = b.expires;
+  if (ae == null || be == null) return ae != null && be == null;
+  return ae.isAfter(be);
+}
+
 /// `~/Library/.../Provisioning Profiles`의 프로파일 하나.
 class ProfileInfo {
   const ProfileInfo({

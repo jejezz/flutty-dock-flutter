@@ -38,6 +38,9 @@ class Diagnostics {
   final ToolInfo xcode;
   final ToolInfo adb;
   final List<SigningCert> certs;
+
+  /// 이름·Team이 같은 인증서를 하나로 합친 목록 — 화면과 점검은 이것을 쓴다.
+  List<SigningCert> get distinctCerts => uniqueCerts(certs);
   final List<ProfileInfo> profiles;
   final AndroidSigning? androidSigning;
   final DateTime collectedAt;
