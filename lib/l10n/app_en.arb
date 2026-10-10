@@ -191,5 +191,65 @@
   "secretOpenAppleId": "Open appleid.apple.com",
   "secretOpenDeveloper": "Open developer.apple.com/account",
   "commandBarEmpty": "No commands run yet",
-  "commonCancel": "Cancel"
+  "commonCancel": "Cancel",
+  "homeProjectTitle": "Project",
+  "homeProjectOpen": "Open project",
+  "homeProjectChange": "Change",
+  "homeProjectDrop": "Drop a Flutter project folder here, or press Open project",
+  "homeProjectNotFlutter": "Not a Flutter project: {path}",
+  "@homeProjectNotFlutter": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "homePlatformIos": "iOS",
+  "homePlatformAndroid": "Android",
+  "homeDevicesTitle": "Devices",
+  "homeDevicesRefresh": "Refresh devices",
+  "homeDevicesNone": "No device is connected over USB. Plug in your phone, unlock it, then refresh",
+  "homeLinkUsb": "USB",
+  "homeLinkWireless": "Wireless",
+  "homeBuildTitle": "Build",
+  "homeModeDebug": "Debug",
+  "homeModeRelease": "Release",
+  "homeTeamLabel": "Apple Team ID",
+  "homeTeamHelp": "Passed only as a build argument — the project is not modified. Find it at developer.apple.com/account → Membership",
+  "homeStepsTitle": "Commands to run",
+  "homeStepPrepare": "Prepare",
+  "homeStepBuild": "Build",
+  "homeStepInstall": "Install",
+  "homeStepLaunch": "Launch",
+  "homeStepRun": "Run (hot reload)",
+  "homeActionInstall": "Build & install",
+  "homeActionRun": "Run debug",
+  "homeActionCancel": "Cancel",
+  "homeActionStop": "Stop",
+  "homeHotReload": "Hot reload",
+  "homeHotRestart": "Hot restart",
+  "homeOutputTitle": "Output",
+  "homeCopyCommand": "Copy command",
+  "blockerNoProject": "Open a Flutter project first",
+  "blockerNoDevice": "Connect and select a device",
+  "blockerPlatformMissing": "This project has no folder (ios/ or android/) for the selected device's platform",
+  "blockerIosNeedsMac": "Installing on an iPhone needs macOS and Xcode",
+  "blockerWireless": "This device is connected wirelessly. Use a USB cable — installs drop over wireless",
+  "blockerDeveloperModeOff": "Developer Mode is off on the iPhone. Turn it on in Settings → Privacy & Security → Developer Mode, then restart",
+  "blockerAndroidUnauthorized": "Approve this computer in the 'Allow USB debugging' prompt on the phone",
+  "blockerNeedsTeamId": "Enter the Apple Team ID to sign iOS builds with",
+  "hintUseUsb": "The connection dropped. Make sure the phone is on a USB cable, not wireless",
+  "hintUnlockDevice": "The iPhone is locked. Unlock it and try again",
+  "hintDeveloperMode": "Turn on Developer Mode on the iPhone: Settings → Privacy & Security → Developer Mode",
+  "hintSigning": "A signing profile problem. Check the Team ID and that Xcode is signed in to your Apple account",
+  "hintTrustComputer": "Tap 'Trust This Computer' on the iPhone",
+  "hintNoAdb": "adb wasn't found. Install the Android SDK platform-tools and add it to PATH",
+  "hintMissingCommand": "The {command} command wasn't found. Install it and make sure it is on PATH",
+  "@hintMissingCommand": {
+    "placeholders": {
+      "command": {
+        "type": "String"
+      }
+    }
+  }
 }

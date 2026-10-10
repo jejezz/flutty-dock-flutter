@@ -14,11 +14,14 @@ import 'about/about_dialog.dart';
 import 'about/app_menu_bar.dart';
 import 'about/extra_licenses.dart';
 import 'app_identity.dart';
+import 'core/command_log.dart';
+import 'core/command_runner.dart';
+import 'devices/device_service.dart';
+import 'install/install_controller.dart';
 import 'l10n/app_localizations.dart';
-import 'secrets/secrets_screen.dart';
 import 'settings/app_settings.dart';
-import 'settings/settings_menus.dart';
 import 'theme/app_theme.dart';
+import 'ui/home_screen.dart';
 import 'update/update_scope.dart';
 import 'update/update_service.dart';
 
@@ -47,7 +50,12 @@ Future<void> main() async {
   // 데스크톱이 아니거나 UPDATE_SERVER 가 비어 있으면 null — 업데이트 확인 없음.
   final updates = await UpdateService.create();
   // UpdateScope 는 MaterialApp 위에 둔다 — 정보 창이 이것을 읽어 "업데이트 확인" 단추를 붙인다.
-  runApp(UpdateScope(service: updates, child: App(settings: settings, updates: updates)));
+  runApp(
+    UpdateScope(
+      service: updates,
+      child: App(settings: settings, updates: updates),
+    ),
+  );
 }
 
 class App extends StatefulWidget {
@@ -62,6 +70,9 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> with WidgetsBindingObserver {
   final _navigatorKey = GlobalKey<NavigatorState>();
+  final _log = CommandLog();
+  late final _runner = CommandRunner(_log);
+  late final _controller = InstallController(runner: _runner, deviceService: ProcessDeviceService(_runner));
 
   @override
   void initState() {
@@ -70,12 +81,14 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     widget.settings.addListener(_syncWindowBrightness);
     _syncWindowBrightness();
     widget.updates?.startAutomaticCheck(_navigatorKey);
+    _controller.init();
   }
 
   @override
   void dispose() {
     widget.settings.removeListener(_syncWindowBrightness);
     WidgetsBinding.instance.removeObserver(this);
+    _controller.dispose();
     super.dispose();
   }
 
@@ -132,55 +145,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
             onCheckForUpdates: widget.updates == null ? null : _checkForUpdates,
             child: child!,
           ),
-          home: HomeScreen(onAbout: _showAbout),
-        ),
-      ),
-    );
-  }
-}
-
-/// 기능이 들어오기 전의 자리 표시 화면 — 빈 상태 패턴 (ui-ux.md §6).
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.onAbout});
-
-  final VoidCallback onAbout;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppIdentity.displayName),
-        actions: [
-          // macOS 릴리스 서명용 시크릿 — Windows 릴리스는 시크릿이 필요 없어 숨긴다.
-          if (SecretsScreen.available)
-            IconButton(
-              tooltip: l10n.secretsTooltip,
-              icon: const Icon(Icons.key_rounded),
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SecretsScreen())),
-            ),
-          const ThemeMenuButton(),
-          const LanguageMenuButton(),
-          IconButton(
-            tooltip: l10n.aboutTooltip,
-            icon: const Icon(Icons.info_outline_rounded),
-            onPressed: onAbout,
-          ),
-          const SizedBox(width: AppSpacing.sm),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(AppIdentity.iconAsset, width: 48, height: 48),
-            const SizedBox(height: AppSpacing.lg),
-            Text(l10n.homeEmptyTitle, style: theme.textTheme.titleMedium),
-            const SizedBox(height: AppSpacing.lg),
-            // 기능이 생기면 주 행동을 연결한다. 그 전까지는 비활성.
-            FilledButton(onPressed: null, child: Text(l10n.homeEmptyAction)),
-          ],
+          home: HomeScreen(controller: _controller, log: _log, onAbout: _showAbout),
         ),
       ),
     );

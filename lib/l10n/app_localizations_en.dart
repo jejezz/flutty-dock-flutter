@@ -323,4 +323,160 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonCancel => 'Cancel';
+
+  @override
+  String get homeProjectTitle => 'Project';
+
+  @override
+  String get homeProjectOpen => 'Open project';
+
+  @override
+  String get homeProjectChange => 'Change';
+
+  @override
+  String get homeProjectDrop =>
+      'Drop a Flutter project folder here, or press Open project';
+
+  @override
+  String homeProjectNotFlutter(String path) {
+    return 'Not a Flutter project: $path';
+  }
+
+  @override
+  String get homePlatformIos => 'iOS';
+
+  @override
+  String get homePlatformAndroid => 'Android';
+
+  @override
+  String get homeDevicesTitle => 'Devices';
+
+  @override
+  String get homeDevicesRefresh => 'Refresh devices';
+
+  @override
+  String get homeDevicesNone =>
+      'No device is connected over USB. Plug in your phone, unlock it, then refresh';
+
+  @override
+  String get homeLinkUsb => 'USB';
+
+  @override
+  String get homeLinkWireless => 'Wireless';
+
+  @override
+  String get homeBuildTitle => 'Build';
+
+  @override
+  String get homeModeDebug => 'Debug';
+
+  @override
+  String get homeModeRelease => 'Release';
+
+  @override
+  String get homeTeamLabel => 'Apple Team ID';
+
+  @override
+  String get homeTeamHelp =>
+      'Passed only as a build argument — the project is not modified. Find it at developer.apple.com/account → Membership';
+
+  @override
+  String get homeStepsTitle => 'Commands to run';
+
+  @override
+  String get homeStepPrepare => 'Prepare';
+
+  @override
+  String get homeStepBuild => 'Build';
+
+  @override
+  String get homeStepInstall => 'Install';
+
+  @override
+  String get homeStepLaunch => 'Launch';
+
+  @override
+  String get homeStepRun => 'Run (hot reload)';
+
+  @override
+  String get homeActionInstall => 'Build & install';
+
+  @override
+  String get homeActionRun => 'Run debug';
+
+  @override
+  String get homeActionCancel => 'Cancel';
+
+  @override
+  String get homeActionStop => 'Stop';
+
+  @override
+  String get homeHotReload => 'Hot reload';
+
+  @override
+  String get homeHotRestart => 'Hot restart';
+
+  @override
+  String get homeOutputTitle => 'Output';
+
+  @override
+  String get homeCopyCommand => 'Copy command';
+
+  @override
+  String get blockerNoProject => 'Open a Flutter project first';
+
+  @override
+  String get blockerNoDevice => 'Connect and select a device';
+
+  @override
+  String get blockerPlatformMissing =>
+      'This project has no folder (ios/ or android/) for the selected device\'s platform';
+
+  @override
+  String get blockerIosNeedsMac =>
+      'Installing on an iPhone needs macOS and Xcode';
+
+  @override
+  String get blockerWireless =>
+      'This device is connected wirelessly. Use a USB cable — installs drop over wireless';
+
+  @override
+  String get blockerDeveloperModeOff =>
+      'Developer Mode is off on the iPhone. Turn it on in Settings → Privacy & Security → Developer Mode, then restart';
+
+  @override
+  String get blockerAndroidUnauthorized =>
+      'Approve this computer in the \'Allow USB debugging\' prompt on the phone';
+
+  @override
+  String get blockerNeedsTeamId =>
+      'Enter the Apple Team ID to sign iOS builds with';
+
+  @override
+  String get hintUseUsb =>
+      'The connection dropped. Make sure the phone is on a USB cable, not wireless';
+
+  @override
+  String get hintUnlockDevice =>
+      'The iPhone is locked. Unlock it and try again';
+
+  @override
+  String get hintDeveloperMode =>
+      'Turn on Developer Mode on the iPhone: Settings → Privacy & Security → Developer Mode';
+
+  @override
+  String get hintSigning =>
+      'A signing profile problem. Check the Team ID and that Xcode is signed in to your Apple account';
+
+  @override
+  String get hintTrustComputer => 'Tap \'Trust This Computer\' on the iPhone';
+
+  @override
+  String get hintNoAdb =>
+      'adb wasn\'t found. Install the Android SDK platform-tools and add it to PATH';
+
+  @override
+  String hintMissingCommand(String command) {
+    return 'The $command command wasn\'t found. Install it and make sure it is on PATH';
+  }
 }

@@ -314,4 +314,155 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get commonCancel => '취소';
+
+  @override
+  String get homeProjectTitle => '프로젝트';
+
+  @override
+  String get homeProjectOpen => '프로젝트 열기';
+
+  @override
+  String get homeProjectChange => '변경';
+
+  @override
+  String get homeProjectDrop => 'Flutter 프로젝트 폴더를 여기로 끌어다 놓거나 [프로젝트 열기]를 누르세요';
+
+  @override
+  String homeProjectNotFlutter(String path) {
+    return 'Flutter 프로젝트가 아닙니다: $path';
+  }
+
+  @override
+  String get homePlatformIos => 'iOS';
+
+  @override
+  String get homePlatformAndroid => 'Android';
+
+  @override
+  String get homeDevicesTitle => '기기';
+
+  @override
+  String get homeDevicesRefresh => '기기 새로 고침';
+
+  @override
+  String get homeDevicesNone =>
+      'USB로 연결된 기기가 없습니다. 폰을 USB로 연결하고 잠금을 푼 뒤 새로 고치세요';
+
+  @override
+  String get homeLinkUsb => 'USB';
+
+  @override
+  String get homeLinkWireless => '무선';
+
+  @override
+  String get homeBuildTitle => '빌드';
+
+  @override
+  String get homeModeDebug => 'Debug';
+
+  @override
+  String get homeModeRelease => 'Release';
+
+  @override
+  String get homeTeamLabel => 'Apple Team ID';
+
+  @override
+  String get homeTeamHelp =>
+      '프로젝트를 고치지 않고 빌드 인자로만 넘깁니다. developer.apple.com/account → Membership에서 확인하세요';
+
+  @override
+  String get homeStepsTitle => '실행할 명령';
+
+  @override
+  String get homeStepPrepare => '준비';
+
+  @override
+  String get homeStepBuild => '빌드';
+
+  @override
+  String get homeStepInstall => '설치';
+
+  @override
+  String get homeStepLaunch => '실행';
+
+  @override
+  String get homeStepRun => '실행 (핫 리로드)';
+
+  @override
+  String get homeActionInstall => '빌드 & 설치';
+
+  @override
+  String get homeActionRun => '디버그 실행';
+
+  @override
+  String get homeActionCancel => '취소';
+
+  @override
+  String get homeActionStop => '중지';
+
+  @override
+  String get homeHotReload => '핫 리로드';
+
+  @override
+  String get homeHotRestart => '핫 리스타트';
+
+  @override
+  String get homeOutputTitle => '출력';
+
+  @override
+  String get homeCopyCommand => '명령 복사';
+
+  @override
+  String get blockerNoProject => '먼저 Flutter 프로젝트를 여세요';
+
+  @override
+  String get blockerNoDevice => '기기를 연결하고 선택하세요';
+
+  @override
+  String get blockerPlatformMissing =>
+      '이 프로젝트에는 선택한 기기의 플랫폼 폴더(ios/ 또는 android/)가 없습니다';
+
+  @override
+  String get blockerIosNeedsMac => 'iPhone에 설치하려면 macOS와 Xcode가 필요합니다';
+
+  @override
+  String get blockerWireless =>
+      '무선으로 잡힌 기기입니다. USB 케이블로 연결하세요 (무선에서는 설치가 끊깁니다)';
+
+  @override
+  String get blockerDeveloperModeOff =>
+      'iPhone의 개발자 모드가 꺼져 있습니다. 설정 → 개인정보 보호 및 보안 → 개발자 모드를 켜고 재시동하세요';
+
+  @override
+  String get blockerAndroidUnauthorized =>
+      '폰 화면의 \'USB 디버깅 허용\' 창에서 이 컴퓨터를 승인하세요';
+
+  @override
+  String get blockerNeedsTeamId => 'iOS 서명에 쓸 Apple Team ID를 입력하세요';
+
+  @override
+  String get hintUseUsb => '연결이 끊겼습니다. 무선이 아니라 USB 케이블로 연결했는지 확인하세요';
+
+  @override
+  String get hintUnlockDevice => 'iPhone이 잠겨 있습니다. 잠금을 풀고 다시 시도하세요';
+
+  @override
+  String get hintDeveloperMode =>
+      'iPhone의 개발자 모드를 켜세요: 설정 → 개인정보 보호 및 보안 → 개발자 모드';
+
+  @override
+  String get hintSigning =>
+      '서명 프로파일 문제입니다. Team ID가 맞는지, Xcode에 Apple 계정이 로그인되어 있는지 확인하세요';
+
+  @override
+  String get hintTrustComputer => 'iPhone에서 \'이 컴퓨터를 신뢰\'를 누르세요';
+
+  @override
+  String get hintNoAdb =>
+      'adb를 찾지 못했습니다. Android SDK platform-tools를 설치하고 PATH에 추가하세요';
+
+  @override
+  String hintMissingCommand(String command) {
+    return '$command 명령을 찾지 못했습니다. 설치하고 PATH에 있는지 확인하세요';
+  }
 }

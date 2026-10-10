@@ -1,0 +1,165 @@
+import '../devices/mobile_device.dart';
+import '../flutter/flutter_project.dart';
+
+enum BuildMode { debug, release }
+
+/// 단계의 역할 — 화면의 이름과 진행바가 이 값을 쓴다.
+enum StepKind { prepare, build, install, launch, run }
+
+/// 실행할 명령 한 개. 화면에 보이는 명령과 실제로 실행하는 명령이 같다.
+class PlanStep {
+  const PlanStep(this.kind, this.args, {this.workingDirectory});
+
+  final StepKind kind;
+  final List<String> args;
+  final String? workingDirectory;
+
+  /// 계속 실행되는 단계(`flutter run`): 끝나는 것이 아니라 사용자가 멈춘다.
+  bool get interactive => kind == StepKind.run;
+}
+
+/// 계획을 세울 수 없거나 실행해도 실패할 이유 — 실행 전에 알려 준다.
+enum Blocker {
+  noProject,
+  noDevice,
+  platformMissing,
+  iosNeedsMac,
+  wireless,
+  developerModeOff,
+  androidUnauthorized,
+  needsTeamId,
+}
+
+class InstallPlan {
+  const InstallPlan(this.steps, this.blockers);
+
+  final List<PlanStep> steps;
+  final List<Blocker> blockers;
+
+  bool get runnable => blockers.isEmpty && steps.isNotEmpty;
+}
+
+/// Phase 0에서 이 Mac(Flutter 3.47, Xcode 27)으로 검증한 명령 순서.
+///
+/// - 프로젝트 파일을 고치지 않는다. 서명 Team은 `xcodebuild` 인자로 넘긴다.
+/// - iOS release: `flutter build ios --config-only`로 준비 → 서명 빌드 → `devicectl install`.
+///   TestFlight 없이 development 서명 release가 실기기에 직접 설치된다.
+/// - debug는 `flutter run`이다 — iOS 14+ debug 빌드는 홈 화면에서 실행되지 않고 Flutter가 붙어야 한다.
+InstallPlan buildInstallPlan({
+  required FlutterProject? project,
+  required MobileDevice? device,
+  required BuildMode mode,
+  required String? teamId,
+  required bool hostIsMac,
+}) {
+  if (project == null) return const InstallPlan([], [Blocker.noProject]);
+  if (device == null) return const InstallPlan([], [Blocker.noDevice]);
+  final blockers = <Blocker>[];
+  final steps = <PlanStep>[];
+  final dir = project.path;
+
+  if (device.platform == DevicePlatform.ios) {
+    if (!project.hasIos) blockers.add(Blocker.platformMissing);
+    if (!hostIsMac) blockers.add(Blocker.iosNeedsMac);
+    if (!device.isUsb) blockers.add(Blocker.wireless);
+    if (device.developerModeOn == false) blockers.add(Blocker.developerModeOff);
+    final team = teamId ?? project.iosTeamId;
+    if (team == null || team.isEmpty) blockers.add(Blocker.needsTeamId);
+
+    if (mode == BuildMode.debug) {
+      steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', device.id, '--debug'], workingDirectory: dir));
+    } else {
+      final config = 'Release';
+      final app = '$dir/build/ios_dd/Build/Products/$config-iphoneos/Runner.app';
+      steps.addAll([
+        PlanStep(StepKind.prepare, [
+          'flutter',
+          'build',
+          'ios',
+          '--release',
+          '--config-only',
+          '--no-codesign',
+        ], workingDirectory: dir),
+        PlanStep(StepKind.build, [
+          'xcodebuild',
+          '-workspace',
+          'Runner.xcworkspace',
+          '-scheme',
+          'Runner',
+          '-configuration',
+          config,
+          '-destination',
+          'generic/platform=iOS',
+          '-derivedDataPath',
+          '../build/ios_dd',
+          '-allowProvisioningUpdates',
+          'DEVELOPMENT_TEAM=${team ?? '<TEAM_ID>'}',
+          'CODE_SIGN_STYLE=Automatic',
+          'build',
+        ], workingDirectory: '$dir/ios'),
+        PlanStep(StepKind.install, ['xcrun', 'devicectl', 'device', 'install', 'app', '--device', device.id, app]),
+        if (project.iosBundleId != null)
+          PlanStep(StepKind.launch, [
+            'xcrun',
+            'devicectl',
+            'device',
+            'process',
+            'launch',
+            '--device',
+            device.id,
+            project.iosBundleId!,
+          ]),
+      ]);
+    }
+  } else {
+    if (!project.hasAndroid) blockers.add(Blocker.platformMissing);
+    if (!device.authorized) blockers.add(Blocker.androidUnauthorized);
+    if (mode == BuildMode.debug) {
+      steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', device.id, '--debug'], workingDirectory: dir));
+    } else {
+      steps.addAll([
+        PlanStep(StepKind.build, ['flutter', 'build', 'apk', '--release'], workingDirectory: dir),
+        PlanStep(StepKind.install, [
+          'adb',
+          '-s',
+          device.id,
+          'install',
+          '-r',
+          '$dir/build/app/outputs/flutter-apk/app-release.apk',
+        ]),
+        if (project.androidApplicationId != null)
+          PlanStep(StepKind.launch, [
+            'adb',
+            '-s',
+            device.id,
+            'shell',
+            'monkey',
+            '-p',
+            project.androidApplicationId!,
+            '-c',
+            'android.intent.category.LAUNCHER',
+            '1',
+          ]),
+      ]);
+    }
+  }
+  return InstallPlan(steps, blockers);
+}
+
+/// 실패한 출력에서 흔한 원인을 찾는다. 모르면 null (원문 로그를 그대로 보여 준다).
+enum FailureHint { useUsb, unlockDevice, developerMode, signing, trustComputer, noAdb }
+
+FailureHint? explainFailure(String output) {
+  final o = output.toLowerCase();
+  if (o.contains('connection reset by peer') || o.contains('controlchannelconnectionerror')) return FailureHint.useUsb;
+  if (o.contains('device is locked') || o.contains('is locked')) return FailureHint.unlockDevice;
+  if (o.contains('developer mode')) return FailureHint.developerMode;
+  if (o.contains('no profiles for') ||
+      o.contains('provisioning profile') ||
+      o.contains('requires a development team')) {
+    return FailureHint.signing;
+  }
+  if (o.contains('not trusted') || o.contains('trust this computer')) return FailureHint.trustComputer;
+  if (o.contains('adb: command not found') || o.contains('adb') && o.contains('no such file')) return FailureHint.noAdb;
+  return null;
+}

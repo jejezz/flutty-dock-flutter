@@ -631,6 +631,282 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'취소'**
   String get commonCancel;
+
+  /// No description provided for @homeProjectTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트'**
+  String get homeProjectTitle;
+
+  /// No description provided for @homeProjectOpen.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트 열기'**
+  String get homeProjectOpen;
+
+  /// No description provided for @homeProjectChange.
+  ///
+  /// In ko, this message translates to:
+  /// **'변경'**
+  String get homeProjectChange;
+
+  /// No description provided for @homeProjectDrop.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flutter 프로젝트 폴더를 여기로 끌어다 놓거나 [프로젝트 열기]를 누르세요'**
+  String get homeProjectDrop;
+
+  /// No description provided for @homeProjectNotFlutter.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flutter 프로젝트가 아닙니다: {path}'**
+  String homeProjectNotFlutter(String path);
+
+  /// No description provided for @homePlatformIos.
+  ///
+  /// In ko, this message translates to:
+  /// **'iOS'**
+  String get homePlatformIos;
+
+  /// No description provided for @homePlatformAndroid.
+  ///
+  /// In ko, this message translates to:
+  /// **'Android'**
+  String get homePlatformAndroid;
+
+  /// No description provided for @homeDevicesTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기'**
+  String get homeDevicesTitle;
+
+  /// No description provided for @homeDevicesRefresh.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기 새로 고침'**
+  String get homeDevicesRefresh;
+
+  /// No description provided for @homeDevicesNone.
+  ///
+  /// In ko, this message translates to:
+  /// **'USB로 연결된 기기가 없습니다. 폰을 USB로 연결하고 잠금을 푼 뒤 새로 고치세요'**
+  String get homeDevicesNone;
+
+  /// No description provided for @homeLinkUsb.
+  ///
+  /// In ko, this message translates to:
+  /// **'USB'**
+  String get homeLinkUsb;
+
+  /// No description provided for @homeLinkWireless.
+  ///
+  /// In ko, this message translates to:
+  /// **'무선'**
+  String get homeLinkWireless;
+
+  /// No description provided for @homeBuildTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드'**
+  String get homeBuildTitle;
+
+  /// No description provided for @homeModeDebug.
+  ///
+  /// In ko, this message translates to:
+  /// **'Debug'**
+  String get homeModeDebug;
+
+  /// No description provided for @homeModeRelease.
+  ///
+  /// In ko, this message translates to:
+  /// **'Release'**
+  String get homeModeRelease;
+
+  /// No description provided for @homeTeamLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'Apple Team ID'**
+  String get homeTeamLabel;
+
+  /// No description provided for @homeTeamHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트를 고치지 않고 빌드 인자로만 넘깁니다. developer.apple.com/account → Membership에서 확인하세요'**
+  String get homeTeamHelp;
+
+  /// No description provided for @homeStepsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행할 명령'**
+  String get homeStepsTitle;
+
+  /// No description provided for @homeStepPrepare.
+  ///
+  /// In ko, this message translates to:
+  /// **'준비'**
+  String get homeStepPrepare;
+
+  /// No description provided for @homeStepBuild.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드'**
+  String get homeStepBuild;
+
+  /// No description provided for @homeStepInstall.
+  ///
+  /// In ko, this message translates to:
+  /// **'설치'**
+  String get homeStepInstall;
+
+  /// No description provided for @homeStepLaunch.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행'**
+  String get homeStepLaunch;
+
+  /// No description provided for @homeStepRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 (핫 리로드)'**
+  String get homeStepRun;
+
+  /// No description provided for @homeActionInstall.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 & 설치'**
+  String get homeActionInstall;
+
+  /// No description provided for @homeActionRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'디버그 실행'**
+  String get homeActionRun;
+
+  /// No description provided for @homeActionCancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get homeActionCancel;
+
+  /// No description provided for @homeActionStop.
+  ///
+  /// In ko, this message translates to:
+  /// **'중지'**
+  String get homeActionStop;
+
+  /// No description provided for @homeHotReload.
+  ///
+  /// In ko, this message translates to:
+  /// **'핫 리로드'**
+  String get homeHotReload;
+
+  /// No description provided for @homeHotRestart.
+  ///
+  /// In ko, this message translates to:
+  /// **'핫 리스타트'**
+  String get homeHotRestart;
+
+  /// No description provided for @homeOutputTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'출력'**
+  String get homeOutputTitle;
+
+  /// No description provided for @homeCopyCommand.
+  ///
+  /// In ko, this message translates to:
+  /// **'명령 복사'**
+  String get homeCopyCommand;
+
+  /// No description provided for @blockerNoProject.
+  ///
+  /// In ko, this message translates to:
+  /// **'먼저 Flutter 프로젝트를 여세요'**
+  String get blockerNoProject;
+
+  /// No description provided for @blockerNoDevice.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기를 연결하고 선택하세요'**
+  String get blockerNoDevice;
+
+  /// No description provided for @blockerPlatformMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 프로젝트에는 선택한 기기의 플랫폼 폴더(ios/ 또는 android/)가 없습니다'**
+  String get blockerPlatformMissing;
+
+  /// No description provided for @blockerIosNeedsMac.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone에 설치하려면 macOS와 Xcode가 필요합니다'**
+  String get blockerIosNeedsMac;
+
+  /// No description provided for @blockerWireless.
+  ///
+  /// In ko, this message translates to:
+  /// **'무선으로 잡힌 기기입니다. USB 케이블로 연결하세요 (무선에서는 설치가 끊깁니다)'**
+  String get blockerWireless;
+
+  /// No description provided for @blockerDeveloperModeOff.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone의 개발자 모드가 꺼져 있습니다. 설정 → 개인정보 보호 및 보안 → 개발자 모드를 켜고 재시동하세요'**
+  String get blockerDeveloperModeOff;
+
+  /// No description provided for @blockerAndroidUnauthorized.
+  ///
+  /// In ko, this message translates to:
+  /// **'폰 화면의 \'USB 디버깅 허용\' 창에서 이 컴퓨터를 승인하세요'**
+  String get blockerAndroidUnauthorized;
+
+  /// No description provided for @blockerNeedsTeamId.
+  ///
+  /// In ko, this message translates to:
+  /// **'iOS 서명에 쓸 Apple Team ID를 입력하세요'**
+  String get blockerNeedsTeamId;
+
+  /// No description provided for @hintUseUsb.
+  ///
+  /// In ko, this message translates to:
+  /// **'연결이 끊겼습니다. 무선이 아니라 USB 케이블로 연결했는지 확인하세요'**
+  String get hintUseUsb;
+
+  /// No description provided for @hintUnlockDevice.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone이 잠겨 있습니다. 잠금을 풀고 다시 시도하세요'**
+  String get hintUnlockDevice;
+
+  /// No description provided for @hintDeveloperMode.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone의 개발자 모드를 켜세요: 설정 → 개인정보 보호 및 보안 → 개발자 모드'**
+  String get hintDeveloperMode;
+
+  /// No description provided for @hintSigning.
+  ///
+  /// In ko, this message translates to:
+  /// **'서명 프로파일 문제입니다. Team ID가 맞는지, Xcode에 Apple 계정이 로그인되어 있는지 확인하세요'**
+  String get hintSigning;
+
+  /// No description provided for @hintTrustComputer.
+  ///
+  /// In ko, this message translates to:
+  /// **'iPhone에서 \'이 컴퓨터를 신뢰\'를 누르세요'**
+  String get hintTrustComputer;
+
+  /// No description provided for @hintNoAdb.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb를 찾지 못했습니다. Android SDK platform-tools를 설치하고 PATH에 추가하세요'**
+  String get hintNoAdb;
+
+  /// No description provided for @hintMissingCommand.
+  ///
+  /// In ko, this message translates to:
+  /// **'{command} 명령을 찾지 못했습니다. 설치하고 PATH에 있는지 확인하세요'**
+  String hintMissingCommand(String command);
 }
 
 class _AppLocalizationsDelegate

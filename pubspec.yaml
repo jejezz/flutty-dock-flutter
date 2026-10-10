@@ -47,6 +47,7 @@ dependencies:
       ref: updater-v0.1.0
       path: updater
   file_selector: ^1.1.0
+  desktop_drop: ^0.8.4
 
 dev_dependencies:
   flutter_test:

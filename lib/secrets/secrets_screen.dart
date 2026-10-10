@@ -3,14 +3,15 @@ import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/command_log.dart';
+import '../core/command_runner.dart';
 import '../core/gh_client.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
+import '../ui/command_text.dart';
 import 'release_secrets.dart';
 
 /// macOS 릴리스 서명·공증용 GitHub Actions 시크릿을 `gh`로 등록하는 화면.
@@ -35,7 +36,7 @@ class _SecretsScreenState extends State<SecretsScreen> {
   static const _repoKey = 'secrets_repo';
 
   late final CommandLog _log = widget.log ?? CommandLog();
-  late final GhClient _gh = widget.client ?? ProcessGhClient(_log);
+  late final GhClient _gh = widget.client ?? ProcessGhClient(CommandRunner(_log));
   final _repo = TextEditingController();
   final _controllers = {
     for (final s in macosReleaseSecrets)
@@ -122,9 +123,11 @@ class _SecretsScreenState extends State<SecretsScreen> {
   }
 
   Future<void> _pickFile(SecretSpec spec) async {
-    final file = await openFile(acceptedTypeGroups: const [
-      XTypeGroup(label: 'p12', extensions: ['p12', 'pfx']),
-    ]);
+    final file = await openFile(
+      acceptedTypeGroups: const [
+        XTypeGroup(label: 'p12', extensions: ['p12', 'pfx']),
+      ],
+    );
     if (file == null) return;
     final bytes = await file.readAsBytes();
     if (!mounted) return;
@@ -136,9 +139,9 @@ class _SecretsScreenState extends State<SecretsScreen> {
   }
 
   void _generate(SecretSpec spec) => setState(() {
-        _values[spec.name] = generatePassword();
-        _issues.remove(spec.name);
-      });
+    _values[spec.name] = generatePassword();
+    _issues.remove(spec.name);
+  });
 
   String _valueOf(SecretSpec spec) => _controllers[spec.name]?.text ?? _values[spec.name] ?? '';
 
@@ -214,16 +217,19 @@ class _SecretsScreenState extends State<SecretsScreen> {
                   _secretCard(l10n, theme, spec),
                   const SizedBox(height: AppSpacing.md),
                 ],
-                Wrap(spacing: AppSpacing.sm, children: [
-                  TextButton(
-                    onPressed: () => launchUrl(Uri.parse('https://appleid.apple.com')),
-                    child: Text(l10n.secretOpenAppleId),
-                  ),
-                  TextButton(
-                    onPressed: () => launchUrl(Uri.parse('https://developer.apple.com/account')),
-                    child: Text(l10n.secretOpenDeveloper),
-                  ),
-                ]),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  children: [
+                    TextButton(
+                      onPressed: () => launchUrl(Uri.parse('https://appleid.apple.com')),
+                      child: Text(l10n.secretOpenAppleId),
+                    ),
+                    TextButton(
+                      onPressed: () => launchUrl(Uri.parse('https://developer.apple.com/account')),
+                      child: Text(l10n.secretOpenDeveloper),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -234,19 +240,19 @@ class _SecretsScreenState extends State<SecretsScreen> {
   }
 
   Widget _repoRow(AppLocalizations l10n) => Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _repo,
-              decoration: InputDecoration(labelText: l10n.secretsRepoLabel, errorText: _repoError),
-              onSubmitted: (_) => _refresh(),
-            ),
-          ),
-          IconButton(tooltip: l10n.secretsPickFolder, icon: const Icon(Icons.folder_open_rounded), onPressed: _pickFolder),
-          IconButton(tooltip: l10n.secretsRefresh, icon: const Icon(Icons.refresh_rounded), onPressed: _refresh),
-        ],
-      );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Expanded(
+        child: TextField(
+          controller: _repo,
+          decoration: InputDecoration(labelText: l10n.secretsRepoLabel, errorText: _repoError),
+          onSubmitted: (_) => _refresh(),
+        ),
+      ),
+      IconButton(tooltip: l10n.secretsPickFolder, icon: const Icon(Icons.folder_open_rounded), onPressed: _pickFolder),
+      IconButton(tooltip: l10n.secretsRefresh, icon: const Icon(Icons.refresh_rounded), onPressed: _refresh),
+    ],
+  );
 
   Widget _ghBanner(AppLocalizations l10n, GhStatus status) {
     final (text, command) = switch (status) {
@@ -256,29 +262,32 @@ class _SecretsScreenState extends State<SecretsScreen> {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(text),
-          const SizedBox(height: AppSpacing.sm),
-          _CommandText(command),
-        ]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(text),
+            const SizedBox(height: AppSpacing.sm),
+            CommandText(command),
+          ],
+        ),
       ),
     );
   }
 
   String _helpFor(AppLocalizations l10n, String name) => switch (name) {
-        'MACOS_CERTIFICATE_P12_BASE64' => l10n.secretHelpP12,
-        'MACOS_CERTIFICATE_PASSWORD' => l10n.secretHelpP12Password,
-        'MACOS_KEYCHAIN_PASSWORD' => l10n.secretHelpKeychain,
-        'APPLE_ID' => l10n.secretHelpAppleId,
-        'APPLE_ID_PASSWORD' => l10n.secretHelpApplePassword,
-        _ => l10n.secretHelpTeamId,
-      };
+    'MACOS_CERTIFICATE_P12_BASE64' => l10n.secretHelpP12,
+    'MACOS_CERTIFICATE_PASSWORD' => l10n.secretHelpP12Password,
+    'MACOS_KEYCHAIN_PASSWORD' => l10n.secretHelpKeychain,
+    'APPLE_ID' => l10n.secretHelpAppleId,
+    'APPLE_ID_PASSWORD' => l10n.secretHelpApplePassword,
+    _ => l10n.secretHelpTeamId,
+  };
 
   String _issueText(AppLocalizations l10n, SecretIssue issue) => switch (issue) {
-        SecretIssue.empty => l10n.secretIssueEmpty,
-        SecretIssue.notEmail => l10n.secretIssueEmail,
-        SecretIssue.badTeamId => l10n.secretIssueTeamId,
-      };
+    SecretIssue.empty => l10n.secretIssueEmpty,
+    SecretIssue.notEmail => l10n.secretIssueEmail,
+    SecretIssue.badTeamId => l10n.secretIssueTeamId,
+  };
 
   Widget _secretCard(AppLocalizations l10n, ThemeData theme, SecretSpec spec) {
     final date = _registered?[spec.name];
@@ -286,12 +295,13 @@ class _SecretsScreenState extends State<SecretsScreen> {
     final status = _registered == null
         ? l10n.secretStatusUnknown
         : registered
-            ? l10n.secretStatusRegistered(date == null ? '' : MaterialLocalizations.of(context).formatShortDate(date))
-            : l10n.secretStatusMissing;
+        ? l10n.secretStatusRegistered(date == null ? '' : MaterialLocalizations.of(context).formatShortDate(date))
+        : l10n.secretStatusMissing;
     final issue = _issues[spec.name];
     final busy = _busy.contains(spec.name);
     final input = switch (spec.kind) {
-      SecretKind.file => Row(children: [
+      SecretKind.file => Row(
+        children: [
           OutlinedButton(onPressed: () => _pickFile(spec), child: Text(l10n.secretPickFile)),
           const SizedBox(width: AppSpacing.md),
           Expanded(
@@ -301,60 +311,72 @@ class _SecretsScreenState extends State<SecretsScreen> {
               style: theme.textTheme.bodySmall,
             ),
           ),
-        ]),
-      SecretKind.generated => Row(children: [
+        ],
+      ),
+      SecretKind.generated => Row(
+        children: [
           OutlinedButton(onPressed: () => _generate(spec), child: Text(l10n.secretGenerate)),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(_values.containsKey(spec.name) ? l10n.secretGenerated : '', style: theme.textTheme.bodySmall),
           ),
-        ]),
+        ],
+      ),
       _ => TextField(
-          controller: _controllers[spec.name],
-          obscureText: spec.kind == SecretKind.password,
-          enableSuggestions: false,
-          autocorrect: false,
-          decoration: const InputDecoration(isDense: true),
-          onChanged: (_) {
-            if (_issues.containsKey(spec.name)) setState(() => _issues.remove(spec.name));
-          },
-        ),
+        controller: _controllers[spec.name],
+        obscureText: spec.kind == SecretKind.password,
+        enableSuggestions: false,
+        autocorrect: false,
+        decoration: const InputDecoration(isDense: true),
+        onChanged: (_) {
+          if (_issues.containsKey(spec.name)) setState(() => _issues.remove(spec.name));
+        },
+      ),
     };
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Expanded(child: Text(spec.name, style: AppFonts.mono.copyWith(fontWeight: FontWeight.w700, fontSize: 12.5))),
-            Text(status, style: theme.textTheme.bodySmall?.copyWith(color: registered ? AppColors.success : null)),
-          ]),
-          const SizedBox(height: AppSpacing.xs),
-          Text(_helpFor(l10n, spec.name), style: theme.textTheme.bodySmall),
-          const SizedBox(height: AppSpacing.sm),
-          input,
-          if (issue != null)
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.xs),
-              child: Text(_issueText(l10n, issue), style: TextStyle(color: theme.colorScheme.error, fontSize: 12)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(spec.name, style: AppFonts.mono.copyWith(fontWeight: FontWeight.w700, fontSize: 12.5)),
+                ),
+                Text(status, style: theme.textTheme.bodySmall?.copyWith(color: registered ? AppColors.success : null)),
+              ],
             ),
-          const SizedBox(height: AppSpacing.sm),
-          Row(children: [
-            Expanded(
-              child: _CommandText(formatCommandLine(
-                secretSetArgs(isValidRepo(_repoName) ? _repoName : 'owner/repo', spec.name),
-              )),
+            const SizedBox(height: AppSpacing.xs),
+            Text(_helpFor(l10n, spec.name), style: theme.textTheme.bodySmall),
+            const SizedBox(height: AppSpacing.sm),
+            input,
+            if (issue != null)
+              Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.xs),
+                child: Text(_issueText(l10n, issue), style: TextStyle(color: theme.colorScheme.error, fontSize: 12)),
+              ),
+            const SizedBox(height: AppSpacing.sm),
+            Row(
+              children: [
+                Expanded(
+                  child: CommandText(
+                    formatCommandLine(secretSetArgs(isValidRepo(_repoName) ? _repoName : 'owner/repo', spec.name)),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                FilledButton(
+                  onPressed: busy ? null : () => _register(spec),
+                  child: busy
+                      ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                      : Text(registered ? l10n.secretOverwrite : l10n.secretSet),
+                ),
+              ],
             ),
-            const SizedBox(width: AppSpacing.sm),
-            FilledButton(
-              onPressed: busy ? null : () => _register(spec),
-              child: busy
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(registered ? l10n.secretOverwrite : l10n.secretSet),
-            ),
-          ]),
-          const SizedBox(height: AppSpacing.xs),
-          Text(l10n.secretViaStdin, style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor, fontSize: 11)),
-        ]),
+            const SizedBox(height: AppSpacing.xs),
+            Text(l10n.secretViaStdin, style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor, fontSize: 11)),
+          ],
+        ),
       ),
     );
   }
@@ -367,55 +389,47 @@ class _SecretsScreenState extends State<SecretsScreen> {
 
   /// 마지막으로 실행한 명령과 결과 — 값은 인자가 아니라 로그에 없다.
   Widget _commandBar(AppLocalizations l10n, ThemeData theme) => ListenableBuilder(
-        listenable: _log,
-        builder: (context, _) {
-          final last = _log.last;
-          return Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.md),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest,
-              border: Border(top: BorderSide(color: theme.dividerColor)),
-            ),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-              if (last == null)
-                Text(l10n.commandBarEmpty, style: theme.textTheme.bodySmall)
-              else
-                Row(children: [
+    listenable: _log,
+    builder: (context, _) {
+      final last = _log.last;
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest,
+          border: Border(top: BorderSide(color: theme.dividerColor)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (last == null)
+              Text(l10n.commandBarEmpty, style: theme.textTheme.bodySmall)
+            else
+              Row(
+                children: [
                   Icon(
                     last.running
                         ? Icons.hourglass_empty_rounded
                         : last.succeeded
-                            ? Icons.check_circle_rounded
-                            : Icons.error_rounded,
+                        ? Icons.check_circle_rounded
+                        : Icons.error_rounded,
                     size: 16,
                     color: last.running ? null : (last.succeeded ? AppColors.success : theme.colorScheme.error),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  Expanded(child: SelectableText(r'$ ' + last.commandLine, style: AppFonts.mono.copyWith(fontSize: 12))),
-                ]),
-              if (_message != null) ...[
-                const SizedBox(height: AppSpacing.xs),
-                Text(_message!, style: theme.textTheme.bodySmall),
-              ],
-            ]),
-          );
-        },
-      );
-}
-
-/// 복사할 수 있는 명령 한 줄.
-class _CommandText extends StatelessWidget {
-  const _CommandText(this.command);
-
-  final String command;
-
-  @override
-  Widget build(BuildContext context) => Row(mainAxisSize: MainAxisSize.min, children: [
-        Flexible(child: SelectableText(command, style: AppFonts.mono.copyWith(fontSize: 11.5))),
-        InkWell(
-          onTap: () => Clipboard.setData(ClipboardData(text: command)),
-          child: const Padding(padding: EdgeInsets.all(4), child: Icon(Icons.copy_rounded, size: 14)),
+                  Expanded(
+                    child: SelectableText(r'$ ' + last.commandLine, style: AppFonts.mono.copyWith(fontSize: 12)),
+                  ),
+                ],
+              ),
+            if (_message != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(_message!, style: theme.textTheme.bodySmall),
+            ],
+          ],
         ),
-      ]);
+      );
+    },
+  );
 }

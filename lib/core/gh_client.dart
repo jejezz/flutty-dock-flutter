@@ -1,21 +1,6 @@
-import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
-import 'command_log.dart';
-
-/// 명령 실행 결과.
-class CommandResult {
-  const CommandResult(this.exitCode, this.stdout, this.stderr);
-
-  final int exitCode;
-  final String stdout;
-  final String stderr;
-
-  bool get ok => exitCode == 0;
-
-  String get combined => [stdout, stderr].where((s) => s.trim().isNotEmpty).join('\n');
-}
+import 'command_runner.dart';
 
 enum GhStatus { ready, notInstalled, notLoggedIn }
 
@@ -56,68 +41,22 @@ Map<String, DateTime?> parseSecretList(String json) {
   };
 }
 
-const _utf8 = Utf8Codec(allowMalformed: true);
-
-/// `gh`, `git`을 셸 없이 인자 목록으로 실행한다.
-///
-/// Finder에서 띄운 macOS 앱의 PATH는 `/usr/bin:/bin:/usr/sbin:/sbin`뿐이라
-/// Homebrew의 `gh`를 못 찾는다 — [resolvePath]로 로그인 셸의 PATH를 가져온다.
+/// [CommandRunner]로 `gh`, `git`을 실행하는 실제 구현.
 class ProcessGhClient implements GhClient {
-  ProcessGhClient(this.log);
+  ProcessGhClient(this.runner);
 
-  final CommandLog log;
-  String? _path;
-
-  Future<CommandResult> _run(List<String> args, {String? stdin, bool quiet = false}) async {
-    _path ??= await resolvePath();
-    final entry = quiet ? null : log.start(args);
-    final watch = Stopwatch()..start();
-    try {
-      final process = await Process.start(
-        args.first,
-        args.sublist(1),
-        environment: {'PATH': _path!, 'GH_PROMPT_DISABLED': '1', 'GH_NO_UPDATE_NOTIFIER': '1', 'NO_COLOR': '1'},
-        runInShell: Platform.isWindows,
-      );
-      if (stdin != null) process.stdin.add(_utf8.encode(stdin));
-      await process.stdin.close();
-      final out = StringBuffer();
-      final err = StringBuffer();
-      void tee(StringBuffer to, String chunk) {
-        to.write(chunk);
-        entry?.append(chunk);
-        if (entry != null) log.update();
-      }
-
-      final outDone = process.stdout.transform(_utf8.decoder).listen((c) => tee(out, c)).asFuture<void>();
-      final errDone = process.stderr.transform(_utf8.decoder).listen((c) => tee(err, c)).asFuture<void>();
-      final code = await process.exitCode;
-      await Future.wait([outDone, errDone]);
-      entry
-        ?..exitCode = code
-        ..duration = watch.elapsed;
-      if (entry != null) log.update();
-      return CommandResult(code, out.toString(), err.toString());
-    } on ProcessException catch (e) {
-      entry
-        ?..append(e.message)
-        ..exitCode = 127
-        ..duration = watch.elapsed;
-      if (entry != null) log.update();
-      return CommandResult(127, '', e.message);
-    }
-  }
+  final CommandRunner runner;
 
   @override
   Future<GhStatus> status() async {
-    final r = await _run(['gh', 'auth', 'status'], quiet: true);
+    final r = await runner.run(['gh', 'auth', 'status'], quiet: true);
     if (r.exitCode == 127) return GhStatus.notInstalled;
     return r.ok ? GhStatus.ready : GhStatus.notLoggedIn;
   }
 
   @override
   Future<Map<String, DateTime?>?> listSecrets(String repo) async {
-    final r = await _run(['gh', 'secret', 'list', '--repo', repo, '--json', 'name,updatedAt']);
+    final r = await runner.run(['gh', 'secret', 'list', '--repo', repo, '--json', 'name,updatedAt']);
     if (!r.ok) return null;
     try {
       return parseSecretList(r.stdout);
@@ -128,37 +67,11 @@ class ProcessGhClient implements GhClient {
 
   @override
   Future<CommandResult> setSecret(String repo, String name, String value) =>
-      _run(secretSetArgs(repo, name), stdin: value);
+      runner.run(secretSetArgs(repo, name), stdin: value);
 
   @override
   Future<String?> repoFromFolder(String directory) async {
-    final r = await _run(['git', '-C', directory, 'remote', 'get-url', 'origin'], quiet: true);
+    final r = await runner.run(['git', '-C', directory, 'remote', 'get-url', 'origin'], quiet: true);
     return r.ok ? parseGithubRepo(r.stdout) : null;
   }
-}
-
-/// `gh`, `git`을 찾을 PATH: 이 프로세스의 PATH → 로그인 셸의 PATH → 흔한 설치 위치.
-Future<String> resolvePath() async {
-  final sep = Platform.isWindows ? ';' : ':';
-  final parts = <String>[];
-  void addAll(String? value) {
-    if (value == null) return;
-    for (final p in value.split(sep)) {
-      final t = p.trim();
-      if (t.isNotEmpty && !parts.contains(t)) parts.add(t);
-    }
-  }
-
-  addAll(Platform.environment['PATH']);
-  if (!Platform.isWindows) {
-    final shell = Platform.environment['SHELL'] ?? '/bin/zsh';
-    try {
-      final r = await Process.run(shell, ['-lc', r'printf %s "$PATH"']).timeout(const Duration(seconds: 3));
-      if (r.exitCode == 0) addAll(r.stdout as String);
-    } on Object {
-      // 셸이 느리거나 없으면 흔한 위치로 충분하다.
-    }
-    addAll('/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin');
-  }
-  return parts.join(sep);
 }

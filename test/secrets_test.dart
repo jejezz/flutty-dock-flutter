@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutty_dock/core/command_log.dart';
+import 'package:flutty_dock/core/command_runner.dart';
 import 'package:flutty_dock/core/gh_client.dart';
 import 'package:flutty_dock/l10n/app_localizations.dart';
 import 'package:flutty_dock/secrets/release_secrets.dart';
@@ -30,11 +31,11 @@ class _FakeGh implements GhClient {
 }
 
 Widget _app(Widget home) => MaterialApp(
-      locale: const Locale('en'),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: home,
-    );
+  locale: const Locale('en'),
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: home,
+);
 
 Future<void> _pump(WidgetTester tester, _FakeGh gh) async {
   // 목록이 느리게 만들어지므로 여섯 카드가 모두 보이게 창을 키운다.
