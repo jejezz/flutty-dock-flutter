@@ -1327,6 +1327,60 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'VS Code를 열지 못했습니다'**
   String get vscodeOpenFailed;
+
+  /// No description provided for @secretFileTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일에서 한 번에 등록'**
+  String get secretFileTitle;
+
+  /// No description provided for @secretFileHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'NAME=값 형식(.env) 파일의 모든 항목을 gh secret set -f로 등록합니다. 이 앱은 값을 읽어 두지 않고 이름만 보여 줍니다. 파일은 gh가 직접 읽습니다.'**
+  String get secretFileHelp;
+
+  /// No description provided for @secretFileEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'NAME=값 형식의 항목이 없습니다'**
+  String get secretFileEmpty;
+
+  /// No description provided for @secretFileUnknown.
+  ///
+  /// In ko, this message translates to:
+  /// **'릴리스 시크릿이 아닌 항목도 함께 등록됩니다: {names}'**
+  String secretFileUnknown(String names);
+
+  /// No description provided for @secretFileMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일에 없는 릴리스 시크릿: {names}'**
+  String secretFileMissing(String names);
+
+  /// No description provided for @secretFileRegister.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일로 등록'**
+  String get secretFileRegister;
+
+  /// No description provided for @secretFileConfirmTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개 시크릿을 등록할까요?'**
+  String secretFileConfirmTitle(int count);
+
+  /// No description provided for @secretFileSaved.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개 시크릿을 등록했습니다'**
+  String secretFileSaved(int count);
+
+  /// No description provided for @secretFileFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일로 등록하지 못했습니다'**
+  String get secretFileFailed;
 }
 
 class _AppLocalizationsDelegate

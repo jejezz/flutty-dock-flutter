@@ -723,4 +723,40 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get vscodeOpenFailed => 'VS Code를 열지 못했습니다';
+
+  @override
+  String get secretFileTitle => '파일에서 한 번에 등록';
+
+  @override
+  String get secretFileHelp =>
+      'NAME=값 형식(.env) 파일의 모든 항목을 gh secret set -f로 등록합니다. 이 앱은 값을 읽어 두지 않고 이름만 보여 줍니다. 파일은 gh가 직접 읽습니다.';
+
+  @override
+  String get secretFileEmpty => 'NAME=값 형식의 항목이 없습니다';
+
+  @override
+  String secretFileUnknown(String names) {
+    return '릴리스 시크릿이 아닌 항목도 함께 등록됩니다: $names';
+  }
+
+  @override
+  String secretFileMissing(String names) {
+    return '파일에 없는 릴리스 시크릿: $names';
+  }
+
+  @override
+  String get secretFileRegister => '파일로 등록';
+
+  @override
+  String secretFileConfirmTitle(int count) {
+    return '$count개 시크릿을 등록할까요?';
+  }
+
+  @override
+  String secretFileSaved(int count) {
+    return '$count개 시크릿을 등록했습니다';
+  }
+
+  @override
+  String get secretFileFailed => '파일로 등록하지 못했습니다';
 }

@@ -46,3 +46,14 @@ String generatePassword([Random? random]) {
   final r = random ?? Random.secure();
   return List.generate(32, (_) => chars[r.nextInt(chars.length)]).join();
 }
+
+/// `.env` 형식 파일에서 **이름만** 뽑는다 (`NAME=값`, `export NAME=값`; 빈 줄과 `#` 주석은 건너뜀).
+/// 값은 읽지도 돌려주지도 않는다.
+List<String> parseDotenvNames(String text) {
+  final names = <String>[];
+  for (final line in text.split('\n')) {
+    final m = RegExp(r'^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=').firstMatch(line);
+    if (m != null && !names.contains(m[1])) names.add(m[1]!);
+  }
+  return names;
+}

@@ -15,12 +15,19 @@ abstract class GhClient {
   /// 값을 **표준 입력**으로 넘겨 등록한다. 값은 명령 인자나 로그에 남지 않는다.
   Future<CommandResult> setSecret(String repo, String name, String value);
 
+  /// `.env` 형식(`NAME=값`) 파일의 모든 항목을 `gh secret set -f`로 한 번에 등록한다.
+  /// 앱은 값을 읽지 않는다 — 파일은 `gh`가 직접 읽는다.
+  Future<CommandResult> setSecretsFromFile(String repo, String path);
+
   /// 폴더의 `origin` 원격에서 `owner/repo`를 읽는다. 없으면 null.
   Future<String?> repoFromFolder(String directory);
 }
 
 /// 사람이 복사해서 실행할 수 있는 명령 — 값은 포함하지 않는다.
 List<String> secretSetArgs(String repo, String name) => ['gh', 'secret', 'set', name, '--repo', repo];
+
+/// 파일에서 등록하는 명령 — 값도 비밀도 들어 있지 않다(파일 경로뿐).
+List<String> secretSetFileArgs(String repo, String path) => ['gh', 'secret', 'set', '-f', path, '--repo', repo];
 
 final _repoPattern = RegExp(r'^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$');
 
@@ -68,6 +75,9 @@ class ProcessGhClient implements GhClient {
   @override
   Future<CommandResult> setSecret(String repo, String name, String value) =>
       runner.run(secretSetArgs(repo, name), stdin: value);
+
+  @override
+  Future<CommandResult> setSecretsFromFile(String repo, String path) => runner.run(secretSetFileArgs(repo, path));
 
   @override
   Future<String?> repoFromFolder(String directory) async {

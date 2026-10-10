@@ -26,9 +26,25 @@ class _FakeGh implements GhClient {
     return const CommandResult(0, '', '');
   }
 
+  final fileSets = <(String, String)>[];
+
+  @override
+  Future<CommandResult> setSecretsFromFile(String repo, String path) async {
+    fileSets.add((repo, path));
+    return const CommandResult(0, '', '');
+  }
+
   @override
   Future<String?> repoFromFolder(String directory) async => 'jejezz/demo';
 }
+
+const _envText = '''
+# release secrets
+APPLE_ID=me@example.com
+export APPLE_TEAM_ID="6N35L95QS4"
+EXTRA_TOKEN=hunter2
+APPLE_ID=duplicate
+''';
 
 Widget _app(Widget home) => MaterialApp(
   locale: const Locale('en'),
@@ -83,6 +99,15 @@ void main() {
       expect(parseGithubRepo('git@github.com:jejezz/flutty-dock-flutter.git'), 'jejezz/flutty-dock-flutter');
       expect(parseGithubRepo('https://gitlab.com/a/b'), isNull);
       expect(formatCommandLine(secretSetArgs('o/r', 'APPLE_ID')), 'gh secret set APPLE_ID --repo o/r');
+    });
+
+    test('parseDotenvNames returns names only, once each, skipping comments', () {
+      expect(parseDotenvNames(_envText), ['APPLE_ID', 'APPLE_TEAM_ID', 'EXTRA_TOKEN']);
+      expect(parseDotenvNames('not a pair\n=x\n  \n'), isEmpty);
+      expect(
+        formatCommandLine(secretSetFileArgs('o/r', '/Users/me/AppDevSecrets/app dev secrets.txt')),
+        "gh secret set -f '/Users/me/AppDevSecrets/app dev secrets.txt' --repo o/r",
+      );
     });
 
     test('parseSecretList reads gh --json output', () {
@@ -144,6 +169,51 @@ void main() {
       await tester.tap(find.descendant(of: find.byType(AlertDialog), matching: find.text('Overwrite')));
       await tester.pumpAndSettle();
       expect(gh.sets, [('jejezz/demo', 'APPLE_ID', 'me@example.com')]);
+    });
+
+    testWidgets('registers a .env file with gh secret set -f and never shows the values', (tester) async {
+      final gh = _FakeGh();
+      tester.view.physicalSize = const Size(900, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        _app(
+          SecretsScreen(
+            client: gh,
+            log: CommandLog(),
+            pickEnvFile: () async => (path: '/s/secrets.env', text: _envText),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Choose file…').first);
+      await tester.pumpAndSettle();
+
+      expect(find.text('/s/secrets.env'), findsOneWidget);
+      expect(find.text('EXTRA_TOKEN'), findsOneWidget);
+      expect(
+        find.textContaining('Entries that aren\'t release secrets are registered too: EXTRA_TOKEN'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Release secrets not in the file:'), findsOneWidget);
+      expect(find.text('gh secret set -f /s/secrets.env --repo jejezz/demo'), findsOneWidget);
+      // 값은 화면 어디에도 없다.
+      expect(find.textContaining('hunter2'), findsNothing);
+      expect(find.textContaining('me@example.com'), findsNothing);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Register file'));
+      await tester.pumpAndSettle();
+      expect(find.text('Register 3 secrets?'), findsOneWidget);
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(gh.fileSets, isEmpty);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Register file'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.descendant(of: find.byType(AlertDialog), matching: find.text('Register')));
+      await tester.pumpAndSettle();
+      expect(gh.fileSets, [('jejezz/demo', '/s/secrets.env')]);
+      expect(find.text('Registered 3 secrets'), findsOneWidget);
     });
 
     testWidgets('tells how to fix gh when it is missing', (tester) async {

@@ -459,5 +459,42 @@
   "homeOpenVsCode": "Open in VS Code",
   "vscodeNotFound": "VS Code wasn't found",
   "vscodeDownload": "Get it",
-  "vscodeOpenFailed": "Couldn't open VS Code"
+  "vscodeOpenFailed": "Couldn't open VS Code",
+  "secretFileTitle": "Register from a file",
+  "secretFileHelp": "Registers every entry of a NAME=value (.env) file with gh secret set -f. The app doesn't keep the values — it only shows the names; gh reads the file itself.",
+  "secretFileEmpty": "No NAME=value entries found",
+  "secretFileUnknown": "Entries that aren't release secrets are registered too: {names}",
+  "@secretFileUnknown": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "secretFileMissing": "Release secrets not in the file: {names}",
+  "@secretFileMissing": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "secretFileRegister": "Register file",
+  "secretFileConfirmTitle": "Register {count} secrets?",
+  "@secretFileConfirmTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secretFileSaved": "Registered {count} secrets",
+  "@secretFileSaved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secretFileFailed": "Couldn't register from the file"
 }

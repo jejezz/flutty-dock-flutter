@@ -740,4 +740,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vscodeOpenFailed => 'Couldn\'t open VS Code';
+
+  @override
+  String get secretFileTitle => 'Register from a file';
+
+  @override
+  String get secretFileHelp =>
+      'Registers every entry of a NAME=value (.env) file with gh secret set -f. The app doesn\'t keep the values — it only shows the names; gh reads the file itself.';
+
+  @override
+  String get secretFileEmpty => 'No NAME=value entries found';
+
+  @override
+  String secretFileUnknown(String names) {
+    return 'Entries that aren\'t release secrets are registered too: $names';
+  }
+
+  @override
+  String secretFileMissing(String names) {
+    return 'Release secrets not in the file: $names';
+  }
+
+  @override
+  String get secretFileRegister => 'Register file';
+
+  @override
+  String secretFileConfirmTitle(int count) {
+    return 'Register $count secrets?';
+  }
+
+  @override
+  String secretFileSaved(int count) {
+    return 'Registered $count secrets';
+  }
+
+  @override
+  String get secretFileFailed => 'Couldn\'t register from the file';
 }
