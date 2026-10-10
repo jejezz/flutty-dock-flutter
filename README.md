@@ -30,14 +30,17 @@
 
 ## Features
 
-- **{{TODO: Feature}}** — {{TODO: what it does, concretely (names, numbers, formats)}}
-- **{{TODO: Feature}}** — {{TODO: …}}
-- **{{TODO: Feature}}** — {{TODO: …}}
+- **Buttons that show their command** — every build, install and launch step lists the exact command it runs (`xcodebuild …`, `xcrun devicectl device install app …`, `adb install -r …`), copyable as is, and the command log keeps the output
+- **iPhone and Android over USB, debug and release** — release builds are signed with your development certificate and installed straight onto the phone, no TestFlight; debug runs `flutter run` with hot reload and hot restart buttons
+- **Doesn't touch your project** — the signing team is passed as a build argument, never written to `project.pbxproj`, so any Flutter project works as it is
+- **One next step, drawn out** — a banner names the one thing blocking you (wireless instead of USB, Developer Mode off, no Team ID …) with numbered steps to fix it; the Doctor checks Flutter, Xcode, adb, certificates and their expiry, provisioning profiles (including the 7-day profile of a free account) and the Android keystore
+- **Release secrets (macOS)** — registers the GitHub Actions secrets for macOS signing with `gh secret set`; values go through standard input, are never stored, and never appear in the command log
+- **Editor-side** — open the project in VS Code, drop a project folder on the window, and the window keeps its size and position next to your editor
 - **Light & dark, English & 한국어** — follows the system, or pick one in the toolbar
 
 <p align="center">
-  <img src="docs/screenshots/home.png" width="360" alt="{{TODO: screen 1}}">
-  <img src="docs/screenshots/detail.png" width="360" alt="{{TODO: screen 2}}">
+  <img src="docs/screenshots/home.png" width="360" alt="Install tab: the project, a USB-connected iPhone, Release mode and the four commands that will run (light and dark)">
+  <img src="docs/screenshots/detail.png" width="360" alt="Doctor tab: checks for Flutter, Xcode, adb, signing certificates and the connected phone, with steps to fix a failed one">
 </p>
 
 ## Install
@@ -53,7 +56,7 @@ Download from [**Releases**](https://github.com/jejezz/flutty-dock-flutter/relea
 
 ## How it works
 
-{{TODO: 2–4 sentences for the curious — the one interesting technical choice (e.g. "Dart drives the UI; a 100-line Swift bridge covers Trash and Full Disk Access"). Delete this section if there is nothing interesting to say.}}
+Flutty Dock doesn't reimplement Flutter's tooling. It runs the `flutter`, `xcodebuild`, `xcrun devicectl` and `adb` you already have, with argument lists and no shell, so what you do in the app and what you do in a terminal always agree. The signing team travels as `DEVELOPMENT_TEAM=<id>` on the `xcodebuild` command line for release, and as `FLUTTER_XCODE_DEVELOPMENT_TEAM` for `flutter run` (Flutter forwards `FLUTTER_XCODE_*` variables to `xcodebuild`), which is how the project stays untouched.
 
 ## Development
 
@@ -62,7 +65,7 @@ flutter pub get
 flutter run -d macos
 ```
 
-{{TODO: Anything else needed to build (native tools, env vars). Link docs/ for architecture: [ARCHITECTURE.md](ARCHITECTURE.md), [UI_UX.md](UI_UX.md).}}
+Installing on an iPhone needs macOS with Xcode and an Apple Developer account signed in to Xcode; on Windows only Android is supported. Android needs `adb` (Android SDK platform-tools) on your `PATH`. The release secrets screen needs the GitHub CLI (`gh`). What was verified on real devices, and the plan, are in [PLAN.md](PLAN.md).
 
 Releasing: `scripts/bump-version.sh patch`, merge, then tag `vX.Y.Z` — CI builds and publishes every platform. Rules: [application-release-templates/conventions](https://github.com/jejezz/application-release-templates/tree/main/conventions).
 

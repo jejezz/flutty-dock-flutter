@@ -30,14 +30,17 @@
 
 ## 기능
 
-- **{{TODO: 기능}}** — {{TODO: 무엇을 하는지 구체적으로 (이름, 숫자, 형식)}}
-- **{{TODO: 기능}}** — {{TODO: …}}
-- **{{TODO: 기능}}** — {{TODO: …}}
+- **명령을 보여 주는 버튼** — 빌드·설치·실행 단계마다 실제로 실행되는 명령(`xcodebuild …`, `xcrun devicectl device install app …`, `adb install -r …`)을 그대로 복사할 수 있게 보여 주고, 명령 기록에 출력을 남깁니다
+- **USB로 iPhone·Android, debug·release** — release는 개발 인증서로 서명해 TestFlight 없이 폰에 바로 설치하고, debug는 `flutter run`으로 핫 리로드·핫 리스타트 버튼을 씁니다
+- **프로젝트를 고치지 않습니다** — 서명 Team은 빌드 인자로만 넘기고 `project.pbxproj`에 쓰지 않아서, 어떤 Flutter 프로젝트든 그대로 쓸 수 있습니다
+- **다음에 할 일 하나를 알려 줍니다** — 막힌 것(USB가 아니라 무선, 개발자 모드 꺼짐, Team ID 없음 …)을 배너로 알리고 번호 붙은 해결 단계를 펼쳐 보여 줍니다. 점검 탭은 Flutter·Xcode·adb, 인증서와 만료, 프로비저닝 프로파일(무료 계정의 7일 프로파일 포함), Android 키스토어를 확인합니다
+- **릴리스 시크릿 등록 (macOS)** — macOS 서명용 GitHub Actions 시크릿을 `gh secret set`으로 등록합니다. 값은 표준 입력으로 전달하고 저장하지 않으며 명령 기록에도 남지 않습니다
+- **편집기 옆에서** — 프로젝트를 VS Code로 열고, 폴더를 창에 끌어다 놓을 수 있으며, 창 크기와 위치를 기억합니다
 - **라이트·다크, 한국어·English** — 시스템 설정을 따르거나 툴바에서 고를 수 있습니다
 
 <p align="center">
-  <img src="docs/screenshots/home.png" width="360" alt="{{TODO: 화면 1}}">
-  <img src="docs/screenshots/detail.png" width="360" alt="{{TODO: 화면 2}}">
+  <img src="docs/screenshots/home.png" width="360" alt="설치 탭: 프로젝트, USB로 연결된 iPhone, Release 모드와 실행될 명령 네 개 (라이트·다크)">
+  <img src="docs/screenshots/detail.png" width="360" alt="점검 탭: Flutter·Xcode·adb·서명 인증서·연결된 폰 점검과 실패 항목의 해결 단계">
 </p>
 
 ## 설치
@@ -53,7 +56,7 @@
 
 ## 동작 방식
 
-{{TODO: 궁금한 사람을 위한 2~4문장 — 흥미로운 기술적 선택 한 가지. 말할 것이 없으면 이 절을 지웁니다.}}
+Flutty Dock은 Flutter 도구를 다시 만들지 않습니다. 이미 설치된 `flutter`, `xcodebuild`, `xcrun devicectl`, `adb`를 셸 없이 인자 목록으로 실행하므로 앱에서 한 일과 터미널에서 한 일이 항상 같습니다. 서명 Team은 release에서는 `xcodebuild` 명령줄의 `DEVELOPMENT_TEAM=<id>`로, `flutter run`에서는 `FLUTTER_XCODE_DEVELOPMENT_TEAM` 환경 변수로 넘깁니다(Flutter가 `FLUTTER_XCODE_*` 변수를 `xcodebuild`에 전달합니다). 그래서 프로젝트 파일은 그대로입니다.
 
 ## 개발
 
@@ -62,7 +65,7 @@ flutter pub get
 flutter run -d macos
 ```
 
-{{TODO: 빌드에 더 필요한 것(네이티브 도구, 환경 변수). 구조 문서 링크: [ARCHITECTURE.md](ARCHITECTURE.md), [UI_UX.md](UI_UX.md).}}
+iPhone에 설치하려면 Xcode가 있는 macOS와, Xcode에 로그인된 Apple Developer 계정이 필요합니다. Windows에서는 Android만 지원합니다. Android에는 `PATH`에 `adb`(Android SDK platform-tools)가 필요하고, 릴리스 시크릿 화면에는 GitHub CLI(`gh`)가 필요합니다. 실기기에서 검증한 범위와 계획은 [PLAN.md](PLAN.md)에 있습니다.
 
 릴리스: `scripts/bump-version.sh patch` → 병합 → `vX.Y.Z` 태그. CI가 모든 플랫폼을 빌드해서 올립니다. 규칙: [application-release-templates/conventions](https://github.com/jejezz/application-release-templates/tree/main/conventions).
 

@@ -60,7 +60,14 @@ Future<void> main() async {
 
   final settings = await AppSettings.load();
   // 데스크톱이 아니거나 UPDATE_SERVER 가 비어 있으면 null — 업데이트 확인 없음.
-  final updates = await UpdateService.create();
+  // macOS는 프리릴리스 버전(0.1.0-rc.1)을 Info.plist에서 0.1.0.1로 바꾸어 AppUpdater가 버전으로 읽지 못하고
+  // 예외를 던진다. 업데이트 확인은 부가 기능이라 그 때문에 앱이 시작하지 못하면 안 된다 — 실패하면 끈다.
+  UpdateService? updates;
+  try {
+    updates = await UpdateService.create();
+  } on Object {
+    updates = null;
+  }
   // UpdateScope 는 MaterialApp 위에 둔다 — 정보 창이 이것을 읽어 "업데이트 확인" 단추를 붙인다.
   runApp(
     UpdateScope(

@@ -23,12 +23,49 @@ import 'signing_tab.dart';
 import 'widgets.dart';
 
 /// VS Code 옆에 세워 두는 화면: 프로젝트 → 기기 → 빌드 → 실행할 명령과 진행.
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.controller, required this.log, required this.onAbout});
 
   final InstallController controller;
   final CommandLog log;
   final VoidCallback onAbout;
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  late final TabController _tabs = TabController(length: 5, vsync: this, initialIndex: widget.controller.tabIndex);
+
+  InstallController get controller => widget.controller;
+  CommandLog get log => widget.log;
+  VoidCallback get onAbout => widget.onAbout;
+
+  @override
+  void initState() {
+    super.initState();
+    // 마지막으로 보던 탭: 저장된 값은 비동기로 읽히므로 도착하면 한 번 옮기고, 이후 바뀔 때마다 저장한다.
+    controller.addListener(_restoreTab);
+    _restored = controller.tabLoaded;
+    _tabs.addListener(() {
+      if (!_tabs.indexIsChanging) controller.setTab(_tabs.index);
+    });
+  }
+
+  bool _restored = false;
+
+  void _restoreTab() {
+    if (_restored || !controller.tabLoaded) return;
+    _restored = true;
+    if (_tabs.index != controller.tabIndex) _tabs.index = controller.tabIndex;
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(_restoreTab);
+    _tabs.dispose();
+    super.dispose();
+  }
 
   Future<void> _open() async {
     final dir = await getDirectoryPath();
@@ -38,9 +75,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return DefaultTabController(
-      length: 5,
-      child: Scaffold(
+    return Builder(
+      builder: (context) => Scaffold(
         appBar: AppBar(
           title: const Text(AppIdentity.displayName),
           actions: [
@@ -68,6 +104,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 NextStepBanner(controller: controller),
                 TabBar(
+                  controller: _tabs,
                   // 도킹 폭(380~440)에서 다섯 탭이 한 줄에 균등하게 들어간다.
                   labelPadding: EdgeInsets.zero,
                   tabs: [
@@ -80,6 +117,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: TabBarView(
+                    controller: _tabs,
                     children: [
                       ListView(
                         padding: const EdgeInsets.all(AppSpacing.lg),

@@ -28,6 +28,7 @@ class InstallController extends ChangeNotifier {
   static const _projectKey = 'last_project';
   static const _teamKey = 'ios_team_id';
   static const _modeKey = 'build_mode';
+  static const _tabKey = 'last_tab';
 
   final CommandRunner runner;
   final DeviceService deviceService;
@@ -47,6 +48,12 @@ class InstallController extends ChangeNotifier {
 
   Diagnostics? diagnostics;
   bool diagnosing = false;
+
+  /// 마지막으로 보던 탭 (0 설치 · 1 기기 · 2 서명 · 3 점검 · 4 기록).
+  int tabIndex = 0;
+
+  /// 저장된 탭을 읽었는지 — 화면이 한 번만 그 탭으로 옮긴다.
+  bool tabLoaded = false;
 
   bool running = false;
   List<StepStatus> statuses = const [];
@@ -104,6 +111,8 @@ class InstallController extends ChangeNotifier {
       _prefs = await SharedPreferences.getInstance();
       teamId = _prefs!.getString(_teamKey);
       mode = BuildMode.values.asNameMap()[_prefs!.getString(_modeKey)] ?? BuildMode.release;
+      tabIndex = (_prefs!.getInt(_tabKey) ?? 0).clamp(0, 4);
+      tabLoaded = true;
       final last = _prefs!.getString(_projectKey);
       if (last != null) project = await FlutterProject.detect(last);
     } on Object {
@@ -139,6 +148,12 @@ class InstallController extends ChangeNotifier {
     }
     loadingDevices = false;
     notifyListeners();
+  }
+
+  void setTab(int i) {
+    if (i == tabIndex) return;
+    tabIndex = i;
+    _prefs?.setInt(_tabKey, i);
   }
 
   void select(MobileDevice d) {

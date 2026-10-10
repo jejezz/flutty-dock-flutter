@@ -83,6 +83,22 @@ InstallController _controller({List<MobileDevice> devices = const [], Diagnostic
 }
 
 void main() {
+  testWidgets('remembers the selected tab and restores it after init loaded the saved one', (tester) async {
+    final c = _controller();
+    await _pump(tester, c);
+    await tester.tap(find.widgetWithText(Tab, 'Doctor'));
+    await tester.pumpAndSettle();
+    expect(c.tabIndex, 3);
+    // 저장된 탭이 나중에 도착하면 그 탭으로 옮긴다.
+    c
+      ..tabIndex = 1
+      ..tabLoaded = true;
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+    c.notifyListeners();
+    await tester.pumpAndSettle();
+    expect(find.textContaining('No device is connected over USB'), findsOneWidget);
+  });
+
   testWidgets('without a project the banner asks to open one and the five tabs exist', (tester) async {
     await _pump(tester, _controller());
     expect(find.text('Open a Flutter project first'), findsOneWidget);
