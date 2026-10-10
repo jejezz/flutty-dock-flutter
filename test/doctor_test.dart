@@ -107,6 +107,41 @@ void main() {
     });
   });
 
+  group('uniqueCerts', () {
+    SigningCert cert(String name, {String team = 'T', int days = 100, bool key = true}) => SigningCert(
+      name: name,
+      teamId: team,
+      expires: _now.add(Duration(days: days)),
+      hasPrivateKey: key,
+    );
+
+    test('same name and team collapse to the one expiring last', () {
+      final merged = uniqueCerts([cert('A', days: 340), cert('A', days: 344)]);
+      expect(merged, hasLength(1));
+      expect(merged.single.daysLeft(_now), 344);
+    });
+
+    test('a certificate with a private key beats a later one without', () {
+      final merged = uniqueCerts([cert('A', days: 100), cert('A', days: 300, key: false)]);
+      expect(merged.single.hasPrivateKey, isTrue);
+      expect(merged.single.daysLeft(_now), 100);
+    });
+
+    test('different names or teams stay separate, in first-seen order', () {
+      final merged = uniqueCerts([cert('B'), cert('A'), cert('B', days: 200), cert('A', team: 'OTHER')]);
+      expect(merged.map((c) => '${c.name}/${c.teamId}'), ['B/T', 'A/T', 'A/OTHER']);
+      expect(merged.first.daysLeft(_now), 200);
+    });
+
+    test('certificate checks list a duplicated certificate once', () {
+      final items = _checks(
+        _diag(certs: [cert('Apple Development: A', days: 340), cert('Apple Development: A', days: 344)]),
+      );
+      expect(items.where((i) => i.id == CheckId.certificateExpiry), hasLength(1));
+      expect(items.firstWhere((i) => i.id == CheckId.certificate).params['count'], '1');
+    });
+  });
+
   group('buildChecks', () {
     final cert = SigningCert(
       name: 'Apple Development: A (X)',

@@ -61,10 +61,10 @@ class SigningTab extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (d == null || d.certs.isEmpty)
+                  if (d == null || d.distinctCerts.isEmpty)
                     Text(l10n.signingNoTeams, style: theme.textTheme.bodySmall)
                   else
-                    for (final c in d.certs)
+                    for (final c in d.distinctCerts)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 3),
                         child: Row(
