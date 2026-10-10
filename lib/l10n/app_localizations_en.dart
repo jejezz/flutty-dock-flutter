@@ -804,4 +804,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get toolPathAdb => 'adb (Android SDK platform-tools)';
+
+  @override
+  String get homeDevicesCauses => 'Possible reasons no device shows up';
+
+  @override
+  String get stepsNoDevice =>
+      '1. Connect the phone with a USB cable (a charge-only cable won\'t work)\n2. Unlock it, then tap \'Trust This Computer\' on an iPhone or \'Allow USB debugging\' on Android\n3. Press refresh above';
 }
