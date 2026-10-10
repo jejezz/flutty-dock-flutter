@@ -273,7 +273,7 @@ class _BuildSectionState extends State<_BuildSection> {
                                   '${i + 1}. ${_stepLabel(l10n, plan.steps[i].kind)}',
                                   style: theme.textTheme.labelLarge,
                                 ),
-                                CommandText(formatCommandLine(plan.steps[i].args)),
+                                CommandText(plan.steps[i].commandLine),
                               ],
                             ),
                           ),

@@ -1,3 +1,4 @@
+import '../core/command_log.dart';
 import '../devices/mobile_device.dart';
 import '../flutter/flutter_project.dart';
 
@@ -8,11 +9,18 @@ enum StepKind { prepare, build, install, launch, run }
 
 /// 실행할 명령 한 개. 화면에 보이는 명령과 실제로 실행하는 명령이 같다.
 class PlanStep {
-  const PlanStep(this.kind, this.args, {this.workingDirectory});
+  const PlanStep(this.kind, this.args, {this.workingDirectory, this.environment = const {}});
 
   final StepKind kind;
   final List<String> args;
   final String? workingDirectory;
+
+  /// 이 명령에만 더하는 환경 변수. 화면의 명령에도 `NAME=값` 접두어로 보인다.
+  final Map<String, String> environment;
+
+  /// 터미널에 붙여 넣어 그대로 실행할 수 있는 한 줄.
+  String get commandLine =>
+      [for (final e in environment.entries) '${e.key}=${e.value}', formatCommandLine(args)].join(' ');
 
   /// 계속 실행되는 단계(`flutter run`): 끝나는 것이 아니라 사용자가 멈춘다.
   bool get interactive => kind == StepKind.run;
@@ -67,7 +75,21 @@ InstallPlan buildInstallPlan({
     if (team == null || team.isEmpty) blockers.add(Blocker.needsTeamId);
 
     if (mode == BuildMode.debug) {
-      steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', device.id, '--debug'], workingDirectory: dir));
+      // flutter run은 xcodebuild 인자를 받지 않는다. 대신 `FLUTTER_XCODE_` 접두어 환경 변수가
+      // xcodebuild 빌드 설정으로 전달되므로 프로젝트를 고치지 않고 Team을 넘길 수 있다.
+      steps.add(
+        PlanStep(
+          StepKind.run,
+          ['flutter', 'run', '-d', device.id, '--debug'],
+          workingDirectory: dir,
+          environment: {
+            if (team != null && team.isNotEmpty) ...{
+              'FLUTTER_XCODE_DEVELOPMENT_TEAM': team,
+              'FLUTTER_XCODE_CODE_SIGN_STYLE': 'Automatic',
+            },
+          },
+        ),
+      );
     } else {
       final config = 'Release';
       final app = '$dir/build/ios_dd/Build/Products/$config-iphoneos/Runner.app';

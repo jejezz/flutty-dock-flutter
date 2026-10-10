@@ -157,6 +157,20 @@ ZZZ                    unauthorized usb:1 transport_id:5
       expect(p.steps.single.args, ['flutter', 'run', '-d', 'R3CY', '--debug']);
     });
 
+    test('ios debug passes the team through FLUTTER_XCODE_ variables, shown in the command', () {
+      final p = _plan(_iphone, BuildMode.debug);
+      final step = p.steps.single;
+      expect(step.environment, {
+        'FLUTTER_XCODE_DEVELOPMENT_TEAM': 'TEAM123456',
+        'FLUTTER_XCODE_CODE_SIGN_STYLE': 'Automatic',
+      });
+      expect(
+        step.commandLine,
+        'FLUTTER_XCODE_DEVELOPMENT_TEAM=TEAM123456 FLUTTER_XCODE_CODE_SIGN_STYLE=Automatic flutter run -d UDID1 --debug',
+      );
+      expect(_plan(_galaxy, BuildMode.debug).steps.single.environment, isEmpty);
+    });
+
     test('blockers', () {
       expect(_plan(_iphone, BuildMode.release, project: null).blockers, [Blocker.noProject]);
       expect(_plan(null, BuildMode.release).blockers, [Blocker.noDevice]);

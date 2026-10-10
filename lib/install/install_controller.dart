@@ -169,6 +169,7 @@ class InstallController extends ChangeNotifier {
       final r = await runner.run(
         step.args,
         workingDirectory: step.workingDirectory,
+        environment: step.environment,
         handle: handle,
         keepStdinOpen: step.interactive,
       );
