@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" width="720" alt="Flutty Dock 데모: Flutter 프로젝트를 고르고 USB로 연결된 iPhone에 release 버전을 빌드해 설치">
+  <img src="docs/screenshots/demo.gif" width="720" alt="Flutty Dock 데모: Flutter 프로젝트를 고르고 USB로 연결된 폰에 release 버전을 빌드해 설치">
 </p>
 
 ## 기능
@@ -39,7 +39,7 @@
 - **라이트·다크, 한국어·English** — 시스템 설정을 따르거나 툴바에서 고를 수 있습니다
 
 <p align="center">
-  <img src="docs/screenshots/home.png" width="360" alt="설치 탭: 프로젝트, USB로 연결된 iPhone, Release 모드와 실행될 명령 네 개 (라이트·다크)">
+  <img src="docs/screenshots/home.png" width="360" alt="설치 탭: 프로젝트, Release 모드와 USB로 연결된 폰에 실행될 명령 (라이트·다크)">
   <img src="docs/screenshots/detail.png" width="360" alt="점검 탭: Flutter·Xcode·adb·서명 인증서·연결된 폰 점검과 실패 항목의 해결 단계">
 </p>
 

@@ -46,3 +46,6 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# README 스크린샷 원본 (다듬은 결과만 올린다)
+docs/screenshots/raw/

@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" width="720" alt="Flutty Dock demo: pick a Flutter project, then build and install the release version on a USB-connected iPhone">
+  <img src="docs/screenshots/demo.gif" width="720" alt="Flutty Dock demo: pick a Flutter project, then build and install the release version on a USB-connected phone">
 </p>
 
 ## Features
@@ -39,7 +39,7 @@
 - **Light & dark, English & 한국어** — follows the system, or pick one in the toolbar
 
 <p align="center">
-  <img src="docs/screenshots/home.png" width="360" alt="Install tab: the project, a USB-connected iPhone, Release mode and the four commands that will run (light and dark)">
+  <img src="docs/screenshots/home.png" width="360" alt="Install tab: the project, Release mode and the commands that will run for a USB-connected phone (light and dark)">
   <img src="docs/screenshots/detail.png" width="360" alt="Doctor tab: checks for Flutter, Xcode, adb, signing certificates and the connected phone, with steps to fix a failed one">
 </p>
 
