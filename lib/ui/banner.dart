@@ -11,7 +11,12 @@ import 'widgets.dart';
 
 /// 지금 막힌 것 하나만 알려 주는 배너. 막힌 것이 없으면 아무것도 그리지 않는다.
 ///
-/// 우선순위: 실행 전 막는 이유 → 방금 실패한 원인 → 점검에서 실패한 첫 항목.
+/// 우선순위: (Android 프로젝트에서 adb를 못 찾았고 기기가 없으면 그 이유) → 실행 전 막는 이유 → 방금 실패한 원인
+/// → 점검에서 실패한 첫 항목.
+/// 점검에서 adb를 못 찾았고, 이 프로젝트가 Android를 지원할 때. (프로젝트를 먼저 여는 안내가 앞선다 — 아래 우선순위.)
+bool _adbMissing(InstallController c) =>
+    (c.project?.hasAndroid ?? true) && c.checks.any((i) => i.id == CheckId.adb && i.status == CheckStatus.warn);
+
 class NextStepBanner extends StatelessWidget {
   const NextStepBanner({super.key, required this.controller});
 
@@ -27,7 +32,13 @@ class NextStepBanner extends StatelessWidget {
     String? steps;
     var toolMissing = false;
     final blockers = controller.plan.blockers;
-    if (blockers.isNotEmpty) {
+    // adb가 없으면 Android 기기는 목록에 나오지 않는다 — "기기를 연결하세요"보다 이유를 먼저 알려 준다.
+    final adbMissing = _adbMissing(controller);
+    if (adbMissing && (blockers.isEmpty || blockers.first == Blocker.noDevice) && controller.missingCommand == null) {
+      text = l10n.checkAdbWarn;
+      steps = l10n.stepsAdbMissing;
+      toolMissing = true;
+    } else if (blockers.isNotEmpty) {
       text = blockerText(l10n, blockers.first);
       steps = blockerSteps(l10n, blockers.first);
     } else if (controller.missingCommand != null) {
