@@ -9,6 +9,7 @@ import 'package:app_updater/app_updater.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutty_dock/about/about_dialog.dart';
 import 'package:flutty_dock/app_identity.dart';
 import 'package:flutty_dock/l10n/app_localizations.dart';
@@ -134,6 +135,46 @@ Future<void> _check(WidgetTester tester, _Harness h, {Locale locale = const Loca
 }
 
 void main() {
+  group('current version (must never stop the app from starting)', () {
+    test('macOS writes 0.1.0-rc.1+1 into Info.plist as 0.1.0.1: read as 0.1.0-rc.1', () {
+      final v = UpdateService.resolveCurrentVersion('0.1.0.1', defined: '');
+      expect(v, '0.1.0-rc.1');
+      expect(AppVersion.parse(v!) < AppVersion.parse('0.1.0'), isTrue);
+    });
+
+    test('the exact version from APP_VERSION wins', () {
+      expect(UpdateService.resolveCurrentVersion('0.1.0.1', defined: '0.1.0-rc.1'), '0.1.0-rc.1');
+      expect(UpdateService.resolveCurrentVersion('0.1.0.1', defined: 'v0.1.0-beta.2'), 'v0.1.0-beta.2');
+    });
+
+    test('a normal version passes through; an unusable APP_VERSION is ignored', () {
+      expect(UpdateService.resolveCurrentVersion('1.2.3', defined: ''), '1.2.3');
+      expect(UpdateService.resolveCurrentVersion('1.2.3', defined: 'nonsense'), '1.2.3');
+    });
+
+    test('unparsable input gives null instead of throwing', () {
+      for (final bad in ['', 'abc', '1.2', '1.2.3.4.5', '0.1.0.rc']) {
+        expect(UpdateService.resolveCurrentVersion(bad, defined: ''), isNull, reason: bad);
+      }
+    });
+
+    test('create() does not throw for an unparsable version (the app must still start)', () async {
+      SharedPreferences.setMockInitialValues({});
+      for (final version in ['0.1.0.1', 'garbage', '']) {
+        PackageInfo.setMockInitialValues(
+          appName: 'Sample', packageName: 'art.example.sample', version: version,
+          buildNumber: '1', buildSignature: '',
+        );
+        await expectLater(UpdateService.create(), completes, reason: version);
+      }
+      PackageInfo.setMockInitialValues(
+        appName: 'Sample', packageName: 'art.example.sample', version: 'garbage',
+        buildNumber: '1', buildSignature: '',
+      );
+      expect(await UpdateService.create(), isNull);
+    }, skip: !(Platform.isMacOS || Platform.isWindows || Platform.isLinux) || AppIdentity.updateServerUrl.isEmpty);
+  });
+
   setUp(() => PackageInfo.setMockInitialValues(
         appName: 'Sample', packageName: 'art.zoomon.sample', version: '1.0.0', buildNumber: '3', buildSignature: ''));
 

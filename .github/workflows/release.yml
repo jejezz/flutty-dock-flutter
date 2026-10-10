@@ -173,7 +173,7 @@ jobs:
 
       - run: flutter pub get
 
-      - run: flutter build macos --release
+      - run: flutter build macos --release --dart-define=APP_VERSION=${{ env.VERSION }}
 
       # Requires the MACOS_CERTIFICATE_* / MACOS_KEYCHAIN_PASSWORD secrets
       # (see README). Without a Developer ID certificate yet, delete this
@@ -277,7 +277,7 @@ jobs:
 
       - run: flutter pub get
 
-      - run: flutter build windows --release
+      - run: flutter build windows --release --dart-define=APP_VERSION=${{ env.VERSION }}
 
       - name: Install Inno Setup
         run: choco install innosetup --no-progress -y

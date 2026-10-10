@@ -42,21 +42,52 @@ class UpdateService {
 
   /// 데스크톱이 아니거나 서버 주소가 비어 있으면(`--dart-define=UPDATE_SERVER=`) null —
   /// 그 앱은 업데이트 확인을 하지 않는다 (스토어 배포 모바일 앱 등).
+  /// 현재 버전을 알 수 없을 때도 null 이다 — 업데이트 확인 때문에 앱이 시작하지 못하면 안 되므로 **절대 던지지 않는다.**
   static Future<UpdateService?> create({bool Function()? isBusy}) async {
     if (AppIdentity.updateServerUrl.isEmpty) return null;
     if (!(Platform.isMacOS || Platform.isWindows || Platform.isLinux)) return null;
-    final info = await PackageInfo.fromPlatform();
-    final prefs = await SharedPreferences.getInstance();
-    return UpdateService(
-      updater: AppUpdater(
-        server: Uri.parse(AppIdentity.updateServerUrl),
-        appId: AppIdentity.updateAppId,
-        currentVersion: info.version,
-        installer: platformInstaller(PlatformInfo.current()),
-      ),
-      policy: UpdatePolicy(PrefsUpdateStateStore(prefs)),
-      isBusy: isBusy,
-    );
+    try {
+      final info = await PackageInfo.fromPlatform();
+      final version = resolveCurrentVersion(info.version);
+      if (version == null) {
+        debugPrint('Update checks disabled: unparsable app version "${info.version}"');
+        return null;
+      }
+      final prefs = await SharedPreferences.getInstance();
+      return UpdateService(
+        updater: AppUpdater(
+          server: Uri.parse(AppIdentity.updateServerUrl),
+          appId: AppIdentity.updateAppId,
+          currentVersion: version,
+          installer: platformInstaller(PlatformInfo.current()),
+        ),
+        policy: UpdatePolicy(PrefsUpdateStateStore(prefs)),
+        isBusy: isBusy,
+      );
+    } catch (e, stack) {
+      debugPrint('Update checks disabled: $e\n$stack');
+      return null;
+    }
+  }
+
+  /// 릴리스 워크플로가 태그에서 넣는 정확한 버전 (`--dart-define=APP_VERSION=0.1.0-rc.1`).
+  static const _definedVersion = String.fromEnvironment('APP_VERSION');
+
+  /// 업데이트 비교에 쓸 현재 버전. 읽을 수 없으면 null.
+  ///
+  /// macOS 는 Info.plist 의 `CFBundleShortVersionString` 에 숫자만 허용해서 Flutter 가 pubspec 의
+  /// `0.1.0-rc.1+1` 을 `0.1.0.1` 로 바꿔 넣는다 (conventions/versioning.md §4). 그대로는
+  /// [AppVersion] 이 읽지 못하므로 순서대로 시도한다:
+  ///   1. [defined] (`APP_VERSION`) — 태그에서 온 정확한 값.
+  ///   2. [packageVersion] 이 그대로 읽히면 그것.
+  ///   3. 4자리 `x.y.z.n` 은 프리릴리스 `x.y.z-rc.n` 으로 본다 (규약의 프리릴리스는 rc 뿐).
+  @visibleForTesting
+  static String? resolveCurrentVersion(String packageVersion, {String defined = _definedVersion}) {
+    String? ok(String text) => AppVersion.tryParse(text) == null ? null : text.trim();
+    final fourPart = RegExp(r'^(\d+\.\d+\.\d+)\.(\d+)$').firstMatch(packageVersion.trim());
+    return ok(defined) ??
+        ok(packageVersion) ??
+        (fourPart == null ? null : ok('${fourPart.group(1)}-rc.${fourPart.group(2)}'));
   }
 
   final AppUpdater updater;
