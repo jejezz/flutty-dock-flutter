@@ -776,4 +776,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get secretFileFailed => 'Couldn\'t register from the file';
+
+  @override
+  String get toolPathsOpen => 'Set tool paths…';
+
+  @override
+  String get toolPathsTitle => 'Tool paths';
+
+  @override
+  String get toolPathsHelp =>
+      'Point the app at tools it can\'t find on PATH. The choice is saved and used the next time too. Pick the executable file, not the folder.';
+
+  @override
+  String get toolPathNotFound => 'Not found';
+
+  @override
+  String get toolPathChoose => 'Locate…';
+
+  @override
+  String get toolPathAuto => 'Automatic';
+
+  @override
+  String get toolPathCustom => 'Custom';
+
+  @override
+  String get toolPathFlutter => 'flutter';
+
+  @override
+  String get toolPathAdb => 'adb (Android SDK platform-tools)';
 }

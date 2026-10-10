@@ -496,5 +496,14 @@
       }
     }
   },
-  "secretFileFailed": "Couldn't register from the file"
+  "secretFileFailed": "Couldn't register from the file",
+  "toolPathsOpen": "Set tool paths…",
+  "toolPathsTitle": "Tool paths",
+  "toolPathsHelp": "Point the app at tools it can't find on PATH. The choice is saved and used the next time too. Pick the executable file, not the folder.",
+  "toolPathNotFound": "Not found",
+  "toolPathChoose": "Locate…",
+  "toolPathAuto": "Automatic",
+  "toolPathCustom": "Custom",
+  "toolPathFlutter": "flutter",
+  "toolPathAdb": "adb (Android SDK platform-tools)"
 }

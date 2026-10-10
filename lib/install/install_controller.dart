@@ -29,6 +29,10 @@ class InstallController extends ChangeNotifier {
   static const _teamKey = 'ios_team_id';
   static const _modeKey = 'build_mode';
   static const _tabKey = 'last_tab';
+  static const _toolKeyPrefix = 'tool_path_';
+
+  /// 사용자가 위치를 지정할 수 있는 도구.
+  static const configurableTools = ['flutter', 'adb'];
 
   final CommandRunner runner;
   final DeviceService deviceService;
@@ -113,6 +117,10 @@ class InstallController extends ChangeNotifier {
       mode = BuildMode.values.asNameMap()[_prefs!.getString(_modeKey)] ?? BuildMode.release;
       tabIndex = (_prefs!.getInt(_tabKey) ?? 0).clamp(0, 4);
       tabLoaded = true;
+      for (final tool in configurableTools) {
+        final saved = _prefs!.getString('$_toolKeyPrefix$tool');
+        if (saved != null && saved.isNotEmpty) runner.toolPaths[tool] = saved;
+      }
       final last = _prefs!.getString(_projectKey);
       if (last != null) project = await FlutterProject.detect(last);
     } on Object {
@@ -148,6 +156,24 @@ class InstallController extends ChangeNotifier {
     }
     loadingDevices = false;
     notifyListeners();
+  }
+
+  bool isCustomTool(String tool) => runner.toolPaths.containsKey(tool);
+
+  /// [tool]을 실제로 실행하게 될 파일. 찾지 못하면 null.
+  Future<String?> locateTool(String tool) => runner.locate(tool);
+
+  /// 도구 위치를 직접 지정한다 (null이면 자동 탐색으로 되돌림). 저장하고 기기·점검을 다시 읽는다.
+  Future<void> setToolPath(String tool, String? path) async {
+    if (path == null || path.isEmpty) {
+      runner.toolPaths.remove(tool);
+      await _prefs?.remove('$_toolKeyPrefix$tool');
+    } else {
+      runner.toolPaths[tool] = path;
+      await _prefs?.setString('$_toolKeyPrefix$tool', path);
+    }
+    notifyListeners();
+    await Future.wait([refreshDevices(), runDiagnostics()]);
   }
 
   void setTab(int i) {

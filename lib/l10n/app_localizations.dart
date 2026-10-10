@@ -1381,6 +1381,60 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'파일로 등록하지 못했습니다'**
   String get secretFileFailed;
+
+  /// No description provided for @toolPathsOpen.
+  ///
+  /// In ko, this message translates to:
+  /// **'도구 경로 지정…'**
+  String get toolPathsOpen;
+
+  /// No description provided for @toolPathsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'도구 경로'**
+  String get toolPathsTitle;
+
+  /// No description provided for @toolPathsHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'PATH에서 찾지 못하는 도구는 직접 지정할 수 있습니다. 한 번 지정하면 저장되고 다음 실행에도 쓰입니다. 폴더가 아니라 실행 파일을 고르세요.'**
+  String get toolPathsHelp;
+
+  /// No description provided for @toolPathNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾지 못함'**
+  String get toolPathNotFound;
+
+  /// No description provided for @toolPathChoose.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾아서 지정…'**
+  String get toolPathChoose;
+
+  /// No description provided for @toolPathAuto.
+  ///
+  /// In ko, this message translates to:
+  /// **'자동으로'**
+  String get toolPathAuto;
+
+  /// No description provided for @toolPathCustom.
+  ///
+  /// In ko, this message translates to:
+  /// **'직접 지정'**
+  String get toolPathCustom;
+
+  /// No description provided for @toolPathFlutter.
+  ///
+  /// In ko, this message translates to:
+  /// **'flutter'**
+  String get toolPathFlutter;
+
+  /// No description provided for @toolPathAdb.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb (Android SDK platform-tools)'**
+  String get toolPathAdb;
 }
 
 class _AppLocalizationsDelegate

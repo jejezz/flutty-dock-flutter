@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../doctor/checks.dart';
 import '../install/install_controller.dart';
+import '../install/install_plan.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import 'check_text.dart';
+import 'tool_paths_dialog.dart';
 import 'widgets.dart';
 
 /// 지금 막힌 것 하나만 알려 주는 배너. 막힌 것이 없으면 아무것도 그리지 않는다.
@@ -23,20 +25,24 @@ class NextStepBanner extends StatelessWidget {
 
     String? text;
     String? steps;
+    var toolMissing = false;
     final blockers = controller.plan.blockers;
     if (blockers.isNotEmpty) {
       text = blockerText(l10n, blockers.first);
       steps = blockerSteps(l10n, blockers.first);
     } else if (controller.missingCommand != null) {
       text = l10n.hintMissingCommand(controller.missingCommand!);
+      toolMissing = InstallController.configurableTools.contains(controller.missingCommand);
     } else if (controller.hint != null) {
       text = failureHintText(l10n, controller.hint!);
       steps = failureHintSteps(l10n, controller.hint!);
+      toolMissing = controller.hint == FailureHint.noAdb;
     } else {
       final problem = firstProblem(controller.checks);
       if (problem != null) {
         text = checkTitle(l10n, problem);
         steps = checkSteps(l10n, problem);
+        toolMissing = problem.id == CheckId.flutter;
       }
     }
     if (text == null) return const SizedBox.shrink();
@@ -70,6 +76,14 @@ class NextStepBanner extends StatelessWidget {
                   ),
                 ],
               ),
+              if (toolMissing)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: () => showToolPathsDialog(context, controller),
+                    child: Text(l10n.toolPathsOpen),
+                  ),
+                ),
               if (steps != null)
                 Theme(
                   data: theme.copyWith(dividerColor: Colors.transparent),

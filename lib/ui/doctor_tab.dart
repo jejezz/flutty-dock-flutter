@@ -5,6 +5,7 @@ import '../install/install_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import 'check_tile.dart';
+import 'tool_paths_dialog.dart';
 
 /// 점검 탭: 도구·기기·서명 점검 전체와 다시 점검 버튼.
 class DoctorTab extends StatelessWidget {
@@ -35,7 +36,10 @@ class DoctorTab extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.md),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton(onPressed: () => showToolPathsDialog(context, controller), child: Text(l10n.toolPathsOpen)),
+        ),
         CheckList(checks),
         if (checks.isNotEmpty && firstProblem(checks) == null)
           Padding(
