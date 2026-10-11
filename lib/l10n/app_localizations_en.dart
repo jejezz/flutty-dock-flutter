@@ -811,4 +811,35 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get stepsNoDevice =>
       '1. Connect the phone with a USB cable (a charge-only cable won\'t work)\n2. Unlock it, then tap \'Trust This Computer\' on an iPhone or \'Allow USB debugging\' on Android\n3. Press refresh above';
+
+  @override
+  String get homeThisMac => 'This Mac';
+
+  @override
+  String get homeThisPc => 'This PC';
+
+  @override
+  String get homeLinkLocal => 'This computer';
+
+  @override
+  String get homePlatformMacos => 'macOS';
+
+  @override
+  String get homePlatformWindows => 'Windows';
+
+  @override
+  String get hintCocoapods =>
+      'CocoaPods is missing, so the macOS app couldn\'t be built';
+
+  @override
+  String get hintVisualStudio =>
+      'Visual Studio\'s \'Desktop development with C++\' workload is missing, so the Windows app couldn\'t be built';
+
+  @override
+  String get stepsCocoapods =>
+      '1. Run brew install cocoapods in a terminal\n2. Build again';
+
+  @override
+  String get stepsVisualStudio =>
+      '1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick \'Desktop development with C++\'\n3. Build again';
 }

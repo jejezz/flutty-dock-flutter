@@ -794,4 +794,34 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get stepsNoDevice =>
       '1. USB 케이블로 폰을 연결합니다 (충전 전용 케이블은 안 됩니다)\n2. 잠금을 풀고, iPhone은 \'이 컴퓨터를 신뢰\', Android는 \'USB 디버깅 허용\'을 누릅니다\n3. 위의 새로 고침을 누릅니다';
+
+  @override
+  String get homeThisMac => '이 Mac';
+
+  @override
+  String get homeThisPc => '이 PC';
+
+  @override
+  String get homeLinkLocal => '이 컴퓨터';
+
+  @override
+  String get homePlatformMacos => 'macOS';
+
+  @override
+  String get homePlatformWindows => 'Windows';
+
+  @override
+  String get hintCocoapods => 'CocoaPods가 없어 macOS 앱을 빌드하지 못했습니다';
+
+  @override
+  String get hintVisualStudio =>
+      'Visual Studio의 C++ 데스크톱 개발 구성 요소가 없어 Windows 앱을 빌드하지 못했습니다';
+
+  @override
+  String get stepsCocoapods =>
+      '1. 터미널에서 brew install cocoapods 를 실행합니다\n2. 다시 빌드합니다';
+
+  @override
+  String get stepsVisualStudio =>
+      '1. Visual Studio 2022(Community 가능)를 설치합니다\n2. 설치 관리자에서 \'C++를 사용한 데스크톱 개발\'을 선택합니다\n3. 다시 빌드합니다';
 }

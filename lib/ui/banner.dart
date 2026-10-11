@@ -15,7 +15,9 @@ import 'widgets.dart';
 /// → 점검에서 실패한 첫 항목.
 /// 점검에서 adb를 못 찾았고, 이 프로젝트가 Android를 지원할 때. (프로젝트를 먼저 여는 안내가 앞선다 — 아래 우선순위.)
 bool _adbMissing(InstallController c) =>
-    (c.project?.hasAndroid ?? true) && c.checks.any((i) => i.id == CheckId.adb && i.status == CheckStatus.warn);
+    !(c.device?.isDesktop ?? false) && // 이 컴퓨터(데스크톱) 빌드에는 adb가 필요 없다
+    (c.project?.hasAndroid ?? true) &&
+    c.checks.any((i) => i.id == CheckId.adb && i.status == CheckStatus.warn);
 
 class NextStepBanner extends StatelessWidget {
   const NextStepBanner({super.key, required this.controller});

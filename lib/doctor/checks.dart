@@ -47,7 +47,8 @@ List<CheckItem> buildChecks({
     CheckItem(CheckId.adb, d.adb.found ? CheckStatus.ok : CheckStatus.warn, {'version': d.adb.version ?? ''}),
   ];
 
-  if (device != null) {
+  // 이 컴퓨터(데스크톱)는 케이블·권한 점검이 필요 없다.
+  if (device != null && !device.isDesktop) {
     items.add(CheckItem(CheckId.connection, device.isUsb ? CheckStatus.ok : CheckStatus.fail, {'name': device.name}));
     if (device.platform == DevicePlatform.ios && device.developerModeOn != null) {
       items.add(CheckItem(CheckId.developerMode, device.developerModeOn! ? CheckStatus.ok : CheckStatus.fail));

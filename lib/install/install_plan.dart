@@ -59,6 +59,7 @@ InstallPlan buildInstallPlan({
   required BuildMode mode,
   required String? teamId,
   required bool hostIsMac,
+  String windowsArch = 'x64',
 }) {
   if (project == null) return const InstallPlan([], [Blocker.noProject]);
   if (device == null) return const InstallPlan([], [Blocker.noDevice]);
@@ -133,6 +134,34 @@ InstallPlan buildInstallPlan({
           ]),
       ]);
     }
+  } else if (device.platform == DevicePlatform.macos) {
+    // 이 컴퓨터(Mac)의 데스크톱 빌드 — 프로젝트에 macos/가 이미 있을 때만. 설치할 곳이 따로 없어서 빌드하고 연다.
+    if (!project.hasMacos) blockers.add(Blocker.platformMissing);
+    if (mode == BuildMode.debug) {
+      steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', 'macos', '--debug'], workingDirectory: dir));
+    } else {
+      steps.addAll([
+        PlanStep(StepKind.build, ['flutter', 'build', 'macos', '--release'], workingDirectory: dir),
+        if (project.macosAppName != null)
+          PlanStep(StepKind.launch, ['open', '$dir/build/macos/Build/Products/Release/${project.macosAppName}.app']),
+      ]);
+    }
+  } else if (device.platform == DevicePlatform.windows) {
+    // Windows PC의 데스크톱 빌드. 산출물은 build\windows\<아키텍처>\runner\Release\<BINARY_NAME>.exe.
+    // explorer.exe는 실행하고 바로 돌아온다 (앱이 끝날 때까지 이 단계가 붙잡히지 않는다).
+    if (!project.hasWindows) blockers.add(Blocker.platformMissing);
+    if (mode == BuildMode.debug) {
+      steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', 'windows', '--debug'], workingDirectory: dir));
+    } else {
+      steps.addAll([
+        PlanStep(StepKind.build, ['flutter', 'build', 'windows', '--release'], workingDirectory: dir),
+        if (project.windowsBinaryName != null)
+          PlanStep(StepKind.launch, [
+            'explorer.exe',
+            '$dir\\build\\windows\\$windowsArch\\runner\\Release\\${project.windowsBinaryName}.exe',
+          ]),
+      ]);
+    }
   } else {
     if (!project.hasAndroid) blockers.add(Blocker.platformMissing);
     if (!device.authorized) blockers.add(Blocker.androidUnauthorized);
@@ -169,7 +198,7 @@ InstallPlan buildInstallPlan({
 }
 
 /// 실패한 출력에서 흔한 원인을 찾는다. 모르면 null (원문 로그를 그대로 보여 준다).
-enum FailureHint { useUsb, unlockDevice, developerMode, signing, trustComputer, noAdb }
+enum FailureHint { useUsb, unlockDevice, developerMode, signing, trustComputer, noAdb, cocoapods, visualStudio }
 
 FailureHint? explainFailure(String output) {
   final o = output.toLowerCase();
@@ -182,6 +211,11 @@ FailureHint? explainFailure(String output) {
     return FailureHint.signing;
   }
   if (o.contains('not trusted') || o.contains('trust this computer')) return FailureHint.trustComputer;
+  // 데스크톱 빌드 도구: macOS는 CocoaPods, Windows는 Visual Studio(C++ 데스크톱 개발).
+  if (o.contains('cocoapods not installed') || o.contains('cocoapods is not installed')) return FailureHint.cocoapods;
+  if (o.contains('unable to find suitable visual studio') || o.contains('visual studio')) {
+    return FailureHint.visualStudio;
+  }
   if (o.contains('adb: command not found') || o.contains('adb') && o.contains('no such file')) return FailureHint.noAdb;
   return null;
 }

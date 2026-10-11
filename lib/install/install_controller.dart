@@ -23,7 +23,14 @@ class InstallController extends ChangeNotifier {
     required this.deviceService,
     this.diagnosticsService,
     this.vscodeCommand = vscodeOpenCommand,
-  });
+    bool? hostIsMac,
+    bool? hostIsWindows,
+  }) : hostIsMac = hostIsMac ?? Platform.isMacOS,
+       hostIsWindows = hostIsWindows ?? Platform.isWindows;
+
+  /// 이 앱이 도는 OS. 이 컴퓨터를 빌드 대상으로 보여 줄지(데스크톱)와 iOS 설치 가능 여부가 여기에 달렸다.
+  final bool hostIsMac;
+  final bool hostIsWindows;
 
   static const _projectKey = 'last_project';
   static const _teamKey = 'ios_team_id';
@@ -67,11 +74,41 @@ class InstallController extends ChangeNotifier {
   String? missingCommand;
   RunHandle? _handle;
 
+  /// 화면에 보이는 대상: 연결된 실기기 + (프로젝트가 이 OS의 데스크톱을 이미 지원하면) 이 컴퓨터.
+  List<MobileDevice> get visibleDevices {
+    final host = hostDesktopDevice(project, isMac: hostIsMac, isWindows: hostIsWindows);
+    return [...devices, ?host];
+  }
+
   MobileDevice? get device {
-    for (final d in devices) {
+    for (final d in visibleDevices) {
       if (d.id == selectedId) return d;
     }
     return null;
+  }
+
+  /// 이 프로젝트가 그 대상의 플랫폼을 지원하는지 (프로젝트를 아직 안 열었으면 지원한다고 본다).
+  bool _supports(MobileDevice d) {
+    final p = project;
+    if (p == null) return true;
+    return switch (d.platform) {
+      DevicePlatform.ios => p.hasIos,
+      DevicePlatform.android => p.hasAndroid,
+      DevicePlatform.macos => p.hasMacos,
+      DevicePlatform.windows => p.hasWindows,
+    };
+  }
+
+  /// 프로젝트가 지원하는 대상을 먼저, 그중 USB로 연결된 실기기를 먼저 고른다. 없으면 보이는 첫 대상.
+  void _pickDefaultDevice() {
+    final all = visibleDevices;
+    final supported = all.where(_supports).toList();
+    selectedId = [
+      ...supported.where((d) => d.isUsb),
+      ...supported,
+      ...all.where((d) => d.isUsb),
+      ...all,
+    ].firstOrNull?.id;
   }
 
   /// 입력한 Team ID → 프로젝트의 Team ID → 키체인에 쓸 수 있는 인증서가 하나뿐이면 그 Team 순서.
@@ -87,7 +124,9 @@ class InstallController extends ChangeNotifier {
     device: device,
     mode: mode,
     teamId: effectiveTeamId,
-    hostIsMac: Platform.isMacOS,
+    hostIsMac: hostIsMac,
+    // Windows ARM에서는 산출물이 build\windows\arm64 아래에 생긴다.
+    windowsArch: Platform.environment['PROCESSOR_ARCHITECTURE']?.toUpperCase() == 'ARM64' ? 'arm64' : 'x64',
   );
 
   List<CheckItem> get checks => buildChecks(
@@ -95,7 +134,7 @@ class InstallController extends ChangeNotifier {
     project: project,
     device: device,
     teamId: effectiveTeamId,
-    hostIsMac: Platform.isMacOS,
+    hostIsMac: hostIsMac,
     now: DateTime.now(),
   );
 
@@ -138,6 +177,8 @@ class InstallController extends ChangeNotifier {
       statuses = const [];
       hint = null;
       await _prefs?.setString(_projectKey, dir);
+      // 새 프로젝트가 지금 고른 대상(예: 이 컴퓨터)을 지원하지 않으면 다시 고른다.
+      if (device == null) _pickDefaultDevice();
     }
     notifyListeners();
     if (found != null) await runDiagnostics();
@@ -149,11 +190,7 @@ class InstallController extends ChangeNotifier {
     notifyListeners();
     final found = await deviceService.list();
     devices = found;
-    if (device == null) {
-      // 프로젝트가 지원하는 플랫폼의 USB 기기를 먼저 고른다.
-      final preferred = found.where((d) => d.isUsb).followedBy(found).firstOrNull;
-      selectedId = preferred?.id;
-    }
+    if (device == null) _pickDefaultDevice();
     loadingDevices = false;
     notifyListeners();
   }

@@ -85,6 +85,8 @@ String failureHintText(AppLocalizations l, FailureHint h) => switch (h) {
   FailureHint.signing => l.hintSigning,
   FailureHint.trustComputer => l.hintTrustComputer,
   FailureHint.noAdb => l.hintNoAdb,
+  FailureHint.cocoapods => l.hintCocoapods,
+  FailureHint.visualStudio => l.hintVisualStudio,
 };
 
 String? failureHintSteps(AppLocalizations l, FailureHint h) => switch (h) {
@@ -92,5 +94,7 @@ String? failureHintSteps(AppLocalizations l, FailureHint h) => switch (h) {
   FailureHint.developerMode => l.stepsDeveloperMode,
   FailureHint.signing => l.stepsTeamId,
   FailureHint.noAdb => l.stepsAdbMissing,
+  FailureHint.cocoapods => l.stepsCocoapods,
+  FailureHint.visualStudio => l.stepsVisualStudio,
   _ => null,
 };

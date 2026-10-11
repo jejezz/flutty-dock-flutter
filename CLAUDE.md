@@ -12,6 +12,7 @@ https://github.com/jejezz/application-release-templates/tree/main/conventions
 - 표시 이름 `Flutty Dock`, 파일 이름 `FluttyDock`, 패키지 `flutty_dock`,
   식별자 `art.zoomon.fluttydock`. 식별자와 `installer/windows/app.iss`의 `AppId`는 릴리스 후 바꾸지 않는다.
 - 앱 이름에 "Flutter"를 넣지 않는다 (Flutter 상표). 소개 문구에서만 "for Flutter apps"처럼 쓴다.
+- 대상: USB로 연결된 iPhone·Android, 그리고 프로젝트에 `macos/`·`windows/`가 이미 있을 때만 이 컴퓨터(현재 OS)의 데스크톱. 없는 플랫폼은 만들어 주지 않는다.
 - 대상 프로젝트는 수정하지 않는다: 서명 Team 등은 빌드 인자로 주입하고, 설정은 앱 쪽에만 저장한다.
 - 비밀값(키, 비밀번호)은 저장하지 않고 경로만 참조한다.
 - 창은 도킹형 세로 창(440×960, 최소 380×560)이다. 구조 참고: ../branch-dock-flutter.

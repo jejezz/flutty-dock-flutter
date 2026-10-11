@@ -1,10 +1,14 @@
 import 'dart:convert';
 
-enum DevicePlatform { ios, android }
+import '../flutter/flutter_project.dart';
 
-enum DeviceLink { usb, wireless }
+/// `macos`·`windows`는 이 컴퓨터 자신(데스크톱 빌드). 프로젝트가 그 플랫폼을 이미 지원할 때만 나온다.
+enum DevicePlatform { ios, android, macos, windows }
 
-/// 연결된 실기기 하나.
+/// `local`은 이 컴퓨터 — 케이블이 필요 없다.
+enum DeviceLink { usb, wireless, local }
+
+/// 빌드·설치 대상 하나: USB로 연결된 실기기, 또는 이 컴퓨터(데스크톱).
 class MobileDevice {
   const MobileDevice({
     required this.id,
@@ -32,6 +36,9 @@ class MobileDevice {
   final bool authorized;
 
   bool get isUsb => link == DeviceLink.usb;
+
+  /// 이 컴퓨터의 데스크톱 빌드인지.
+  bool get isDesktop => platform == DevicePlatform.macos || platform == DevicePlatform.windows;
 }
 
 /// `xcrun devicectl list devices --json-output`의 결과에서 **실기기**만 읽는다.
@@ -81,4 +88,17 @@ List<MobileDevice> parseAdbDevices(String text) {
     );
   }
   return out;
+}
+
+/// 이 컴퓨터를 대상으로 쓸 수 있으면 그 "기기". **프로젝트가 이 OS의 데스크톱을 이미 지원할 때만**
+/// (macOS면 `macos/`, Windows면 `windows/` 폴더가 있을 때) 돌려준다 — 없는 플랫폼을 만들어 주지는 않는다.
+MobileDevice? hostDesktopDevice(FlutterProject? project, {required bool isMac, required bool isWindows}) {
+  if (project == null) return null;
+  if (isMac && project.hasMacos) {
+    return const MobileDevice(id: 'macos', name: 'macOS', platform: DevicePlatform.macos, link: DeviceLink.local);
+  }
+  if (isWindows && project.hasWindows) {
+    return const MobileDevice(id: 'windows', name: 'Windows', platform: DevicePlatform.windows, link: DeviceLink.local);
+  }
+  return null;
 }
