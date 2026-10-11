@@ -21,6 +21,7 @@ import 'doctor_tab.dart';
 import 'log_tab.dart';
 import 'signing_tab.dart';
 import 'widgets.dart';
+import '../window/focus_tint.dart';
 
 /// VS Code 옆에 세워 두는 화면: 프로젝트 → 기기 → 빌드 → 실행할 명령과 진행.
 class HomeScreen extends StatefulWidget {
@@ -78,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Builder(
       builder: (context) => Scaffold(
         appBar: AppBar(
+          flexibleSpace: const FocusTint(),
           title: const Text(AppIdentity.displayName),
           actions: [
             // macOS 릴리스 서명용 시크릿 — Windows 릴리스는 시크릿이 필요 없어 숨긴다.
