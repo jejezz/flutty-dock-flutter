@@ -11,6 +11,10 @@ class FlutterProject {
     this.iosBundleId,
     this.iosTeamId,
     this.androidApplicationId,
+    this.hasMacos = false,
+    this.hasWindows = false,
+    this.macosAppName,
+    this.windowsBinaryName,
   });
 
   final String path;
@@ -25,6 +29,14 @@ class FlutterProject {
   /// 프로젝트에 이미 들어 있는 `DEVELOPMENT_TEAM`.
   final String? iosTeamId;
   final String? androidApplicationId;
+
+  /// 이 프로젝트가 데스크톱을 이미 지원하는지 (`macos/Runner.xcodeproj`, `windows/CMakeLists.txt`가 있음).
+  final bool hasMacos;
+  final bool hasWindows;
+
+  /// 빌드 산출물 이름: macOS는 `<PRODUCT_NAME>.app`, Windows는 `<BINARY_NAME>.exe`.
+  final String? macosAppName;
+  final String? windowsBinaryName;
 
   /// [dir]이 Flutter 프로젝트면 읽어서 돌려주고, 아니면 null.
   static Future<FlutterProject?> detect(String dir) async {
@@ -41,6 +53,10 @@ class FlutterProject {
         break;
       }
     }
+    final xcconfig = File('$dir/macos/Runner/Configs/AppInfo.xcconfig');
+    final cmake = File('$dir/windows/CMakeLists.txt');
+    final hasMacos = await File('$dir/macos/Runner.xcodeproj/project.pbxproj').exists();
+    final hasWindows = await cmake.exists();
     return FlutterProject(
       path: dir,
       name: parsePubspecField(text, 'name') ?? dir.split(Platform.pathSeparator).last,
@@ -50,6 +66,10 @@ class FlutterProject {
       iosBundleId: pbxText == null ? null : parseIosBundleId(pbxText),
       iosTeamId: pbxText == null ? null : parseIosTeamId(pbxText),
       androidApplicationId: gradle == null ? null : parseAndroidApplicationId(gradle),
+      hasMacos: hasMacos,
+      hasWindows: hasWindows,
+      macosAppName: hasMacos && await xcconfig.exists() ? parseMacosProductName(await xcconfig.readAsString()) : null,
+      windowsBinaryName: hasWindows ? parseWindowsBinaryName(await cmake.readAsString()) : null,
     );
   }
 }
@@ -76,3 +96,10 @@ String? parseIosTeamId(String pbxproj) => RegExp(r'DEVELOPMENT_TEAM = ([A-Z0-9]{
 
 String? parseAndroidApplicationId(String gradle) =>
     RegExp(r'''applicationId\s*=?\s*["']([^"']+)["']''').firstMatch(gradle)?[1];
+
+/// `macos/Runner/Configs/AppInfo.xcconfig`의 `PRODUCT_NAME` — 앱 번들 이름(`<이름>.app`).
+String? parseMacosProductName(String xcconfig) =>
+    RegExp(r'^\s*PRODUCT_NAME\s*=\s*(.+?)\s*$', multiLine: true).firstMatch(xcconfig)?[1];
+
+/// `windows/CMakeLists.txt`의 `set(BINARY_NAME "…")` — 실행 파일 이름(`<이름>.exe`).
+String? parseWindowsBinaryName(String cmake) => RegExp(r'set\(\s*BINARY_NAME\s+"([^"]+)"\s*\)').firstMatch(cmake)?[1];

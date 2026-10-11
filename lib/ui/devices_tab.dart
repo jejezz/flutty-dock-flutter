@@ -52,7 +52,7 @@ class _DeviceList extends StatelessWidget {
                   onPressed: controller.refreshDevices,
                 ),
         ),
-        if (controller.devices.isEmpty)
+        if (controller.visibleDevices.isEmpty)
           Card(
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
@@ -70,25 +70,25 @@ class _DeviceList extends StatelessWidget {
             child: RadioGroup<String>(
               groupValue: controller.selectedId,
               onChanged: (id) {
-                final d = controller.devices.where((d) => d.id == id).firstOrNull;
+                final d = controller.visibleDevices.where((d) => d.id == id).firstOrNull;
                 if (d != null) controller.select(d);
               },
               child: Column(
                 children: [
-                  for (final d in controller.devices)
+                  for (final d in controller.visibleDevices)
                     RadioListTile<String>(
                       value: d.id,
                       dense: true,
-                      title: Text(d.name, style: AppFonts.userContent),
+                      title: Text(_deviceName(l10n, d), style: AppFonts.userContent),
                       subtitle: Text(
                         [
-                          d.platform == DevicePlatform.ios ? l10n.homePlatformIos : l10n.homePlatformAndroid,
+                          _platformLabel(l10n, d.platform),
                           if (d.osVersion != null) d.osVersion!,
                           if (d.model != null && d.model != d.name) d.model!,
                         ].join(' · '),
                         style: const TextStyle(fontSize: 12),
                       ),
-                      secondary: InfoChip(d.isUsb ? l10n.homeLinkUsb : l10n.homeLinkWireless),
+                      secondary: InfoChip(_linkLabel(l10n, d.link)),
                     ),
                 ],
               ),
@@ -128,3 +128,23 @@ class _NoDeviceCauses extends StatelessWidget {
     );
   }
 }
+
+/// 이 컴퓨터는 이름 대신 "이 Mac"/"이 PC"로 — 실기기 이름은 기기가 알려 준 그대로.
+String _deviceName(AppLocalizations l10n, MobileDevice d) => switch (d.platform) {
+  DevicePlatform.macos => l10n.homeThisMac,
+  DevicePlatform.windows => l10n.homeThisPc,
+  _ => d.name,
+};
+
+String _platformLabel(AppLocalizations l10n, DevicePlatform p) => switch (p) {
+  DevicePlatform.ios => l10n.homePlatformIos,
+  DevicePlatform.android => l10n.homePlatformAndroid,
+  DevicePlatform.macos => l10n.homePlatformMacos,
+  DevicePlatform.windows => l10n.homePlatformWindows,
+};
+
+String _linkLabel(AppLocalizations l10n, DeviceLink l) => switch (l) {
+  DeviceLink.usb => l10n.homeLinkUsb,
+  DeviceLink.wireless => l10n.homeLinkWireless,
+  DeviceLink.local => l10n.homeLinkLocal,
+};

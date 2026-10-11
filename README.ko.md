@@ -32,6 +32,7 @@
 
 - **명령을 보여 주는 버튼** — 빌드·설치·실행 단계마다 실제로 실행되는 명령(`xcodebuild …`, `xcrun devicectl device install app …`, `adb install -r …`)을 그대로 복사할 수 있게 보여 주고, 명령 기록에 출력을 남깁니다
 - **USB로 iPhone·Android, debug·release** — release는 개발 인증서로 서명해 TestFlight 없이 폰에 바로 설치하고, debug는 `flutter run`으로 핫 리로드·핫 리스타트 버튼을 씁니다
+- **프로젝트가 지원하면 이 컴퓨터도** — 프로젝트에 `macos/`나 `windows/` 폴더가 이미 있으면 지금 쓰는 OS의 데스크톱 앱이 "이 Mac"/"이 PC"로 나옵니다. debug는 핫 리로드로 실행하고, release는 빌드해서 엽니다. 프로젝트에 없는 플랫폼은 절대 내놓지 않습니다
 - **프로젝트를 고치지 않습니다** — 서명 Team은 빌드 인자로만 넘기고 `project.pbxproj`에 쓰지 않아서, 어떤 Flutter 프로젝트든 그대로 쓸 수 있습니다
 - **다음에 할 일 하나를 알려 줍니다** — 막힌 것(USB가 아니라 무선, 개발자 모드 꺼짐, Team ID 없음 …)을 배너로 알리고 번호 붙은 해결 단계를 펼쳐 보여 줍니다. 점검 탭은 Flutter·Xcode·adb, 인증서와 만료, 프로비저닝 프로파일(무료 계정의 7일 프로파일 포함), Android 키스토어를 확인합니다
 - **릴리스 시크릿 등록 (macOS)** — macOS 서명용 GitHub Actions 시크릿을 `gh secret set`으로 등록합니다. 값은 표준 입력으로 전달하고 저장하지 않으며 명령 기록에도 남지 않습니다

@@ -11,7 +11,8 @@
 지금 **무엇을 해야 하는지 단계별로** 안내해서 쓰면서 명령을 익히게 한다.
 
 - 포함: iOS/Android 모바일, USB 실기기 설치, debug/release, signing 점검, 단계별 안내
-- 제외(1차): 스토어 제출(TestFlight/Play), 데스크톱·웹 타깃, 무선 디버깅, Windows/Linux 호스트(iOS는 macOS 필수)
+- 제외(1차): 스토어 제출(TestFlight/Play), 웹 타깃, 무선 디버깅, Linux 호스트(iOS는 macOS 필수)
+- 추가(v0.1.0 이후): 프로젝트가 이미 `macos/`·`windows/`를 지원하면 이 컴퓨터의 데스크톱 빌드(debug 실행·release 빌드 후 열기)
 - 성공 기준: 처음 보는 Flutter 프로젝트를 고르면 프로젝트 수정 없이 몇 분 안에 release가 폰에 설치되고,
   실패하면 로그 대신 **원인과 조치 한 줄**이 나온다.
 

@@ -32,6 +32,7 @@
 
 - **Buttons that show their command** — every build, install and launch step lists the exact command it runs (`xcodebuild …`, `xcrun devicectl device install app …`, `adb install -r …`), copyable as is, and the command log keeps the output
 - **iPhone and Android over USB, debug and release** — release builds are signed with your development certificate and installed straight onto the phone, no TestFlight; debug runs `flutter run` with hot reload and hot restart buttons
+- **This computer too, when the project supports it** — if a project already has a `macos/` or `windows/` folder, the desktop app of the OS you're running on appears as "This Mac" / "This PC": debug runs it with hot reload, release builds it and opens the result. Platforms the project doesn't have are never offered
 - **Doesn't touch your project** — the signing team is passed as a build argument, never written to `project.pbxproj`, so any Flutter project works as it is
 - **One next step, drawn out** — a banner names the one thing blocking you (wireless instead of USB, Developer Mode off, no Team ID …) with numbered steps to fix it; the Doctor checks Flutter, Xcode, adb, certificates and their expiry, provisioning profiles (including the 7-day profile of a free account) and the Android keystore
 - **Release secrets (macOS)** — registers the GitHub Actions secrets for macOS signing with `gh secret set`; values go through standard input, are never stored, and never appear in the command log

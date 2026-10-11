@@ -507,5 +507,14 @@
   "toolPathFlutter": "flutter",
   "toolPathAdb": "adb (Android SDK platform-tools)",
   "homeDevicesCauses": "Possible reasons no device shows up",
-  "stepsNoDevice": "1. Connect the phone with a USB cable (a charge-only cable won't work)\n2. Unlock it, then tap 'Trust This Computer' on an iPhone or 'Allow USB debugging' on Android\n3. Press refresh above"
+  "stepsNoDevice": "1. Connect the phone with a USB cable (a charge-only cable won't work)\n2. Unlock it, then tap 'Trust This Computer' on an iPhone or 'Allow USB debugging' on Android\n3. Press refresh above",
+  "homeThisMac": "This Mac",
+  "homeThisPc": "This PC",
+  "homeLinkLocal": "This computer",
+  "homePlatformMacos": "macOS",
+  "homePlatformWindows": "Windows",
+  "hintCocoapods": "CocoaPods is missing, so the macOS app couldn't be built",
+  "hintVisualStudio": "Visual Studio's 'Desktop development with C++' workload is missing, so the Windows app couldn't be built",
+  "stepsCocoapods": "1. Run brew install cocoapods in a terminal\n2. Build again",
+  "stepsVisualStudio": "1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick 'Desktop development with C++'\n3. Build again"
 }

@@ -210,6 +210,8 @@ class _ProjectSection extends StatelessWidget {
                               children: [
                                 if (p.hasIos) InfoChip(l10n.homePlatformIos),
                                 if (p.hasAndroid) InfoChip(l10n.homePlatformAndroid),
+                                if (p.hasMacos) InfoChip(l10n.homePlatformMacos),
+                                if (p.hasWindows) InfoChip(l10n.homePlatformWindows),
                               ],
                             ),
                           ],
