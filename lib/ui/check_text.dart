@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import '../doctor/checks.dart';
 import '../install/install_plan.dart';
 import '../l10n/app_localizations.dart';
@@ -46,7 +48,7 @@ String? checkNote(AppLocalizations l, CheckItem c) =>
 String? checkSteps(AppLocalizations l, CheckItem c) {
   if (c.status == CheckStatus.ok || c.status == CheckStatus.info) return null;
   return switch (c.id) {
-    CheckId.flutter => l.stepsFlutterMissing,
+    CheckId.flutter => Platform.isWindows ? l.stepsFlutterMissingWindows : l.stepsFlutterMissing,
     CheckId.xcode => l.stepsXcodeMissing,
     CheckId.adb => l.stepsAdbMissing,
     CheckId.connection => l.stepsWireless,

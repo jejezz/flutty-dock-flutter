@@ -141,13 +141,23 @@ class InstallController extends ChangeNotifier {
   /// 도구·인증서·프로파일·키스토어를 다시 읽는다.
   Future<void> runDiagnostics() async {
     final service = diagnosticsService;
-    if (service == null || diagnosing) return;
+    if (service == null) return;
+    // 읽는 도중에 다시 요청되면(도구 경로를 방금 바꾼 경우 등) 끝난 뒤 한 번 더 읽는다.
+    if (diagnosing) {
+      _diagnoseAgain = true;
+      return;
+    }
     diagnosing = true;
     notifyListeners();
-    diagnostics = await service.collect(project);
+    do {
+      _diagnoseAgain = false;
+      diagnostics = await service.collect(project);
+    } while (_diagnoseAgain);
     diagnosing = false;
     notifyListeners();
   }
+
+  bool _diagnoseAgain = false;
 
   Future<void> init() async {
     try {
