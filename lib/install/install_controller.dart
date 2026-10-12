@@ -151,7 +151,9 @@ class InstallController extends ChangeNotifier {
     notifyListeners();
     do {
       _diagnoseAgain = false;
-      diagnostics = await service.collect(project);
+      final result = await service.collect(project);
+      // 읽는 사이에 다시 요청됐다면 이 결과는 이미 낡았다 — 보여 주지 않는다.
+      if (!_diagnoseAgain) diagnostics = result;
     } while (_diagnoseAgain);
     diagnosing = false;
     notifyListeners();
@@ -219,6 +221,8 @@ class InstallController extends ChangeNotifier {
       runner.toolPaths[tool] = path;
       await _prefs?.setString('$_toolKeyPrefix$tool', path);
     }
+    // 이전 경로로 읽은 결과("찾지 못함")를 점검이 끝날 때까지 남겨 두지 않는다 — Windows에서는 수십 초 걸린다.
+    diagnostics = null;
     notifyListeners();
     await Future.wait([refreshDevices(), runDiagnostics()]);
   }
