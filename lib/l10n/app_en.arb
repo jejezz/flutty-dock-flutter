@@ -452,6 +452,7 @@
   "stepsTeamId": "1. Find the Team ID (10 characters) at developer.apple.com/account → Membership details\n2. Enter it in Apple Team ID under Build\n3. Or tap a team of your certificates in the Signing tab",
   "stepsCertificate": "1. Xcode → Settings → Accounts: sign in with your Apple ID\n2. Manage Certificates → + → add Apple Development\n3. Press Check again",
   "stepsFlutterMissing": "1. Install the Flutter SDK from flutter.dev\n2. Add flutter/bin to PATH (~/.zshrc)\n3. Reopen the app and press Check again",
+  "stepsFlutterMissingWindows": "1. Install the Flutter SDK from flutter.dev\n2. Add the flutter\\bin folder to PATH, or pick flutter.bat with \"Set tool paths…\" above\n3. Press Check again",
   "stepsXcodeMissing": "1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license",
   "stepsAdbMissing": "1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again",
   "stepsAndroidKeystore": "1. Check the storeFile path in android/key.properties\n2. If the file is gone, recreate the keystore or fix the path\n3. For personal installs you can drop key.properties — the debug key signs the build",
