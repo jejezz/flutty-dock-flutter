@@ -99,7 +99,8 @@ class CommandRunner {
       final process = await Process.start(
         executableFor(args.first),
         args.sublist(1),
-        workingDirectory: workingDirectory,
+        // 앱 폴더(C:\Program Files\…)는 쓸 수 없다 — flutter.bat이 현재 폴더에 hash.txt를 쓰다 실패한다.
+        workingDirectory: workingDirectory ?? Directory.systemTemp.path,
         environment: {
           'PATH': await effectivePath,
           'GH_PROMPT_DISABLED': '1',
