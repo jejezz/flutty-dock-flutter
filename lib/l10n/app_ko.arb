@@ -326,6 +326,14 @@
       }
     }
   },
+  "checkFlutterRunFail": "flutter를 실행했지만 실패했습니다: {error}",
+  "@checkFlutterRunFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "checkFlutterFail": "flutter를 찾지 못했습니다",
   "checkXcodeOk": "Xcode {version}",
   "@checkXcodeOk": {

@@ -309,6 +309,14 @@
       }
     }
   },
+  "checkFlutterRunFail": "flutter ran but failed: {error}",
+  "@checkFlutterRunFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "checkFlutterFail": "flutter wasn't found",
   "checkXcodeOk": "Xcode {version}",
   "@checkXcodeOk": {

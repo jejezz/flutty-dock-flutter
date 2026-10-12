@@ -41,6 +41,7 @@ List<CheckItem> buildChecks({
   final items = <CheckItem>[
     CheckItem(CheckId.flutter, d.flutter.found ? CheckStatus.ok : CheckStatus.fail, {
       'version': d.flutter.version ?? '',
+      if (d.flutter.error != null) 'error': d.flutter.error!,
     }),
     if (hostIsMac)
       CheckItem(CheckId.xcode, d.xcode.found ? CheckStatus.ok : CheckStatus.fail, {'version': d.xcode.version ?? ''}),
