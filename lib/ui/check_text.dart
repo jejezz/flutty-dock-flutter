@@ -9,7 +9,12 @@ String checkTitle(AppLocalizations l, CheckItem c) {
   final p = c.params;
   final s = c.status;
   return switch (c.id) {
-    CheckId.flutter => s == CheckStatus.ok ? l.checkFlutterOk(p['version']!) : l.checkFlutterFail,
+    CheckId.flutter =>
+      s == CheckStatus.ok
+          ? l.checkFlutterOk(p['version']!)
+          : p['error'] != null
+          ? l.checkFlutterRunFail(p['error']!)
+          : l.checkFlutterFail,
     CheckId.xcode => s == CheckStatus.ok ? l.checkXcodeOk(p['version']!) : l.checkXcodeFail,
     CheckId.adb => s == CheckStatus.ok ? l.checkAdbOk(p['version']!) : l.checkAdbWarn,
     CheckId.connection => s == CheckStatus.ok ? l.checkConnectionOk(p['name']!) : l.checkConnectionFail(p['name']!),

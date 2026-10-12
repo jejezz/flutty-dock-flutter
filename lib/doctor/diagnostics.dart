@@ -6,9 +6,12 @@ import 'signing_info.dart';
 
 /// 명령줄 도구 하나: 찾았으면 버전, 못 찾았으면 [version]이 null.
 class ToolInfo {
-  const ToolInfo(this.version);
+  const ToolInfo(this.version, {this.error});
 
   final String? version;
+
+  /// 실행은 했지만 실패했을 때 도구가 남긴 첫 줄들. 못 찾은 경우엔 비어 있다.
+  final String? error;
   bool get found => version != null;
 }
 
@@ -63,7 +66,11 @@ class ProcessDiagnosticsService implements DiagnosticsService {
 
   Future<ToolInfo> _tool(List<String> args, RegExp pattern) async {
     final r = await runner.run(args, quiet: true);
-    if (!r.ok) return const ToolInfo(null);
+    if (!r.ok) {
+      final lines = r.combined.split(RegExp(r'\r?\n')).map((l) => l.trim()).where((l) => l.isNotEmpty).take(2).join(' ');
+      // 실행 파일을 못 찾은 경우(127)는 '못 찾음'이지 '실행 실패'가 아니다.
+      return ToolInfo(null, error: r.exitCode == 127 || lines.isEmpty ? null : lines);
+    }
     return ToolInfo(pattern.firstMatch(r.combined)?[1] ?? '?');
   }
 
