@@ -35,6 +35,18 @@ class RunHandle {
 
 const _utf8 = Utf8Codec(allowMalformed: true);
 
+/// 자식 프로세스 출력 한 덩어리를 글자로 바꾼다. UTF-8이면 그대로 읽고, Windows에서 UTF-8이
+/// 아니면 시스템 코드 페이지(한국어 Windows는 CP949)로 읽는다 — PowerShell·cmd의 오류 메시지가
+/// 그 코드 페이지로 나온다.
+String decodeProcessOutput(List<int> bytes, {Encoding? fallback}) {
+  try {
+    return utf8.decode(bytes);
+  } on FormatException {
+    final enc = fallback ?? (Platform.isWindows ? systemEncoding : null);
+    return enc == null ? _utf8.decode(bytes) : enc.decode(bytes);
+  }
+}
+
 /// 명령을 셸 없이 인자 목록으로 실행하고 [CommandLog]에 남긴다.
 ///
 /// macOS GUI 앱의 PATH는 `/usr/bin:/bin:/usr/sbin:/sbin`뿐이라 Homebrew의 `gh`나
@@ -99,7 +111,9 @@ class CommandRunner {
       final process = await Process.start(
         executableFor(args.first),
         args.sublist(1),
-        workingDirectory: workingDirectory,
+        // 지정하지 않으면 이 앱의 작업 디렉터리(설치 폴더 등)를 물려받는다 — flutter가 거기에
+        // hash.txt를 쓰려다 쓰기 권한이 없어 실패한다. 쓸 수 있는 임시 폴더에서 돌린다.
+        workingDirectory: workingDirectory ?? Directory.systemTemp.path,
         environment: {
           'PATH': await effectivePath,
           'GH_PROMPT_DISABLED': '1',
@@ -125,8 +139,8 @@ class CommandRunner {
         if (entry != null) log.update();
       }
 
-      final outDone = process.stdout.transform(_utf8.decoder).listen((c) => tee(out, c)).asFuture<void>();
-      final errDone = process.stderr.transform(_utf8.decoder).listen((c) => tee(err, c)).asFuture<void>();
+      final outDone = process.stdout.map(decodeProcessOutput).listen((c) => tee(out, c)).asFuture<void>();
+      final errDone = process.stderr.map(decodeProcessOutput).listen((c) => tee(err, c)).asFuture<void>();
       final code = await process.exitCode;
       await Future.wait([outDone, errDone]);
       finish(code);
