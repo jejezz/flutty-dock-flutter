@@ -245,6 +245,26 @@ ZZZ                    unauthorized usb:1 transport_id:5
       expect(c.missingCommand, 'flutter');
     });
 
+    test('clean runs flutter clean then pub get', () async {
+      final r = _FakeRunner(List.generate(2, (_) => const CommandResult(0, '', '')));
+      final c = make(r);
+      expect(await c.cleanProject(), isTrue);
+      expect(r.ran, [
+        ['flutter', 'clean'],
+        ['flutter', 'pub', 'get'],
+      ]);
+      expect(c.cleanResult, isTrue);
+      expect(c.cleaning, isFalse);
+    });
+
+    test('clean stops at the first failure and skips pub get', () async {
+      final r = _FakeRunner([const CommandResult(1, '', 'boom')]);
+      final c = make(r);
+      expect(await c.cleanProject(), isFalse);
+      expect(r.ran, hasLength(1));
+      expect(c.cleanResult, isFalse);
+    });
+
     test('does nothing while blocked', () async {
       final r = _FakeRunner([]);
       final c = make(r)..selectedId = null;

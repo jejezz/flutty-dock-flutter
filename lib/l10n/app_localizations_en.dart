@@ -405,6 +405,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeActionInstall => 'Build & install';
 
   @override
+  String get homeActionClean => 'Clean & get packages';
+
+  @override
+  String get homeCleanHelp =>
+      'flutter clean → flutter pub get. Worth trying when a build fails for no clear reason.';
+
+  @override
+  String get homeCleanDone =>
+      'Cleaned and packages restored. Try building again.';
+
+  @override
+  String get homeCleanFailed =>
+      'Clean failed. Check the output in the Log tab.';
+
+  @override
   String get homeActionRun => 'Run debug';
 
   @override

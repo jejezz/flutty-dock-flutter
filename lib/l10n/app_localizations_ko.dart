@@ -395,6 +395,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeActionInstall => '빌드 & 설치';
 
   @override
+  String get homeActionClean => '정리 후 패키지 다시 받기';
+
+  @override
+  String get homeCleanHelp =>
+      'flutter clean → flutter pub get. 이유 없이 빌드가 실패할 때 해 볼 만합니다.';
+
+  @override
+  String get homeCleanDone => '정리했고 패키지를 다시 받았습니다. 이제 빌드해 보세요.';
+
+  @override
+  String get homeCleanFailed => '정리에 실패했습니다. 기록 탭에서 출력을 확인하세요.';
+
+  @override
   String get homeActionRun => '디버그 실행';
 
   @override

@@ -389,6 +389,30 @@ class _BuildSectionState extends State<_BuildSection> {
             ],
           ],
         ),
+        if (c.project != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Tooltip(
+            message: l10n.homeCleanHelp,
+            child: OutlinedButton.icon(
+              onPressed: c.running || c.cleaning ? null : c.cleanProject,
+              icon: c.cleaning
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.cleaning_services_rounded, size: 18),
+              label: Text(l10n.homeActionClean),
+            ),
+          ),
+          if (c.cleanResult != null && !c.cleaning)
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.xs),
+              child: Text(
+                c.cleanResult! ? l10n.homeCleanDone : l10n.homeCleanFailed,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: c.cleanResult! ? AppColors.success : theme.colorScheme.error,
+                ),
+              ),
+            ),
+        ],
         if (c.missingCommand != null)
           Padding(
             padding: const EdgeInsets.only(top: AppSpacing.sm),

@@ -67,6 +67,10 @@ class InstallController extends ChangeNotifier {
   bool tabLoaded = false;
 
   bool running = false;
+
+  /// `flutter clean` + `flutter pub get`을 실행 중인지, 마지막 결과(null이면 아직 안 함).
+  bool cleaning = false;
+  bool? cleanResult;
   List<StepStatus> statuses = const [];
   FailureHint? hint;
 
@@ -293,6 +297,35 @@ class InstallController extends ChangeNotifier {
     running = false;
     _handle = null;
     notifyListeners();
+  }
+
+  /// 빌드가 알 수 없는 이유로 깨질 때의 처방: `flutter clean` 다음 `flutter pub get`.
+  /// 둘 다 성공하면 true. 명령은 기록 탭에도 남는다.
+  Future<bool> cleanProject() async {
+    final p = project;
+    if (p == null || running || cleaning) return false;
+    cleaning = true;
+    cleanResult = null;
+    missingCommand = null;
+    hint = null;
+    statuses = const [];
+    notifyListeners();
+    var ok = true;
+    for (final args in const [
+      ['flutter', 'clean'],
+      ['flutter', 'pub', 'get'],
+    ]) {
+      final r = await runner.run(args, workingDirectory: p.path);
+      if (!r.ok) {
+        ok = false;
+        if (r.exitCode == 127) missingCommand = args.first;
+        break;
+      }
+    }
+    cleaning = false;
+    cleanResult = ok;
+    notifyListeners();
+    return ok;
   }
 
   /// 프로젝트 폴더를 VS Code로 연다. 명령은 기록 탭에도 남는다.
