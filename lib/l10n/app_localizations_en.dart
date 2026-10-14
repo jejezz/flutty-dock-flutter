@@ -334,6 +334,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeProjectChange => 'Change';
 
   @override
+  String get homeProjectReload => 'Reload this project';
+
+  @override
   String get homeProjectDrop =>
       'Drop a Flutter project folder here, or press Open project';
 

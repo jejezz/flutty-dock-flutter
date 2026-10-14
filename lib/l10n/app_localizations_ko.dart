@@ -325,6 +325,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeProjectChange => '변경';
 
   @override
+  String get homeProjectReload => '이 프로젝트 다시 읽기';
+
+  @override
   String get homeProjectDrop => 'Flutter 프로젝트 폴더를 여기로 끌어다 놓거나 [프로젝트 열기]를 누르세요';
 
   @override

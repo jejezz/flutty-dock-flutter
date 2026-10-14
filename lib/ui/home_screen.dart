@@ -219,7 +219,18 @@ class _ProjectSection extends StatelessWidget {
                       ),
                       Column(
                         children: [
-                          TextButton(onPressed: onOpen, child: Text(l10n.homeProjectChange)),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextButton(onPressed: onOpen, child: Text(l10n.homeProjectChange)),
+                              IconButton(
+                                tooltip: l10n.homeProjectReload,
+                                visualDensity: VisualDensity.compact,
+                                icon: const Icon(Icons.refresh_rounded, size: 20),
+                                onPressed: () => controller.openProject(p.path),
+                              ),
+                            ],
+                          ),
                           TextButton(onPressed: () => _openInVsCode(context), child: Text(l10n.homeOpenVsCode)),
                         ],
                       ),
