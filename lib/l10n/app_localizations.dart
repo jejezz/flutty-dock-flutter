@@ -650,6 +650,12 @@ abstract class AppLocalizations {
   /// **'변경'**
   String get homeProjectChange;
 
+  /// No description provided for @homeProjectReload.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload this project'**
+  String get homeProjectReload;
+
   /// No description provided for @homeProjectDrop.
   ///
   /// In ko, this message translates to:
