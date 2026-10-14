@@ -652,8 +652,8 @@ abstract class AppLocalizations {
 
   /// No description provided for @homeProjectReload.
   ///
-  /// In en, this message translates to:
-  /// **'Reload this project'**
+  /// In ko, this message translates to:
+  /// **'이 프로젝트 다시 읽기'**
   String get homeProjectReload;
 
   /// No description provided for @homeProjectDrop.
@@ -781,6 +781,30 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'빌드 & 설치'**
   String get homeActionInstall;
+
+  /// No description provided for @homeActionClean.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리 후 패키지 다시 받기'**
+  String get homeActionClean;
+
+  /// No description provided for @homeCleanHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'flutter clean → flutter pub get. 이유 없이 빌드가 실패할 때 해 볼 만합니다.'**
+  String get homeCleanHelp;
+
+  /// No description provided for @homeCleanDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리했고 패키지를 다시 받았습니다. 이제 빌드해 보세요.'**
+  String get homeCleanDone;
+
+  /// No description provided for @homeCleanFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리에 실패했습니다. 기록 탭에서 출력을 확인하세요.'**
+  String get homeCleanFailed;
 
   /// No description provided for @homeActionRun.
   ///
