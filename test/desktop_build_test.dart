@@ -158,6 +158,11 @@ CMake Error at flutter/generated_plugins.cmake:23 (add_subdirectory):
 Error: Unable to generate build files''';
       expect(explainFailure(output), FailureHint.restartApp);
       expect(explainFailure('flutter/ephemeral/.plugin_symlinks/x/windows exists'), isNull);
+      // Linux 빌드의 같은 문장은 해당하지 않는다.
+      expect(
+        explainFailure('add_subdirectory given source "flutter/ephemeral/.plugin_symlinks/x/linux" which is not an existing directory.'),
+        isNull,
+      );
     });
   });
 

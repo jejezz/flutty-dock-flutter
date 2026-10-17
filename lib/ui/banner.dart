@@ -100,7 +100,11 @@ class NextStepBanner extends StatelessWidget {
                     child: Text(l10n.toolPathsOpen),
                   ),
                 ),
-              if (controller.hint == FailureHint.restartApp && blockers.isEmpty && controller.missingCommand == null)
+              // 다시 열기는 탐색기(`explorer.exe`)를 쓰므로 Windows에서만 보인다.
+              if (Platform.isWindows &&
+                  controller.hint == FailureHint.restartApp &&
+                  blockers.isEmpty &&
+                  controller.missingCommand == null)
                 Align(
                   alignment: Alignment.centerLeft,
                   child: FilledButton.tonal(

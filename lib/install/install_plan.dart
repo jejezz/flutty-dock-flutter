@@ -205,7 +205,8 @@ FailureHint? explainFailure(String output) {
   // 일부 환경에서 첫 빌드가 플러그인 링크(`.plugin_symlinks`)를 못 찾고 실패한다 — 앱을 다시 열면 된다.
   // CMake가 긴 줄을 접어 쓰므로 줄바꿈·들여쓰기를 공백 하나로 모아서 찾는다.
   final flat = o.replaceAll(RegExp(r'\s+'), ' ');
-  if (flat.contains('.plugin_symlinks') && flat.contains('not an existing directory')) {
+  // Windows 빌드의 `.plugin_symlinks/<플러그인>/windows`만 — Linux 빌드의 같은 문장은 해당하지 않는다.
+  if (RegExp(r'\.plugin_symlinks/[^/\s"]+/windows').hasMatch(flat) && flat.contains('not an existing directory')) {
     return FailureHint.restartApp;
   }
   if (o.contains('connection reset by peer') || o.contains('controlchannelconnectionerror')) return FailureHint.useUsb;
