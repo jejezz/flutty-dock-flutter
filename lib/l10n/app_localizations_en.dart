@@ -580,6 +580,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logClear => 'Clear log';
 
   @override
+  String get outputCopyAll => 'Copy all output';
+
+  @override
+  String get outputCopied => 'Output copied';
+
+  @override
+  String get outputViewer => 'Open in viewer';
+
+  @override
+  String get viewerPause => 'Pause updates (to select text)';
+
+  @override
+  String get viewerResume => 'Resume live updates';
+
+  @override
+  String viewerLines(Object count) {
+    return '$count lines';
+  }
+
+  @override
   String get logEmpty => 'No commands run yet';
 
   @override

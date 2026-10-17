@@ -1088,6 +1088,42 @@ abstract class AppLocalizations {
   /// **'기록 지우기'**
   String get logClear;
 
+  /// No description provided for @outputCopyAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'출력 전체 복사'**
+  String get outputCopyAll;
+
+  /// No description provided for @outputCopied.
+  ///
+  /// In ko, this message translates to:
+  /// **'출력을 복사했습니다'**
+  String get outputCopied;
+
+  /// No description provided for @outputViewer.
+  ///
+  /// In ko, this message translates to:
+  /// **'뷰어로 보기'**
+  String get outputViewer;
+
+  /// No description provided for @viewerPause.
+  ///
+  /// In ko, this message translates to:
+  /// **'갱신 멈추기 (텍스트 선택용)'**
+  String get viewerPause;
+
+  /// No description provided for @viewerResume.
+  ///
+  /// In ko, this message translates to:
+  /// **'실시간 갱신 다시 켜기'**
+  String get viewerResume;
+
+  /// No description provided for @viewerLines.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}줄'**
+  String viewerLines(Object count);
+
   /// No description provided for @logEmpty.
   ///
   /// In ko, this message translates to:

@@ -563,6 +563,26 @@ class AppLocalizationsKo extends AppLocalizations {
   String get logClear => '기록 지우기';
 
   @override
+  String get outputCopyAll => '출력 전체 복사';
+
+  @override
+  String get outputCopied => '출력을 복사했습니다';
+
+  @override
+  String get outputViewer => '뷰어로 보기';
+
+  @override
+  String get viewerPause => '갱신 멈추기 (텍스트 선택용)';
+
+  @override
+  String get viewerResume => '실시간 갱신 다시 켜기';
+
+  @override
+  String viewerLines(Object count) {
+    return '$count줄';
+  }
+
+  @override
   String get logEmpty => '아직 실행한 명령이 없습니다';
 
   @override
