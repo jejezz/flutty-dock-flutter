@@ -313,6 +313,8 @@
   "signingAndroid": "Android 릴리스 서명",
   "signingMacOnly": "iOS 서명 점검은 macOS에서만 합니다",
   "logClear": "기록 지우기",
+  "outputCopyAll": "출력 전체 복사",
+  "outputCopied": "출력을 복사했습니다",
   "logEmpty": "아직 실행한 명령이 없습니다",
   "logRunning": "실행 중",
   "logExit": "종료 코드 {code}",

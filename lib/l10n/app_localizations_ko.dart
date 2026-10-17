@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -56,8 +55,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get aboutTagline => 'Flutter 앱을 USB 실기기에 올리는 도킹형 도우미';
 
   @override
-  String get aboutDescription =>
-      '편집기 옆에 세워 두고 Flutter 프로젝트를 iPhone·Android 실기기에 debug/release로 빌드·설치합니다. 버튼마다 실제 실행되는 명령을 보여 주고, 서명 문제는 원인과 해결 단계로 안내합니다.';
+  String get aboutDescription => '편집기 옆에 세워 두고 Flutter 프로젝트를 iPhone·Android 실기기에 debug/release로 빌드·설치합니다. 버튼마다 실제 실행되는 명령을 보여 주고, 서명 문제는 원인과 해결 단계로 안내합니다.';
 
   @override
   String get homeEmptyTitle => 'Flutter 프로젝트 폴더를 끌어다 놓으세요';
@@ -112,19 +110,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get updateCheckFailedTitle => '업데이트를 확인하지 못했습니다';
 
   @override
-  String get updateErrorNetwork =>
-      '업데이트 서버에 연결하지 못했습니다. 인터넷 연결을 확인한 뒤 다시 시도해 주세요.';
+  String get updateErrorNetwork => '업데이트 서버에 연결하지 못했습니다. 인터넷 연결을 확인한 뒤 다시 시도해 주세요.';
 
   @override
-  String get updateErrorChecksum =>
-      '내려받은 파일이 올바르지 않아 설치하지 않았습니다. 잠시 뒤에 다시 시도해 주세요.';
+  String get updateErrorChecksum => '내려받은 파일이 올바르지 않아 설치하지 않았습니다. 잠시 뒤에 다시 시도해 주세요.';
 
   @override
   String get updateErrorInstall => '설치를 시작하지 못했습니다.';
 
   @override
-  String get updateErrorGeneric =>
-      '업데이트 서버에서 예상하지 못한 응답을 받았습니다. 잠시 뒤에 다시 시도해 주세요.';
+  String get updateErrorGeneric => '업데이트 서버에서 예상하지 못한 응답을 받았습니다. 잠시 뒤에 다시 시도해 주세요.';
 
   @override
   String get updateUpToDateTitle => '최신 버전입니다';
@@ -190,8 +185,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get secretsTitle => '릴리스 시크릿 등록';
 
   @override
-  String get secretsIntro =>
-      'macOS 릴리스 워크플로가 서명·공증에 쓰는 GitHub Actions 시크릿을 gh로 등록합니다. 값은 이 앱에 저장되지 않습니다.';
+  String get secretsIntro => 'macOS 릴리스 워크플로가 서명·공증에 쓰는 GitHub Actions 시크릿을 gh로 등록합니다. 값은 이 앱에 저장되지 않습니다.';
 
   @override
   String get secretsRepoLabel => '저장소 (owner/repo)';
@@ -282,26 +276,22 @@ class AppLocalizationsKo extends AppLocalizations {
   String get secretOverwriteBody => '이미 등록된 값을 새 값으로 바꿉니다. 되돌릴 수 없습니다.';
 
   @override
-  String get secretHelpP12 =>
-      '키체인 접근에서 \'Developer ID Application\' 인증서를 .p12로 내보낸 파일을 고르세요. 앱이 base64로 바꿔 등록합니다.';
+  String get secretHelpP12 => '키체인 접근에서 \'Developer ID Application\' 인증서를 .p12로 내보낸 파일을 고르세요. 앱이 base64로 바꿔 등록합니다.';
 
   @override
   String get secretHelpP12Password => '.p12를 내보낼 때 지정한 암호입니다.';
 
   @override
-  String get secretHelpKeychain =>
-      'CI가 빌드 중에만 쓰는 임시 키체인 암호입니다. 아무 값이나 괜찮아서 무작위로 만들어 드립니다.';
+  String get secretHelpKeychain => 'CI가 빌드 중에만 쓰는 임시 키체인 암호입니다. 아무 값이나 괜찮아서 무작위로 만들어 드립니다.';
 
   @override
   String get secretHelpAppleId => '공증(notarization)에 쓰는 Apple ID 이메일입니다.';
 
   @override
-  String get secretHelpApplePassword =>
-      '앱 암호(app-specific password)입니다. 계정 비밀번호가 아닙니다.';
+  String get secretHelpApplePassword => '앱 암호(app-specific password)입니다. 계정 비밀번호가 아닙니다.';
 
   @override
-  String get secretHelpTeamId =>
-      'developer.apple.com/account의 Membership details에 있는 10자리 Team ID입니다.';
+  String get secretHelpTeamId => 'developer.apple.com/account의 Membership details에 있는 10자리 Team ID입니다.';
 
   @override
   String get secretOpenAppleId => 'appleid.apple.com 열기';
@@ -348,8 +338,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeDevicesRefresh => '기기 새로 고침';
 
   @override
-  String get homeDevicesNone =>
-      'USB로 연결된 기기가 없습니다. 폰을 USB로 연결하고 잠금을 푼 뒤 새로 고치세요';
+  String get homeDevicesNone => 'USB로 연결된 기기가 없습니다. 폰을 USB로 연결하고 잠금을 푼 뒤 새로 고치세요';
 
   @override
   String get homeLinkUsb => 'USB';
@@ -370,8 +359,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeTeamLabel => 'Apple Team ID';
 
   @override
-  String get homeTeamHelp =>
-      '프로젝트를 고치지 않고 빌드 인자로만 넘깁니다. developer.apple.com/account → Membership에서 확인하세요';
+  String get homeTeamHelp => '프로젝트를 고치지 않고 빌드 인자로만 넘깁니다. developer.apple.com/account → Membership에서 확인하세요';
 
   @override
   String get homeStepsTitle => '실행할 명령';
@@ -398,8 +386,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeActionClean => '정리 후 패키지 다시 받기';
 
   @override
-  String get homeCleanHelp =>
-      'flutter clean → flutter pub get. 이유 없이 빌드가 실패할 때 해 볼 만합니다.';
+  String get homeCleanHelp => 'flutter clean → flutter pub get. 이유 없이 빌드가 실패할 때 해 볼 만합니다.';
 
   @override
   String get homeCleanDone => '정리했고 패키지를 다시 받았습니다. 이제 빌드해 보세요.';
@@ -435,23 +422,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get blockerNoDevice => '기기를 연결하고 선택하세요';
 
   @override
-  String get blockerPlatformMissing =>
-      '이 프로젝트에는 선택한 기기의 플랫폼 폴더(ios/ 또는 android/)가 없습니다';
+  String get blockerPlatformMissing => '이 프로젝트에는 선택한 기기의 플랫폼 폴더(ios/ 또는 android/)가 없습니다';
 
   @override
   String get blockerIosNeedsMac => 'iPhone에 설치하려면 macOS와 Xcode가 필요합니다';
 
   @override
-  String get blockerWireless =>
-      '무선으로 잡힌 기기입니다. USB 케이블로 연결하세요 (무선에서는 설치가 끊깁니다)';
+  String get blockerWireless => '무선으로 잡힌 기기입니다. USB 케이블로 연결하세요 (무선에서는 설치가 끊깁니다)';
 
   @override
-  String get blockerDeveloperModeOff =>
-      'iPhone의 개발자 모드가 꺼져 있습니다. 설정 → 개인정보 보호 및 보안 → 개발자 모드를 켜고 재시동하세요';
+  String get blockerDeveloperModeOff => 'iPhone의 개발자 모드가 꺼져 있습니다. 설정 → 개인정보 보호 및 보안 → 개발자 모드를 켜고 재시동하세요';
 
   @override
-  String get blockerAndroidUnauthorized =>
-      '폰 화면의 \'USB 디버깅 허용\' 창에서 이 컴퓨터를 승인하세요';
+  String get blockerAndroidUnauthorized => '폰 화면의 \'USB 디버깅 허용\' 창에서 이 컴퓨터를 승인하세요';
 
   @override
   String get blockerNeedsTeamId => 'iOS 서명에 쓸 Apple Team ID를 입력하세요';
@@ -463,19 +446,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hintUnlockDevice => 'iPhone이 잠겨 있습니다. 잠금을 풀고 다시 시도하세요';
 
   @override
-  String get hintDeveloperMode =>
-      'iPhone의 개발자 모드를 켜세요: 설정 → 개인정보 보호 및 보안 → 개발자 모드';
+  String get hintDeveloperMode => 'iPhone의 개발자 모드를 켜세요: 설정 → 개인정보 보호 및 보안 → 개발자 모드';
 
   @override
-  String get hintSigning =>
-      '서명 프로파일 문제입니다. Team ID가 맞는지, Xcode에 Apple 계정이 로그인되어 있는지 확인하세요';
+  String get hintSigning => '서명 프로파일 문제입니다. Team ID가 맞는지, Xcode에 Apple 계정이 로그인되어 있는지 확인하세요';
 
   @override
   String get hintTrustComputer => 'iPhone에서 \'이 컴퓨터를 신뢰\'를 누르세요';
 
   @override
-  String get hintNoAdb =>
-      'adb를 찾지 못했습니다. Android SDK platform-tools를 설치하고 PATH에 추가하세요';
+  String get hintNoAdb => 'adb를 찾지 못했습니다. Android SDK platform-tools를 설치하고 PATH에 추가하세요';
 
   @override
   String hintMissingCommand(String command) {
@@ -524,8 +504,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get signingTeams => '서명 Team';
 
   @override
-  String get signingTeamsHelp =>
-      '키체인에 개인 키가 있는 인증서의 Team입니다. 누르면 이 Team으로 서명합니다';
+  String get signingTeamsHelp => '키체인에 개인 키가 있는 인증서의 Team입니다. 누르면 이 Team으로 서명합니다';
 
   @override
   String get signingNoTeams => '사용할 수 있는 개발 인증서가 없습니다';
@@ -561,6 +540,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get logClear => '기록 지우기';
+
+  @override
+  String get outputCopyAll => '출력 전체 복사';
+
+  @override
+  String get outputCopied => '출력을 복사했습니다';
 
   @override
   String get logEmpty => '아직 실행한 명령이 없습니다';
@@ -684,8 +669,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get checkProfileShort => '무료 계정의 7일 프로파일입니다. 만료되면 다시 빌드해서 설치하세요';
 
   @override
-  String get checkAndroidSigningDebugKey =>
-      '키스토어 설정 없음 — debug 키로 서명 (개인 기기 설치용으로 충분)';
+  String get checkAndroidSigningDebugKey => '키스토어 설정 없음 — debug 키로 서명 (개인 기기 설치용으로 충분)';
 
   @override
   String get checkAndroidSigningKeystore => '릴리스 키스토어로 서명';
@@ -694,48 +678,37 @@ class AppLocalizationsKo extends AppLocalizations {
   String get checkAndroidSigningMissing => 'key.properties가 가리키는 키스토어 파일이 없음';
 
   @override
-  String get stepsWireless =>
-      '1. iPhone을 USB 케이블로 Mac에 연결합니다\n2. 잠금을 풀고 \'이 컴퓨터를 신뢰\'를 누릅니다\n3. 기기 새로 고침을 누르고 USB 표시가 뜨는지 확인합니다';
+  String get stepsWireless => '1. iPhone을 USB 케이블로 Mac에 연결합니다\n2. 잠금을 풀고 \'이 컴퓨터를 신뢰\'를 누릅니다\n3. 기기 새로 고침을 누르고 USB 표시가 뜨는지 확인합니다';
 
   @override
-  String get stepsDeveloperMode =>
-      '1. iPhone: 설정 → 개인정보 보호 및 보안 → 개발자 모드\n2. 켜고 재시동합니다\n3. 재시동 후 나오는 확인 창에서 \'켜기\'를 누릅니다';
+  String get stepsDeveloperMode => '1. iPhone: 설정 → 개인정보 보호 및 보안 → 개발자 모드\n2. 켜고 재시동합니다\n3. 재시동 후 나오는 확인 창에서 \'켜기\'를 누릅니다';
 
   @override
-  String get stepsAndroidAuth =>
-      '1. 폰을 USB로 연결하고 잠금을 풉니다\n2. \'USB 디버깅 허용\' 창에서 이 컴퓨터를 허용합니다\n3. 창이 안 뜨면 개발자 옵션에서 USB 디버깅을 켭니다';
+  String get stepsAndroidAuth => '1. 폰을 USB로 연결하고 잠금을 풉니다\n2. \'USB 디버깅 허용\' 창에서 이 컴퓨터를 허용합니다\n3. 창이 안 뜨면 개발자 옵션에서 USB 디버깅을 켭니다';
 
   @override
-  String get stepsTeamId =>
-      '1. developer.apple.com/account → Membership details에서 Team ID(10자)를 확인합니다\n2. 빌드 영역의 Apple Team ID에 입력합니다\n3. 서명 탭에서 인증서의 Team을 눌러 고를 수도 있습니다';
+  String get stepsTeamId => '1. developer.apple.com/account → Membership details에서 Team ID(10자)를 확인합니다\n2. 빌드 영역의 Apple Team ID에 입력합니다\n3. 서명 탭에서 인증서의 Team을 눌러 고를 수도 있습니다';
 
   @override
-  String get stepsCertificate =>
-      '1. Xcode → Settings → Accounts에서 Apple ID로 로그인합니다\n2. Manage Certificates → + → Apple Development을 추가합니다\n3. 다시 점검을 누릅니다';
+  String get stepsCertificate => '1. Xcode → Settings → Accounts에서 Apple ID로 로그인합니다\n2. Manage Certificates → + → Apple Development을 추가합니다\n3. 다시 점검을 누릅니다';
 
   @override
-  String get stepsFlutterMissing =>
-      '1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter/bin을 PATH에 추가합니다 (~/.zshrc)\n3. 앱을 다시 열고 점검을 누릅니다';
+  String get stepsFlutterMissing => '1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter/bin을 PATH에 추가합니다 (~/.zshrc)\n3. 앱을 다시 열고 점검을 누릅니다';
 
   @override
-  String get stepsFlutterMissingWindows =>
-      '1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter\\bin 폴더를 PATH에 추가하거나, 위의 \'도구 경로 지정\'에서 flutter.bat을 직접 고릅니다\n3. 다시 점검을 누릅니다';
+  String get stepsFlutterMissingWindows => '1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter\\bin 폴더를 PATH에 추가하거나, 위의 \'도구 경로 지정\'에서 flutter.bat을 직접 고릅니다\n3. 다시 점검을 누릅니다';
 
   @override
-  String get stepsXcodeMissing =>
-      '1. App Store에서 Xcode를 설치합니다\n2. 터미널에서 sudo xcode-select -s /Applications/Xcode.app 를 실행합니다\n3. Xcode를 한 번 열어 라이선스에 동의합니다';
+  String get stepsXcodeMissing => '1. App Store에서 Xcode를 설치합니다\n2. 터미널에서 sudo xcode-select -s /Applications/Xcode.app 를 실행합니다\n3. Xcode를 한 번 열어 라이선스에 동의합니다';
 
   @override
-  String get stepsAdbMissing =>
-      '1. Android SDK platform-tools를 설치합니다 (Android Studio SDK Manager)\n2. platform-tools 폴더를 PATH에 추가합니다\n3. 다시 점검을 누릅니다';
+  String get stepsAdbMissing => '1. Android SDK platform-tools를 설치합니다 (Android Studio SDK Manager)\n2. platform-tools 폴더를 PATH에 추가합니다\n3. 다시 점검을 누릅니다';
 
   @override
-  String get stepsAndroidKeystore =>
-      '1. android/key.properties의 storeFile 경로를 확인합니다\n2. 파일이 없으면 키스토어를 다시 만들거나 경로를 고칩니다\n3. 개인 설치만 한다면 key.properties를 쓰지 않아도 debug 키로 서명됩니다';
+  String get stepsAndroidKeystore => '1. android/key.properties의 storeFile 경로를 확인합니다\n2. 파일이 없으면 키스토어를 다시 만들거나 경로를 고칩니다\n3. 개인 설치만 한다면 key.properties를 쓰지 않아도 debug 키로 서명됩니다';
 
   @override
-  String get stepsCertExpiry =>
-      '1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다';
+  String get stepsCertExpiry => '1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다';
 
   @override
   String get homeOpenVsCode => 'VS Code로 열기';
@@ -753,8 +726,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get secretFileTitle => '파일에서 한 번에 등록';
 
   @override
-  String get secretFileHelp =>
-      'NAME=값 형식(.env) 파일의 모든 항목을 gh secret set -f로 등록합니다. 이 앱은 값을 읽어 두지 않고 이름만 보여 줍니다. 파일은 gh가 직접 읽습니다.';
+  String get secretFileHelp => 'NAME=값 형식(.env) 파일의 모든 항목을 gh secret set -f로 등록합니다. 이 앱은 값을 읽어 두지 않고 이름만 보여 줍니다. 파일은 gh가 직접 읽습니다.';
 
   @override
   String get secretFileEmpty => 'NAME=값 형식의 항목이 없습니다';
@@ -792,8 +764,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get toolPathsTitle => '도구 경로';
 
   @override
-  String get toolPathsHelp =>
-      'PATH에서 찾지 못하는 도구는 직접 지정할 수 있습니다. 한 번 지정하면 저장되고 다음 실행에도 쓰입니다. 폴더가 아니라 실행 파일을 고르세요.';
+  String get toolPathsHelp => 'PATH에서 찾지 못하는 도구는 직접 지정할 수 있습니다. 한 번 지정하면 저장되고 다음 실행에도 쓰입니다. 폴더가 아니라 실행 파일을 고르세요.';
 
   @override
   String get toolPathNotFound => '찾지 못함';
@@ -817,8 +788,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeDevicesCauses => '기기가 안 보이는 이유일 수 있는 것';
 
   @override
-  String get stepsNoDevice =>
-      '1. USB 케이블로 폰을 연결합니다 (충전 전용 케이블은 안 됩니다)\n2. 잠금을 풀고, iPhone은 \'이 컴퓨터를 신뢰\', Android는 \'USB 디버깅 허용\'을 누릅니다\n3. 위의 새로 고침을 누릅니다';
+  String get stepsNoDevice => '1. USB 케이블로 폰을 연결합니다 (충전 전용 케이블은 안 됩니다)\n2. 잠금을 풀고, iPhone은 \'이 컴퓨터를 신뢰\', Android는 \'USB 디버깅 허용\'을 누릅니다\n3. 위의 새로 고침을 누릅니다';
 
   @override
   String get homeThisMac => '이 Mac';
@@ -839,14 +809,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hintCocoapods => 'CocoaPods가 없어 macOS 앱을 빌드하지 못했습니다';
 
   @override
-  String get hintVisualStudio =>
-      'Visual Studio의 C++ 데스크톱 개발 구성 요소가 없어 Windows 앱을 빌드하지 못했습니다';
+  String get hintVisualStudio => 'Visual Studio의 C++ 데스크톱 개발 구성 요소가 없어 Windows 앱을 빌드하지 못했습니다';
 
   @override
-  String get stepsCocoapods =>
-      '1. 터미널에서 brew install cocoapods 를 실행합니다\n2. 다시 빌드합니다';
+  String get stepsCocoapods => '1. 터미널에서 brew install cocoapods 를 실행합니다\n2. 다시 빌드합니다';
 
   @override
-  String get stepsVisualStudio =>
-      '1. Visual Studio 2022(Community 가능)를 설치합니다\n2. 설치 관리자에서 \'C++를 사용한 데스크톱 개발\'을 선택합니다\n3. 다시 빌드합니다';
+  String get stepsVisualStudio => '1. Visual Studio 2022(Community 가능)를 설치합니다\n2. 설치 관리자에서 \'C++를 사용한 데스크톱 개발\'을 선택합니다\n3. 다시 빌드합니다';
 }

@@ -4,6 +4,7 @@ import '../core/command_log.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import 'command_text.dart';
+import 'copy_output_button.dart';
 
 /// 기록 탭: 지금까지 실행한 모든 명령과 출력 (최신이 위).
 class LogTab extends StatelessWidget {
@@ -55,7 +56,12 @@ class LogTab extends StatelessWidget {
                   childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                   expandedCrossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CommandText(e.commandLine),
+                    Row(
+                      children: [
+                        Expanded(child: CommandText(e.commandLine)),
+                        CopyOutputButton(text: () => '\$ ${e.commandLine}\n${e.output.trimRight()}'),
+                      ],
+                    ),
                     const SizedBox(height: AppSpacing.sm),
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxHeight: 220),
