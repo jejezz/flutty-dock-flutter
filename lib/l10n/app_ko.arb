@@ -315,6 +315,11 @@
   "logClear": "기록 지우기",
   "outputCopyAll": "출력 전체 복사",
   "outputCopied": "출력을 복사했습니다",
+  "outputViewer": "뷰어로 보기",
+  "viewerPause": "갱신 멈추기 (텍스트 선택용)",
+  "viewerResume": "실시간 갱신 다시 켜기",
+  "viewerLines": "{count}줄",
+  
   "logEmpty": "아직 실행한 명령이 없습니다",
   "logRunning": "실행 중",
   "logExit": "종료 코드 {code}",

@@ -20,6 +20,7 @@ import 'copy_output_button.dart';
 import 'devices_tab.dart';
 import 'doctor_tab.dart';
 import 'log_tab.dart';
+import 'output_viewer.dart';
 import 'signing_tab.dart';
 import 'widgets.dart';
 import '../window/focus_tint.dart';
@@ -451,6 +452,13 @@ class _OutputSection extends StatelessWidget {
             Row(
               children: [
                 Expanded(child: SectionTitle(l10n.homeOutputTitle)),
+                IconButton(
+                  tooltip: l10n.outputViewer,
+                  visualDensity: VisualDensity.compact,
+                  iconSize: 16,
+                  icon: const Icon(Icons.open_in_full_rounded),
+                  onPressed: () => OutputViewerScreen.open(context, log, last),
+                ),
                 CopyOutputButton(text: () => '\$ ${last.commandLine}\n${last.output.trimRight()}'),
               ],
             ),
