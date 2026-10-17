@@ -835,6 +835,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hintVisualStudio => 'Visual Studio\'s \'Desktop development with C++\' workload is missing, so the Windows app couldn\'t be built';
 
   @override
+  String get hintRestartApp => 'The build failed because the build environment wasn\'t ready (plugin links not found). Closing and reopening the app fixes it';
+
+  @override
+  String get restartAppButton => 'Close and reopen';
+
+  @override
   String get stepsCocoapods => '1. Run brew install cocoapods in a terminal\n2. Build again';
 
   @override

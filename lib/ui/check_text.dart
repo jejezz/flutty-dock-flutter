@@ -94,6 +94,7 @@ String failureHintText(AppLocalizations l, FailureHint h) => switch (h) {
   FailureHint.noAdb => l.hintNoAdb,
   FailureHint.cocoapods => l.hintCocoapods,
   FailureHint.visualStudio => l.hintVisualStudio,
+  FailureHint.restartApp => l.hintRestartApp,
 };
 
 String? failureHintSteps(AppLocalizations l, FailureHint h) => switch (h) {

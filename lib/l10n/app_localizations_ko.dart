@@ -835,6 +835,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hintVisualStudio => 'Visual Studio의 C++ 데스크톱 개발 구성 요소가 없어 Windows 앱을 빌드하지 못했습니다';
 
   @override
+  String get hintRestartApp => '빌드 환경이 아직 준비되지 않아 실패했습니다 (플러그인 링크를 찾지 못함). 앱을 종료하고 다시 실행하면 해결됩니다';
+
+  @override
+  String get restartAppButton => '종료 후 다시 실행';
+
+  @override
   String get stepsCocoapods => '1. 터미널에서 brew install cocoapods 를 실행합니다\n2. 다시 빌드합니다';
 
   @override

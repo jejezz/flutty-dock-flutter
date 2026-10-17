@@ -1583,6 +1583,18 @@ abstract class AppLocalizations {
   /// **'Visual Studio의 C++ 데스크톱 개발 구성 요소가 없어 Windows 앱을 빌드하지 못했습니다'**
   String get hintVisualStudio;
 
+  /// No description provided for @hintRestartApp.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 환경이 아직 준비되지 않아 실패했습니다 (플러그인 링크를 찾지 못함). 앱을 종료하고 다시 실행하면 해결됩니다'**
+  String get hintRestartApp;
+
+  /// No description provided for @restartAppButton.
+  ///
+  /// In ko, this message translates to:
+  /// **'종료 후 다시 실행'**
+  String get restartAppButton;
+
   /// No description provided for @stepsCocoapods.
   ///
   /// In ko, this message translates to:

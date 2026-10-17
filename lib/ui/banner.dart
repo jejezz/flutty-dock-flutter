@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
+import '../core/elevation.dart';
 import '../doctor/checks.dart';
 import '../install/install_controller.dart';
 import '../install/install_plan.dart';
@@ -95,6 +98,21 @@ class NextStepBanner extends StatelessWidget {
                   child: TextButton(
                     onPressed: () => showToolPathsDialog(context, controller),
                     child: Text(l10n.toolPathsOpen),
+                  ),
+                ),
+              // 다시 열기는 탐색기(`explorer.exe`)를 쓰므로 Windows에서만 보인다.
+              if (Platform.isWindows &&
+                  controller.hint == FailureHint.restartApp &&
+                  blockers.isEmpty &&
+                  controller.missingCommand == null)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: FilledButton.tonal(
+                    onPressed: () async {
+                      await relaunchWithoutElevation();
+                      exit(0);
+                    },
+                    child: Text(l10n.restartAppButton),
                   ),
                 ),
               if (steps != null)
