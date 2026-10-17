@@ -538,6 +538,8 @@
   "homePlatformWindows": "Windows",
   "hintCocoapods": "CocoaPods is missing, so the macOS app couldn't be built",
   "hintVisualStudio": "Visual Studio's 'Desktop development with C++' workload is missing, so the Windows app couldn't be built",
+  "hintRestartApp": "The build failed because the build environment wasn't ready (plugin links not found). Closing and reopening the app fixes it",
+  "restartAppButton": "Close and reopen",
   "stepsCocoapods": "1. Run brew install cocoapods in a terminal\n2. Build again",
   "stepsVisualStudio": "1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick 'Desktop development with C++'\n3. Build again"
 }
