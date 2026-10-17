@@ -16,6 +16,7 @@ import 'about/extra_licenses.dart';
 import 'app_identity.dart';
 import 'core/command_log.dart';
 import 'core/command_runner.dart';
+import 'core/elevation.dart';
 import 'core/window_bounds.dart';
 import 'devices/device_service.dart';
 import 'doctor/diagnostics.dart';
@@ -102,6 +103,29 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     _syncWindowBrightness();
     widget.updates?.startAutomaticCheck(_navigatorKey);
     _controller.init();
+    _warnIfElevated();
+  }
+
+  /// 관리자 권한으로 실행됐으면 알리고 종료한다 — 상승된 권한에서는 `flutter` 빌드(CMake)가
+  /// 플러그인 링크를 못 찾고 실패한다. 일반 권한으로 다시 열 수 있으면 다시 연다.
+  Future<void> _warnIfElevated() async {
+    if (!Platform.isWindows || !await isRunningElevated()) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final context = _navigatorKey.currentContext;
+      if (context == null || !context.mounted) return;
+      final l10n = AppLocalizations.of(context);
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.elevatedTitle),
+          content: Text(l10n.elevatedBody),
+          actions: [FilledButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.elevatedQuit))],
+        ),
+      );
+      await relaunchWithoutElevation();
+      exit(0);
+    });
   }
 
   @override
