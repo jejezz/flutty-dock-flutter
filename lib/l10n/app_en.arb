@@ -296,6 +296,8 @@
   "signingAndroid": "Android release signing",
   "signingMacOnly": "iOS signing checks run on macOS only",
   "logClear": "Clear log",
+  "outputCopyAll": "Copy all output",
+  "outputCopied": "Output copied",
   "logEmpty": "No commands run yet",
   "logRunning": "Running",
   "logExit": "Exit code {code}",

@@ -16,6 +16,7 @@ import '../theme/app_theme.dart';
 import 'banner.dart';
 import 'command_text.dart';
 import 'check_text.dart';
+import 'copy_output_button.dart';
 import 'devices_tab.dart';
 import 'doctor_tab.dart';
 import 'log_tab.dart';
@@ -447,7 +448,12 @@ class _OutputSection extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SectionTitle(l10n.homeOutputTitle),
+            Row(
+              children: [
+                Expanded(child: SectionTitle(l10n.homeOutputTitle)),
+                CopyOutputButton(text: () => '\$ ${last.commandLine}\n${last.output.trimRight()}'),
+              ],
+            ),
             Container(
               width: double.infinity,
               constraints: const BoxConstraints(maxHeight: 260),

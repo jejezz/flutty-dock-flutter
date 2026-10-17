@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -53,12 +52,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSystemShort => 'System';
 
   @override
-  String get aboutTagline =>
-      'A docked helper for putting Flutter apps on real devices over USB';
+  String get aboutTagline => 'A docked helper for putting Flutter apps on real devices over USB';
 
   @override
-  String get aboutDescription =>
-      'Dock it beside your editor to build and install a Flutter project on an iPhone or Android phone in debug or release. Every button shows the command it runs, and signing problems come with the cause and the steps to fix them.';
+  String get aboutDescription => 'Dock it beside your editor to build and install a Flutter project on an iPhone or Android phone in debug or release. Every button shows the command it runs, and signing problems come with the cause and the steps to fix them.';
 
   @override
   String get homeEmptyTitle => 'Drop a Flutter project folder to get started';
@@ -113,19 +110,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateCheckFailedTitle => 'Couldn\'t check for updates';
 
   @override
-  String get updateErrorNetwork =>
-      'Couldn\'t reach the update server. Check your internet connection and try again.';
+  String get updateErrorNetwork => 'Couldn\'t reach the update server. Check your internet connection and try again.';
 
   @override
-  String get updateErrorChecksum =>
-      'The downloaded file didn\'t pass verification, so it was not installed. Please try again later.';
+  String get updateErrorChecksum => 'The downloaded file didn\'t pass verification, so it was not installed. Please try again later.';
 
   @override
   String get updateErrorInstall => 'Couldn\'t start the installation.';
 
   @override
-  String get updateErrorGeneric =>
-      'The update server sent an unexpected response. Please try again later.';
+  String get updateErrorGeneric => 'The update server sent an unexpected response. Please try again later.';
 
   @override
   String get updateUpToDateTitle => 'You\'re up to date';
@@ -182,8 +176,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateBusyTitle => 'Can\'t update right now';
 
   @override
-  String get updateBusyBody =>
-      'A task is in progress. Please try again when it has finished.';
+  String get updateBusyBody => 'A task is in progress. Please try again when it has finished.';
 
   @override
   String get secretsTooltip => 'Release secrets';
@@ -192,8 +185,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get secretsTitle => 'Register release secrets';
 
   @override
-  String get secretsIntro =>
-      'Registers the GitHub Actions secrets that the macOS release workflow uses for signing and notarization, through gh. Values are not stored in this app.';
+  String get secretsIntro => 'Registers the GitHub Actions secrets that the macOS release workflow uses for signing and notarization, through gh. Values are not stored in this app.';
 
   @override
   String get secretsRepoLabel => 'Repository (owner/repo)';
@@ -208,20 +200,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get secretsRepoInvalid => 'Use the owner/repo form';
 
   @override
-  String get secretsFolderNoRemote =>
-      'No GitHub remote (origin) found in that folder';
+  String get secretsFolderNoRemote => 'No GitHub remote (origin) found in that folder';
 
   @override
-  String get secretsGhMissing =>
-      'GitHub CLI (gh) isn\'t installed. Install it in a terminal with:';
+  String get secretsGhMissing => 'GitHub CLI (gh) isn\'t installed. Install it in a terminal with:';
 
   @override
-  String get secretsGhNotLoggedIn =>
-      'gh isn\'t signed in. Run this in a terminal:';
+  String get secretsGhNotLoggedIn => 'gh isn\'t signed in. Run this in a terminal:';
 
   @override
-  String get secretsListFailed =>
-      'Couldn\'t read the registration status. Check the repository name and your access';
+  String get secretsListFailed => 'Couldn\'t read the registration status. Check the repository name and your access';
 
   @override
   String secretStatusRegistered(String date) {
@@ -258,8 +246,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get secretGenerated => 'A random value was generated (not shown)';
 
   @override
-  String get secretViaStdin =>
-      'The value is passed on standard input, not as a command argument, so it never appears in the command log.';
+  String get secretViaStdin => 'The value is passed on standard input, not as a command argument, so it never appears in the command log.';
 
   @override
   String get secretIssueEmpty => 'Enter a value';
@@ -286,31 +273,25 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get secretOverwriteBody =>
-      'This replaces the registered value with the new one. It can\'t be undone.';
+  String get secretOverwriteBody => 'This replaces the registered value with the new one. It can\'t be undone.';
 
   @override
-  String get secretHelpP12 =>
-      'Choose the \'Developer ID Application\' certificate exported as .p12 from Keychain Access. The app registers it as base64.';
+  String get secretHelpP12 => 'Choose the \'Developer ID Application\' certificate exported as .p12 from Keychain Access. The app registers it as base64.';
 
   @override
-  String get secretHelpP12Password =>
-      'The password you set when exporting the .p12.';
+  String get secretHelpP12Password => 'The password you set when exporting the .p12.';
 
   @override
-  String get secretHelpKeychain =>
-      'A temporary keychain password CI uses only during the build. Any value works, so it can be generated for you.';
+  String get secretHelpKeychain => 'A temporary keychain password CI uses only during the build. Any value works, so it can be generated for you.';
 
   @override
   String get secretHelpAppleId => 'The Apple ID email used for notarization.';
 
   @override
-  String get secretHelpApplePassword =>
-      'An app-specific password, not your account password.';
+  String get secretHelpApplePassword => 'An app-specific password, not your account password.';
 
   @override
-  String get secretHelpTeamId =>
-      'The 10-character Team ID from Membership details at developer.apple.com/account.';
+  String get secretHelpTeamId => 'The 10-character Team ID from Membership details at developer.apple.com/account.';
 
   @override
   String get secretOpenAppleId => 'Open appleid.apple.com';
@@ -337,8 +318,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeProjectReload => 'Reload this project';
 
   @override
-  String get homeProjectDrop =>
-      'Drop a Flutter project folder here, or press Open project';
+  String get homeProjectDrop => 'Drop a Flutter project folder here, or press Open project';
 
   @override
   String homeProjectNotFlutter(String path) {
@@ -358,8 +338,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeDevicesRefresh => 'Refresh devices';
 
   @override
-  String get homeDevicesNone =>
-      'No device is connected over USB. Plug in your phone, unlock it, then refresh';
+  String get homeDevicesNone => 'No device is connected over USB. Plug in your phone, unlock it, then refresh';
 
   @override
   String get homeLinkUsb => 'USB';
@@ -380,8 +359,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeTeamLabel => 'Apple Team ID';
 
   @override
-  String get homeTeamHelp =>
-      'Passed only as a build argument — the project is not modified. Find it at developer.apple.com/account → Membership';
+  String get homeTeamHelp => 'Passed only as a build argument — the project is not modified. Find it at developer.apple.com/account → Membership';
 
   @override
   String get homeStepsTitle => 'Commands to run';
@@ -408,16 +386,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeActionClean => 'Clean & get packages';
 
   @override
-  String get homeCleanHelp =>
-      'flutter clean → flutter pub get. Worth trying when a build fails for no clear reason.';
+  String get homeCleanHelp => 'flutter clean → flutter pub get. Worth trying when a build fails for no clear reason.';
 
   @override
-  String get homeCleanDone =>
-      'Cleaned and packages restored. Try building again.';
+  String get homeCleanDone => 'Cleaned and packages restored. Try building again.';
 
   @override
-  String get homeCleanFailed =>
-      'Clean failed. Check the output in the Log tab.';
+  String get homeCleanFailed => 'Clean failed. Check the output in the Log tab.';
 
   @override
   String get homeActionRun => 'Run debug';
@@ -447,51 +422,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get blockerNoDevice => 'Connect and select a device';
 
   @override
-  String get blockerPlatformMissing =>
-      'This project has no folder (ios/ or android/) for the selected device\'s platform';
+  String get blockerPlatformMissing => 'This project has no folder (ios/ or android/) for the selected device\'s platform';
 
   @override
-  String get blockerIosNeedsMac =>
-      'Installing on an iPhone needs macOS and Xcode';
+  String get blockerIosNeedsMac => 'Installing on an iPhone needs macOS and Xcode';
 
   @override
-  String get blockerWireless =>
-      'This device is connected wirelessly. Use a USB cable — installs drop over wireless';
+  String get blockerWireless => 'This device is connected wirelessly. Use a USB cable — installs drop over wireless';
 
   @override
-  String get blockerDeveloperModeOff =>
-      'Developer Mode is off on the iPhone. Turn it on in Settings → Privacy & Security → Developer Mode, then restart';
+  String get blockerDeveloperModeOff => 'Developer Mode is off on the iPhone. Turn it on in Settings → Privacy & Security → Developer Mode, then restart';
 
   @override
-  String get blockerAndroidUnauthorized =>
-      'Approve this computer in the \'Allow USB debugging\' prompt on the phone';
+  String get blockerAndroidUnauthorized => 'Approve this computer in the \'Allow USB debugging\' prompt on the phone';
 
   @override
-  String get blockerNeedsTeamId =>
-      'Enter the Apple Team ID to sign iOS builds with';
+  String get blockerNeedsTeamId => 'Enter the Apple Team ID to sign iOS builds with';
 
   @override
-  String get hintUseUsb =>
-      'The connection dropped. Make sure the phone is on a USB cable, not wireless';
+  String get hintUseUsb => 'The connection dropped. Make sure the phone is on a USB cable, not wireless';
 
   @override
-  String get hintUnlockDevice =>
-      'The iPhone is locked. Unlock it and try again';
+  String get hintUnlockDevice => 'The iPhone is locked. Unlock it and try again';
 
   @override
-  String get hintDeveloperMode =>
-      'Turn on Developer Mode on the iPhone: Settings → Privacy & Security → Developer Mode';
+  String get hintDeveloperMode => 'Turn on Developer Mode on the iPhone: Settings → Privacy & Security → Developer Mode';
 
   @override
-  String get hintSigning =>
-      'A signing profile problem. Check the Team ID and that Xcode is signed in to your Apple account';
+  String get hintSigning => 'A signing profile problem. Check the Team ID and that Xcode is signed in to your Apple account';
 
   @override
   String get hintTrustComputer => 'Tap \'Trust This Computer\' on the iPhone';
 
   @override
-  String get hintNoAdb =>
-      'adb wasn\'t found. Install the Android SDK platform-tools and add it to PATH';
+  String get hintNoAdb => 'adb wasn\'t found. Install the Android SDK platform-tools and add it to PATH';
 
   @override
   String hintMissingCommand(String command) {
@@ -540,8 +504,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signingTeams => 'Signing team';
 
   @override
-  String get signingTeamsHelp =>
-      'Teams of certificates whose private key is in your keychain. Tap one to sign with it';
+  String get signingTeamsHelp => 'Teams of certificates whose private key is in your keychain. Tap one to sign with it';
 
   @override
   String get signingNoTeams => 'No usable development certificate';
@@ -553,8 +516,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signingProfiles => 'Profiles for this project';
 
   @override
-  String get signingNoProfiles =>
-      'None yet — Xcode creates one on the first build';
+  String get signingNoProfiles => 'None yet — Xcode creates one on the first build';
 
   @override
   String get signingShortLived => '7-day profile';
@@ -578,6 +540,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logClear => 'Clear log';
+
+  @override
+  String get outputCopyAll => 'Copy all output';
+
+  @override
+  String get outputCopied => 'Output copied';
 
   @override
   String get logEmpty => 'No commands run yet';
@@ -698,63 +666,49 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get checkProfileShort =>
-      'A 7-day profile from a free account. When it expires, build and install again';
+  String get checkProfileShort => 'A 7-day profile from a free account. When it expires, build and install again';
 
   @override
-  String get checkAndroidSigningDebugKey =>
-      'No keystore configured — signed with the debug key (fine for installing on your own device)';
+  String get checkAndroidSigningDebugKey => 'No keystore configured — signed with the debug key (fine for installing on your own device)';
 
   @override
   String get checkAndroidSigningKeystore => 'Signed with the release keystore';
 
   @override
-  String get checkAndroidSigningMissing =>
-      'The keystore file key.properties points to is missing';
+  String get checkAndroidSigningMissing => 'The keystore file key.properties points to is missing';
 
   @override
-  String get stepsWireless =>
-      '1. Connect the iPhone to the Mac with a USB cable\n2. Unlock it and tap \'Trust This Computer\'\n3. Press Refresh devices and check the USB badge appears';
+  String get stepsWireless => '1. Connect the iPhone to the Mac with a USB cable\n2. Unlock it and tap \'Trust This Computer\'\n3. Press Refresh devices and check the USB badge appears';
 
   @override
-  String get stepsDeveloperMode =>
-      '1. On the iPhone: Settings → Privacy & Security → Developer Mode\n2. Turn it on and restart\n3. After the restart, tap \'Turn On\' in the confirmation prompt';
+  String get stepsDeveloperMode => '1. On the iPhone: Settings → Privacy & Security → Developer Mode\n2. Turn it on and restart\n3. After the restart, tap \'Turn On\' in the confirmation prompt';
 
   @override
-  String get stepsAndroidAuth =>
-      '1. Connect the phone over USB and unlock it\n2. Allow this computer in the \'Allow USB debugging\' prompt\n3. If no prompt appears, enable USB debugging in Developer options';
+  String get stepsAndroidAuth => '1. Connect the phone over USB and unlock it\n2. Allow this computer in the \'Allow USB debugging\' prompt\n3. If no prompt appears, enable USB debugging in Developer options';
 
   @override
-  String get stepsTeamId =>
-      '1. Find the Team ID (10 characters) at developer.apple.com/account → Membership details\n2. Enter it in Apple Team ID under Build\n3. Or tap a team of your certificates in the Signing tab';
+  String get stepsTeamId => '1. Find the Team ID (10 characters) at developer.apple.com/account → Membership details\n2. Enter it in Apple Team ID under Build\n3. Or tap a team of your certificates in the Signing tab';
 
   @override
-  String get stepsCertificate =>
-      '1. Xcode → Settings → Accounts: sign in with your Apple ID\n2. Manage Certificates → + → add Apple Development\n3. Press Check again';
+  String get stepsCertificate => '1. Xcode → Settings → Accounts: sign in with your Apple ID\n2. Manage Certificates → + → add Apple Development\n3. Press Check again';
 
   @override
-  String get stepsFlutterMissing =>
-      '1. Install the Flutter SDK from flutter.dev\n2. Add flutter/bin to PATH (~/.zshrc)\n3. Reopen the app and press Check again';
+  String get stepsFlutterMissing => '1. Install the Flutter SDK from flutter.dev\n2. Add flutter/bin to PATH (~/.zshrc)\n3. Reopen the app and press Check again';
 
   @override
-  String get stepsFlutterMissingWindows =>
-      '1. Install the Flutter SDK from flutter.dev\n2. Add the flutter\\bin folder to PATH, or pick flutter.bat with \"Set tool paths…\" above\n3. Press Check again';
+  String get stepsFlutterMissingWindows => '1. Install the Flutter SDK from flutter.dev\n2. Add the flutter\\bin folder to PATH, or pick flutter.bat with \"Set tool paths…\" above\n3. Press Check again';
 
   @override
-  String get stepsXcodeMissing =>
-      '1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license';
+  String get stepsXcodeMissing => '1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license';
 
   @override
-  String get stepsAdbMissing =>
-      '1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again';
+  String get stepsAdbMissing => '1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again';
 
   @override
-  String get stepsAndroidKeystore =>
-      '1. Check the storeFile path in android/key.properties\n2. If the file is gone, recreate the keystore or fix the path\n3. For personal installs you can drop key.properties — the debug key signs the build';
+  String get stepsAndroidKeystore => '1. Check the storeFile path in android/key.properties\n2. If the file is gone, recreate the keystore or fix the path\n3. For personal installs you can drop key.properties — the debug key signs the build';
 
   @override
-  String get stepsCertExpiry =>
-      '1. Xcode → Settings → Accounts → Manage Certificates: create a new Apple Development certificate\n2. Press Check again';
+  String get stepsCertExpiry => '1. Xcode → Settings → Accounts → Manage Certificates: create a new Apple Development certificate\n2. Press Check again';
 
   @override
   String get homeOpenVsCode => 'Open in VS Code';
@@ -772,8 +726,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get secretFileTitle => 'Register from a file';
 
   @override
-  String get secretFileHelp =>
-      'Registers every entry of a NAME=value (.env) file with gh secret set -f. The app doesn\'t keep the values — it only shows the names; gh reads the file itself.';
+  String get secretFileHelp => 'Registers every entry of a NAME=value (.env) file with gh secret set -f. The app doesn\'t keep the values — it only shows the names; gh reads the file itself.';
 
   @override
   String get secretFileEmpty => 'No NAME=value entries found';
@@ -811,8 +764,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toolPathsTitle => 'Tool paths';
 
   @override
-  String get toolPathsHelp =>
-      'Point the app at tools it can\'t find on PATH. The choice is saved and used the next time too. Pick the executable file, not the folder.';
+  String get toolPathsHelp => 'Point the app at tools it can\'t find on PATH. The choice is saved and used the next time too. Pick the executable file, not the folder.';
 
   @override
   String get toolPathNotFound => 'Not found';
@@ -836,8 +788,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeDevicesCauses => 'Possible reasons no device shows up';
 
   @override
-  String get stepsNoDevice =>
-      '1. Connect the phone with a USB cable (a charge-only cable won\'t work)\n2. Unlock it, then tap \'Trust This Computer\' on an iPhone or \'Allow USB debugging\' on Android\n3. Press refresh above';
+  String get stepsNoDevice => '1. Connect the phone with a USB cable (a charge-only cable won\'t work)\n2. Unlock it, then tap \'Trust This Computer\' on an iPhone or \'Allow USB debugging\' on Android\n3. Press refresh above';
 
   @override
   String get homeThisMac => 'This Mac';
@@ -855,18 +806,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homePlatformWindows => 'Windows';
 
   @override
-  String get hintCocoapods =>
-      'CocoaPods is missing, so the macOS app couldn\'t be built';
+  String get hintCocoapods => 'CocoaPods is missing, so the macOS app couldn\'t be built';
 
   @override
-  String get hintVisualStudio =>
-      'Visual Studio\'s \'Desktop development with C++\' workload is missing, so the Windows app couldn\'t be built';
+  String get hintVisualStudio => 'Visual Studio\'s \'Desktop development with C++\' workload is missing, so the Windows app couldn\'t be built';
 
   @override
-  String get stepsCocoapods =>
-      '1. Run brew install cocoapods in a terminal\n2. Build again';
+  String get stepsCocoapods => '1. Run brew install cocoapods in a terminal\n2. Build again';
 
   @override
-  String get stepsVisualStudio =>
-      '1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick \'Desktop development with C++\'\n3. Build again';
+  String get stepsVisualStudio => '1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick \'Desktop development with C++\'\n3. Build again';
 }

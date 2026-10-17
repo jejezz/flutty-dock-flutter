@@ -108,9 +108,23 @@ class CommandRunner {
     }
 
     try {
+      var executable = executableFor(args.first);
+      var arguments = args.sublist(1);
+      var viaShell = Platform.isWindows;
+      final bash = args.first == 'flutter' ? gitBashPath() : null;
+      if (bash != null) {
+        // Windows의 cmd/PowerShell로 `flutter.bat`을 돌리면 오류가 많다 — Git Bash에서
+        // `flutter` 셸 스크립트를 직접 실행한다. 인자는 "$@"로 넘겨 따옴표 문제를 피한다.
+        final script = flutterShellScript(executable, await effectivePath);
+        if (script != null) {
+          arguments = ['-c', r'exec "$@"', 'bash', script, ...arguments];
+          executable = bash;
+          viaShell = false;
+        }
+      }
       final process = await Process.start(
-        executableFor(args.first),
-        args.sublist(1),
+        executable,
+        arguments,
         // 지정하지 않으면 이 앱의 작업 디렉터리(설치 폴더 등)를 물려받는다 — flutter가 거기에
         // hash.txt를 쓰려다 쓰기 권한이 없어 실패한다. 쓸 수 있는 임시 폴더에서 돌린다.
         workingDirectory: workingDirectory ?? Directory.systemTemp.path,
@@ -121,7 +135,7 @@ class CommandRunner {
           'NO_COLOR': '1',
           ...environment,
         },
-        runInShell: Platform.isWindows,
+        runInShell: viaShell,
       );
       handle?._process = process;
       if (stdin != null) {
@@ -151,6 +165,35 @@ class CommandRunner {
       return CommandResult(127, '', e.message);
     }
   }
+}
+
+/// Windows에서 Git for Windows의 `bash.exe` 경로. 없거나 Windows가 아니면 null.
+/// (`C:\Windows\System32\bash.exe`는 WSL이라 쓰지 않는다.)
+String? gitBashPath() {
+  if (!Platform.isWindows) return null;
+  final env = Platform.environment;
+  final candidates = [
+    for (final root in [env['ProgramFiles'], env['ProgramW6432'], env['LOCALAPPDATA'] == null ? null : '${env['LOCALAPPDATA']}\\Programs'])
+      if (root != null) '$root\\Git\\bin\\bash.exe',
+  ];
+  for (final c in candidates) {
+    if (File(c).existsSync()) return c;
+  }
+  return null;
+}
+
+/// `flutter` 명령에 해당하는 셸 스크립트(`bin/flutter`, 확장자 없음) 경로. 없으면 null.
+String? flutterShellScript(String executable, String path) {
+  var file = executable;
+  if (executable == 'flutter') {
+    file = findExecutable('flutter', path) ?? '';
+  }
+  if (file.isEmpty) return null;
+  final lower = file.toLowerCase();
+  if (lower.endsWith('.bat') || lower.endsWith('.cmd') || lower.endsWith('.exe')) {
+    file = file.substring(0, file.length - 4);
+  }
+  return File(file).existsSync() ? file.replaceAll('\\', '/') : null;
 }
 
 /// [path]의 폴더들에서 [name] 실행 파일을 찾아 전체 경로를 돌려준다. 없으면 null.
