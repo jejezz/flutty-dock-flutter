@@ -7,7 +7,9 @@ import 'dart:io';
 Future<bool> isRunningElevated() async {
   if (!Platform.isWindows) return false;
   try {
-    final r = await Process.run('whoami', ['/groups']);
+    // PATH에 Git의 coreutils `whoami`가 먼저 올 수 있어 System32의 것을 직접 지정한다.
+    final root = Platform.environment['SystemRoot'] ?? r'C:\Windows';
+    final r = await Process.run('$root\System32\whoami.exe', ['/groups']);
     return r.exitCode == 0 && (r.stdout as String).contains('S-1-16-12288');
   } on Object {
     return false;
