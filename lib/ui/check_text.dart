@@ -37,6 +37,8 @@ String checkTitle(AppLocalizations l, CheckItem c) {
       CheckStatus.fail => l.checkProfileFail(p['bundle']!),
       CheckStatus.info => l.checkProfileInfo(p['bundle']!),
     },
+    CheckId.windowsDeveloperMode => s == CheckStatus.ok ? l.checkWindowsDevModeOk : l.checkWindowsDevModeWarn,
+    CheckId.visualStudio => s == CheckStatus.ok ? l.checkVisualStudioOk(p['version']!) : l.checkVisualStudioFail,
     CheckId.androidSigning => switch (p['mode']) {
       'keystore' => l.checkAndroidSigningKeystore,
       'keystoreMissing' => l.checkAndroidSigningMissing,
@@ -63,6 +65,8 @@ String? checkSteps(AppLocalizations l, CheckItem c) {
     CheckId.certificateExpiry || CheckId.profile => l.stepsCertExpiry,
     CheckId.team => l.stepsTeamId,
     CheckId.androidSigning => l.stepsAndroidKeystore,
+    CheckId.windowsDeveloperMode => l.stepsWindowsDevMode,
+    CheckId.visualStudio => l.stepsVisualStudio,
   };
 }
 
