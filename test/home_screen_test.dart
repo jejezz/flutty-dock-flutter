@@ -235,16 +235,43 @@ void main() {
     expect(find.text('Fetch'), findsNothing);
   });
 
-  testWidgets('release offers Build & run, Build only and Run only (disabled until a build exists)', (tester) async {
+  testWidgets('a desktop target runs, a phone gets installed', (tester) async {
+    const winProject = FlutterProject(
+      path: '/p/app',
+      name: 'app',
+      hasIos: false,
+      hasAndroid: false,
+      hasWindows: true,
+      windowsBinaryName: 'app',
+    );
+    final c = InstallController(
+      runner: CommandRunner(CommandLog()),
+      deviceService: _Devices(const []),
+      diagnosticsService: _Diag(_diag()),
+      hostIsMac: false,
+      hostIsWindows: true,
+    )
+      ..project = winProject
+      ..selectedId = 'windows'
+      ..mode = BuildMode.release;
+    expect(c.device?.isDesktop, isTrue);
+    await _pump(tester, c);
+    expect(find.text('Build & run'), findsOneWidget);
+    expect(find.text('Run only'), findsOneWidget);
+    expect(find.text('Build & install'), findsNothing);
+    expect(find.text('Install only'), findsNothing);
+  });
+
+  testWidgets('release offers Build & install, Build only and Install only (disabled until a build exists)', (tester) async {
     final c = _controller()
       ..project = _project
       ..devices = const [_galaxy]
       ..selectedId = _galaxy.id
       ..mode = BuildMode.release;
     await _pump(tester, c);
-    expect(find.text('Build & run'), findsOneWidget);
+    expect(find.text('Build & install'), findsOneWidget);
     expect(find.text('Build only'), findsOneWidget);
-    final runOnly = tester.widget<OutlinedButton>(find.widgetWithText(OutlinedButton, 'Run only'));
+    final runOnly = tester.widget<OutlinedButton>(find.widgetWithText(OutlinedButton, 'Install only'));
     expect(runOnly.onPressed, isNull, reason: '/p/app has no APK');
     final buildOnly = tester.widget<OutlinedButton>(find.widgetWithText(OutlinedButton, 'Build only'));
     expect(buildOnly.onPressed, isNotNull);

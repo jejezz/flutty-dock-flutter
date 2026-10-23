@@ -285,7 +285,7 @@ class _BuildSectionState extends State<_BuildSection> {
     final ready = plan.runnable && c.artifactReady;
     final button = OutlinedButton(
       onPressed: ready ? () => c.start(phase: RunPhase.run) : null,
-      child: Text(l10n.homeActionRunOnly),
+      child: Text((c.device?.isDesktop ?? false) ? l10n.homeActionRunOnly : l10n.homeActionInstallOnly),
     );
     // 결과물이 없어서 눌 수 없을 때만 이유를 알려 준다.
     return plan.runnable && !c.artifactReady ? Tooltip(message: l10n.homeRunOnlyNeedsBuild, child: button) : button;
@@ -385,7 +385,14 @@ class _BuildSectionState extends State<_BuildSection> {
                     )
                   : FilledButton(
                       onPressed: plan.runnable ? c.start : null,
-                      child: Text(interactive ? l10n.homeActionRun : l10n.homeActionInstall),
+                      // 데스크톱(이 컴퓨터)은 바로 실행하고, 폰은 설치한다.
+                      child: Text(
+                        interactive
+                            ? l10n.homeActionRun
+                            : (c.device?.isDesktop ?? false)
+                            ? l10n.homeActionBuildRun
+                            : l10n.homeActionInstall,
+                      ),
                     ),
             ),
             if (c.running && interactive) ...[
