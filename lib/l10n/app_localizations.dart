@@ -794,29 +794,35 @@ abstract class AppLocalizations {
   /// **'설치만'**
   String get homeActionInstallOnly;
 
-  /// No description provided for @homeActionClean.
-  ///
-  /// In ko, this message translates to:
-  /// **'정리 후 패키지 다시 받기'**
-  String get homeActionClean;
-
   /// No description provided for @homeCleanHelp.
   ///
   /// In ko, this message translates to:
-  /// **'flutter clean → flutter pub get. 이유 없이 빌드가 실패할 때 해 볼 만합니다.'**
+  /// **'빌드 앞에 flutter clean → flutter pub get을 더합니다. 이유 없이 빌드가 실패할 때 켜 보세요. 한 번 끝나면 꺼집니다.'**
   String get homeCleanHelp;
 
-  /// No description provided for @homeCleanDone.
+  /// No description provided for @homeStepClean.
   ///
   /// In ko, this message translates to:
-  /// **'정리했고 패키지를 다시 받았습니다. 이제 빌드해 보세요.'**
-  String get homeCleanDone;
+  /// **'정리'**
+  String get homeStepClean;
 
-  /// No description provided for @homeCleanFailed.
+  /// No description provided for @homeStepPubGet.
   ///
   /// In ko, this message translates to:
-  /// **'정리에 실패했습니다. 기록 탭에서 출력을 확인하세요.'**
-  String get homeCleanFailed;
+  /// **'패키지 받기'**
+  String get homeStepPubGet;
+
+  /// No description provided for @homeCleanOption.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리 후 패키지 다시 받기'**
+  String get homeCleanOption;
+
+  /// No description provided for @homeCleanOptional.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택'**
+  String get homeCleanOptional;
 
   /// No description provided for @homeActionRun.
   ///

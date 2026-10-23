@@ -235,6 +235,31 @@ void main() {
     expect(find.text('Fetch'), findsNothing);
   });
 
+  testWidgets('the clean option sits at the top of the steps card and adds its two commands when ticked', (tester) async {
+    final c = _controller()
+      ..project = _project
+      ..devices = const [_galaxy]
+      ..selectedId = _galaxy.id
+      ..mode = BuildMode.release;
+    await _pump(tester, c);
+    expect(find.text('Clean and re-fetch packages'), findsOneWidget);
+    expect(find.text('Optional'), findsOneWidget);
+    expect(find.text('flutter clean'), findsNothing);
+    // 선택 항목이 첫 단계("1. Build")보다 위에 있다.
+    final optionY = tester.getTopLeft(find.text('Clean and re-fetch packages')).dy;
+    expect(optionY, lessThan(tester.getTopLeft(find.textContaining('1. ')).dy));
+    // 예전의 따로 떨어진 단추는 없다.
+    expect(find.text('Clean & get packages'), findsNothing);
+
+    await tester.tap(find.text('Clean and re-fetch packages'));
+    await tester.pumpAndSettle();
+    expect(c.cleanFirst, isTrue);
+    expect(find.text('flutter clean'), findsOneWidget);
+    expect(find.text('flutter pub get'), findsOneWidget);
+    expect(find.text('1. Clean'), findsOneWidget);
+    expect(find.text('3. Build'), findsOneWidget);
+  });
+
   testWidgets('a desktop target runs, a phone gets installed', (tester) async {
     const winProject = FlutterProject(
       path: '/p/app',

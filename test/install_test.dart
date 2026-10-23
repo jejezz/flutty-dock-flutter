@@ -245,24 +245,62 @@ ZZZ                    unauthorized usb:1 transport_id:5
       expect(c.missingCommand, 'flutter');
     });
 
-    test('clean runs flutter clean then pub get', () async {
-      final r = _FakeRunner(List.generate(2, (_) => const CommandResult(0, '', '')));
-      final c = make(r);
-      expect(await c.cleanProject(), isTrue);
-      expect(r.ran, [
+    test('the optional clean step goes in front of the build and turns itself off once it ran', () async {
+      final r = _FakeRunner(List.generate(5, (_) => const CommandResult(0, '', '')));
+      final c = make(r)
+        ..mode = BuildMode.release
+        ..setCleanFirst(true);
+      expect(c.plan.steps.map((s) => s.kind), [
+        StepKind.clean,
+        StepKind.pubGet,
+        StepKind.build,
+        StepKind.install,
+        StepKind.launch,
+      ]);
+      expect(c.plan.cleanCount, 2);
+      expect(c.plan.splittable, isTrue);
+
+      await c.start();
+      expect(r.ran.take(2), [
         ['flutter', 'clean'],
         ['flutter', 'pub', 'get'],
       ]);
-      expect(c.cleanResult, isTrue);
-      expect(c.cleaning, isFalse);
+      expect(r.ran, hasLength(5));
+      // 정리 단계를 끝내면 선택이 꺼지고, 남은 단계의 체크 표시가 새 계획(3단계)과 맞는다.
+      expect(c.cleanFirst, isFalse);
+      expect(c.plan.steps, hasLength(3));
+      expect(c.statuses, [StepStatus.done, StepStatus.done, StepStatus.done]);
     });
 
-    test('clean stops at the first failure and skips pub get', () async {
+    test('a failed clean keeps the option on and never reaches the build', () async {
       final r = _FakeRunner([const CommandResult(1, '', 'boom')]);
-      final c = make(r);
-      expect(await c.cleanProject(), isFalse);
+      final c = make(r)
+        ..mode = BuildMode.release
+        ..setCleanFirst(true);
+      await c.start();
       expect(r.ran, hasLength(1));
-      expect(c.cleanResult, isFalse);
+      expect(c.cleanFirst, isTrue);
+      expect(c.statuses.first, StepStatus.failed);
+    });
+
+    test('build only includes the clean step, run only does not', () async {
+      final r = _FakeRunner(List.generate(3, (_) => const CommandResult(0, '', '')));
+      final c = make(r)
+        ..mode = BuildMode.release
+        ..setCleanFirst(true);
+      expect(c.plan.indicesOf(RunPhase.build), [0, 1, 2]);
+      expect(c.plan.indicesOf(RunPhase.run), [3, 4]);
+      await c.start(phase: RunPhase.build);
+      expect(r.ran.map((a) => a.take(2).join(' ')), ['flutter clean', 'flutter pub', 'flutter build']);
+    });
+
+    test('debug with clean is still one interactive run, not a build/run split', () {
+      final c = make(_FakeRunner([]))
+        ..mode = BuildMode.debug
+        ..setCleanFirst(true);
+      expect(c.plan.steps.map((s) => s.kind), [StepKind.clean, StepKind.pubGet, StepKind.run]);
+      expect(c.plan.splittable, isFalse);
+      expect(c.plan.steps.any((s) => s.interactive), isTrue);
     });
 
     test('does nothing while blocked', () async {

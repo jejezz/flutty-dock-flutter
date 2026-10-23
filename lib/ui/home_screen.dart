@@ -274,6 +274,8 @@ class _BuildSectionState extends State<_BuildSection> {
   }
 
   String _stepLabel(AppLocalizations l10n, StepKind k) => switch (k) {
+    StepKind.clean => l10n.homeStepClean,
+    StepKind.pubGet => l10n.homeStepPubGet,
     StepKind.prepare => l10n.homeStepPrepare,
     StepKind.build => l10n.homeStepBuild,
     StepKind.install => l10n.homeStepInstall,
@@ -306,7 +308,7 @@ class _BuildSectionState extends State<_BuildSection> {
     final theme = Theme.of(context);
     final plan = c.plan;
     final isIos = c.device?.platform == DevicePlatform.ios;
-    final interactive = plan.steps.isNotEmpty && plan.steps.first.interactive;
+    final interactive = plan.steps.any((s) => s.interactive);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -343,6 +345,43 @@ class _BuildSectionState extends State<_BuildSection> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 빌드 앞에 끼워 넣을 수 있는 선택 단계. 켜면 아래 목록 맨 앞에 두 명령이 더해진다.
+                  InkWell(
+                    onTap: c.running ? null : () => c.setCleanFirst(!c.cleanFirst),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Checkbox(
+                            value: c.cleanFirst,
+                            visualDensity: VisualDensity.compact,
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            onChanged: c.running ? null : (v) => c.setCleanFirst(v ?? false),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Wrap(
+                                spacing: AppSpacing.xs,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Text(l10n.homeCleanOption, style: theme.textTheme.labelLarge),
+                                  InfoChip(l10n.homeCleanOptional),
+                                ],
+                              ),
+                              Text(l10n.homeCleanHelp, style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: AppSpacing.xl),
                   for (var i = 0; i < plan.steps.length; i++)
                     Padding(
                       padding: EdgeInsets.only(bottom: i == plan.steps.length - 1 ? 0 : AppSpacing.md),
@@ -425,30 +464,6 @@ class _BuildSectionState extends State<_BuildSection> {
               Expanded(child: _runOnlyButton(c, l10n, plan)),
             ],
           ),
-        ],
-        if (c.project != null) ...[
-          const SizedBox(height: AppSpacing.sm),
-          Tooltip(
-            message: l10n.homeCleanHelp,
-            child: OutlinedButton.icon(
-              onPressed: c.running || c.cleaning ? null : c.cleanProject,
-              icon: c.cleaning
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.cleaning_services_rounded, size: 18),
-              label: Text(l10n.homeActionClean),
-            ),
-          ),
-          if (c.cleanResult != null && !c.cleaning)
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.xs),
-              child: Text(
-                c.cleanResult! ? l10n.homeCleanDone : l10n.homeCleanFailed,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: c.cleanResult! ? AppColors.success : theme.colorScheme.error,
-                ),
-              ),
-            ),
         ],
         if (c.missingCommand != null)
           Padding(
