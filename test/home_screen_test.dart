@@ -82,8 +82,18 @@ class _FakeGit extends GitClient {
   GitState? state;
   final calls = <String>[];
 
+  /// git이 설치되어 있는지, 그리고 이 저장소의 worktree들.
+  bool installed = true;
+  List<GitWorktree> trees = const [];
+
   @override
   Future<GitState?> status(String directory) async => state;
+
+  @override
+  Future<bool> available() async => installed;
+
+  @override
+  Future<List<GitWorktree>> worktrees(String directory) async => trees;
 
   @override
   Future<CommandResult> fetch(String directory) async {
@@ -235,6 +245,50 @@ void main() {
     await c.refreshGit();
     await _pump(tester, c);
     expect(find.text('Fetch'), findsNothing);
+    expect(find.text('Git'), findsNothing, reason: 'a plain folder gets no Git card at all');
+    expect(find.textContaining("wasn't found"), findsNothing);
+  });
+
+  testWidgets('without git installed the Git card says so', (tester) async {
+    final c = InstallController(
+      runner: CommandRunner(CommandLog()),
+      deviceService: _Devices(const []),
+      diagnosticsService: _Diag(_diag()),
+      gitClient: _FakeGit(null)..installed = false,
+    )..project = _project;
+    await c.refreshGit();
+    expect(c.gitMissing, isTrue);
+    await _pump(tester, c);
+    expect(find.text('Git'), findsOneWidget);
+    expect(find.text("The git command wasn't found. Install it and make sure it is on PATH"), findsOneWidget);
+    expect(find.text('Fetch'), findsNothing);
+  });
+
+  testWidgets('the worktree picker appears only when there is more than one worktree', (tester) async {
+    InstallController make(List<GitWorktree> trees) => InstallController(
+      runner: CommandRunner(CommandLog()),
+      deviceService: _Devices(const []),
+      diagnosticsService: _Diag(_diag()),
+      gitClient: _FakeGit(
+        const GitState(branch: 'main', upstream: 'origin/main', remoteUrl: 'git@github.com:o/r.git'),
+      )..trees = trees,
+    )..project = _project;
+
+    final one = make(const [GitWorktree(path: '/p/app', branch: 'main')]);
+    await one.refreshGit();
+    await _pump(tester, one);
+    expect(find.text('Worktree'), findsNothing);
+
+    final many = make(const [
+      GitWorktree(path: '/p/app', branch: 'main'),
+      GitWorktree(path: '/p/app-feature', branch: 'feature/x'),
+    ]);
+    await many.refreshGit();
+    await _pump(tester, many);
+    expect(find.text('Worktree'), findsOneWidget);
+    expect(many.currentWorktree?.branch, 'main');
+    // 현재 항목이 칸에 보인다.
+    expect(find.textContaining('main  ·  app'), findsWidgets);
   });
 
   testWidgets('the clean button sits at the top of the commands card, above the first step', (tester) async {

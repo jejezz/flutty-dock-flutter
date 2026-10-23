@@ -99,6 +99,91 @@ String? remoteWebUrlOf(String remote) {
   return 'https://$host/$path';
 }
 
+/// `git worktree list`의 항목 하나: 폴더와 그 폴더에 체크아웃된 브랜치.
+class GitWorktree {
+  const GitWorktree({required this.path, this.branch, this.detached = false});
+
+  /// 폴더 경로 (git이 주는 대로 `/` 구분).
+  final String path;
+
+  /// 체크아웃된 브랜치(`main`). 분리된 HEAD면 null.
+  final String? branch;
+  final bool detached;
+
+  /// 폴더 이름(경로의 마지막 마디).
+  String get folderName {
+    final parts = path.split('/').where((p) => p.isNotEmpty);
+    return parts.isEmpty ? path : parts.last;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is GitWorktree && other.path == path && other.branch == branch && other.detached == detached;
+
+  @override
+  int get hashCode => Object.hash(path, branch, detached);
+}
+
+/// `git worktree list --porcelain` 출력을 읽는다. 첫 항목이 원래 작업 폴더다.
+/// 저장소 자체(`bare`)와 이미 사라진 폴더(`prunable`)는 연 수 없으므로 뺀다.
+List<GitWorktree> parseWorktrees(String output) {
+  final result = <GitWorktree>[];
+  String? path;
+  String? branch;
+  var detached = false;
+  var skip = false;
+
+  void flush() {
+    if (path != null && !skip) result.add(GitWorktree(path: path!, branch: branch, detached: detached));
+    path = null;
+    branch = null;
+    detached = false;
+    skip = false;
+  }
+
+  for (final raw in output.split('\n')) {
+    final line = raw.trimRight();
+    if (line.isEmpty) {
+      flush();
+    } else if (line.startsWith('worktree ')) {
+      flush();
+      path = line.substring('worktree '.length);
+    } else if (line.startsWith('branch ')) {
+      branch = line.substring('branch '.length).replaceFirst('refs/heads/', '');
+    } else if (line == 'detached') {
+      detached = true;
+    } else if (line == 'bare' || line.startsWith('prunable')) {
+      skip = true;
+    }
+  }
+  flush();
+  return result;
+}
+
+/// 프로젝트 경로가 속한 worktree: 경로를 포함하는 것 중 가장 깊은 것. 없으면 null.
+/// Windows 경로(`\`)와 대소문자 차이는 같은 것으로 본다.
+GitWorktree? worktreeContaining(List<GitWorktree> worktrees, String projectPath) {
+  String norm(String p) => p.replaceAll('\\', '/').replaceAll(RegExp(r'/+$'), '').toLowerCase();
+  final target = norm(projectPath);
+  GitWorktree? best;
+  for (final w in worktrees) {
+    final root = norm(w.path);
+    if (target == root || target.startsWith('$root/')) {
+      if (best == null || root.length > norm(best.path).length) best = w;
+    }
+  }
+  return best;
+}
+
+/// 현재 프로젝트가 [from] worktree 안의 어느 하위 폴더에 있는지를 [to] worktree에 옮긴 경로.
+/// 저장소 루트가 곧 프로젝트면 [to]의 경로 그대로, 모노레포의 하위 프로젝트면 같은 하위 폴더.
+String projectPathIn(GitWorktree from, GitWorktree to, String projectPath) {
+  final fromRoot = from.path.replaceAll('\\', '/').replaceAll(RegExp(r'/+$'), '');
+  final project = projectPath.replaceAll('\\', '/').replaceAll(RegExp(r'/+$'), '');
+  final sub = project.length > fromRoot.length ? project.substring(fromRoot.length) : '';
+  return '${to.path.replaceAll(RegExp(r'/+$'), '')}$sub';
+}
+
 /// [CommandRunner]로 `git`을 실행한다. 읽기 명령은 기록에 남기지 않고, fetch·pull은 남긴다.
 ///
 /// 자격 증명을 물어볼 수 없는 환경이라 `GIT_TERMINAL_PROMPT=0`으로 멈춤 대신 실패하게 한다.
@@ -125,6 +210,23 @@ class GitClient {
       quiet: true,
     );
     return parseGitStatus(r.stdout, remoteUrl: remote.ok ? remote.stdout.trim() : null);
+  }
+
+  /// git을 실행할 수 있는지 (설치되어 PATH에 있는지). 저장소인지는 따지지 않는다.
+  Future<bool> available() async {
+    final r = await runner.run(['git', '--version'], environment: _env, quiet: true);
+    return r.ok;
+  }
+
+  /// 이 저장소의 worktree 목록 (첫 항목이 원래 작업 폴더). 읽지 못하면 빈 목록.
+  Future<List<GitWorktree>> worktrees(String directory) async {
+    final r = await runner.run(
+      ['git', 'worktree', 'list', '--porcelain'],
+      workingDirectory: directory,
+      environment: _env,
+      quiet: true,
+    );
+    return r.ok ? parseWorktrees(r.stdout) : const [];
   }
 
   Future<CommandResult> fetch(String directory) =>

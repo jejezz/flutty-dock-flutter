@@ -24,9 +24,37 @@ class GitSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final g = controller.gitState;
-    if (controller.project == null || g == null) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    if (controller.project != null && g == null && controller.gitMissing) {
+      // git 저장소가 아닌 폴더는 카드를 숨기지만, git이 없는 PC는 이유를 알려 준다.
+      return Padding(
+        padding: const EdgeInsets.only(top: AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SectionTitle(l10n.gitTitle),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Icon(Icons.lightbulb_outline_rounded, size: 16, color: AppColors.warning),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(child: Text(l10n.hintMissingCommand('git'), style: theme.textTheme.bodyMedium)),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    if (controller.project == null || g == null) return const SizedBox.shrink();
     final busy = controller.gitBusy;
     final locked = busy || controller.running || controller.cleaning;
     final web = g.remoteWebUrl;
@@ -65,6 +93,39 @@ class GitSection extends StatelessWidget {
                       ),
                     ],
                   ),
+                  // worktree가 둘 이상이면 고르는 칸. 고르면 그 폴더의 같은 프로젝트를 연다 (파일은 바꾸지 않는다).
+                  if (controller.worktrees.length > 1) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    Tooltip(
+                      message: l10n.gitWorktreeHelp,
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: l10n.gitWorktree,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<GitWorktree>(
+                            isExpanded: true,
+                            isDense: true,
+                            value: controller.currentWorktree,
+                            items: [
+                              for (final w in controller.worktrees)
+                                DropdownMenuItem(
+                                  value: w,
+                                  child: Text(
+                                    '${w.branch ?? l10n.gitDetached}  ·  ${w.folderName}',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppFonts.mono.copyWith(fontSize: 12),
+                                  ),
+                                ),
+                            ],
+                            onChanged: locked ? null : (w) => w == null ? null : controller.switchWorktree(w),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.xs),
                   Wrap(
                     spacing: AppSpacing.xs,
