@@ -5,7 +5,7 @@ import '../flutter/flutter_project.dart';
 enum BuildMode { debug, release }
 
 /// 단계의 역할 — 화면의 이름과 진행바가 이 값을 쓴다.
-enum StepKind { clean, pubGet, prepare, build, install, launch, run }
+enum StepKind { prepare, build, install, launch, run }
 
 /// 계획을 어디까지 실행할지. release는 빌드와 실행을 따로 할 수 있다.
 enum RunPhase { all, build, run }
@@ -30,7 +30,7 @@ class PlanStep {
 
   /// 빌드 단계(준비·빌드)인지, 기기에서 실행하는 단계(올리기·열기·`flutter run`)인지.
   RunPhase get phase => switch (kind) {
-    StepKind.clean || StepKind.pubGet || StepKind.prepare || StepKind.build => RunPhase.build,
+    StepKind.prepare || StepKind.build => RunPhase.build,
     StepKind.install || StepKind.launch || StepKind.run => RunPhase.run,
   };
 }
@@ -63,12 +63,7 @@ class InstallPlan {
   ];
 
   /// 빌드와 실행을 따로 할 수 있는지 — 두 단계가 모두 있을 때만.
-  bool get splittable =>
-      steps.any((s) => s.kind == StepKind.prepare || s.kind == StepKind.build) &&
-      indicesOf(RunPhase.run).isNotEmpty;
-
-  /// 맨 앞의 선택 단계(정리·패키지 받기) 개수.
-  int get cleanCount => steps.where((s) => s.kind == StepKind.clean || s.kind == StepKind.pubGet).length;
+  bool get splittable => indicesOf(RunPhase.build).isNotEmpty && indicesOf(RunPhase.run).isNotEmpty;
 
   bool get runnable => blockers.isEmpty && steps.isNotEmpty;
 }
@@ -86,9 +81,6 @@ InstallPlan buildInstallPlan({
   required String? teamId,
   required bool hostIsMac,
   String windowsArch = 'x64',
-
-  /// 빌드 전에 `flutter clean` → `flutter pub get`을 먼저 한다 (사용자가 고르는 선택 단계).
-  bool cleanFirst = false,
 }) {
   if (project == null) return const InstallPlan([], [Blocker.noProject]);
   if (device == null) return const InstallPlan([], [Blocker.noDevice]);
@@ -231,12 +223,6 @@ InstallPlan buildInstallPlan({
           ]),
       ]);
     }
-  }
-  if (cleanFirst) {
-    steps.insertAll(0, [
-      PlanStep(StepKind.clean, ['flutter', 'clean'], workingDirectory: dir),
-      PlanStep(StepKind.pubGet, ['flutter', 'pub', 'get'], workingDirectory: dir),
-    ]);
   }
   return InstallPlan(steps, blockers, artifact: artifact);
 }

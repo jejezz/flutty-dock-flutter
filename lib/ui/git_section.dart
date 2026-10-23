@@ -28,7 +28,7 @@ class GitSection extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final busy = controller.gitBusy;
-    final locked = busy || controller.running;
+    final locked = busy || controller.running || controller.cleaning;
     final web = g.remoteWebUrl;
     final remote = g.remoteUrl;
 

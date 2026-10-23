@@ -74,8 +74,9 @@ class InstallController extends ChangeNotifier {
 
   bool running = false;
 
-  /// 다음 실행 앞에 `flutter clean` → `flutter pub get`을 더할지. 한 번 성공하면 꺼진다.
-  bool cleanFirst = false;
+  /// `flutter clean` + `flutter pub get`을 실행 중인지, 마지막 결과(null이면 아직 안 함).
+  bool cleaning = false;
+  bool? cleanResult;
   List<StepStatus> statuses = const [];
   FailureHint? hint;
 
@@ -136,7 +137,6 @@ class InstallController extends ChangeNotifier {
     hostIsMac: hostIsMac,
     // Windows ARM에서는 산출물이 build\windows\arm64 아래에 생긴다.
     windowsArch: Platform.environment['PROCESSOR_ARCHITECTURE']?.toUpperCase() == 'ARM64' ? 'arm64' : 'x64',
-    cleanFirst: cleanFirst,
   );
 
   List<CheckItem> get checks => buildChecks(
@@ -251,13 +251,6 @@ class InstallController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setCleanFirst(bool value) {
-    if (running || cleanFirst == value) return;
-    cleanFirst = value;
-    statuses = const [];
-    notifyListeners();
-  }
-
   void setMode(BuildMode m) {
     mode = m;
     _prefs?.setString(_modeKey, m.name);
@@ -322,16 +315,6 @@ class InstallController extends ChangeNotifier {
       hint = explainFailure(r.combined);
       break;
     }
-    // 정리 단계를 끝냈으면 선택을 끈다 — 다음 빌드까지 매번 정리하지 않게. 맨 앞 단계라 체크 표시도 같이 덜어 낸다.
-    final cleanCount = p.cleanCount;
-    if (cleanFirst &&
-        cleanCount > 0 &&
-        phase != RunPhase.run &&
-        statuses.length >= cleanCount &&
-        statuses.take(cleanCount).every((s) => s == StepStatus.done)) {
-      cleanFirst = false;
-      statuses = statuses.sublist(cleanCount);
-    }
     running = false;
     _handle = null;
     notifyListeners();
@@ -373,7 +356,7 @@ class InstallController extends ChangeNotifier {
 
   Future<bool> _runGit(GitAction action, Future<CommandResult> Function(String dir) run) async {
     final p = project;
-    if (p == null || gitBusy || running) return false;
+    if (p == null || gitBusy || running || cleaning) return false;
     gitBusy = true;
     lastGitAction = null;
     lastGitOk = null;
@@ -391,6 +374,35 @@ class InstallController extends ChangeNotifier {
     }
     await refreshGit();
     return r.ok;
+  }
+
+  /// 빌드가 알 수 없는 이유로 깨질 때의 처방: `flutter clean` 다음 `flutter pub get`.
+  /// 둘 다 성공하면 true. 명령은 기록 탭에도 남는다.
+  Future<bool> cleanProject() async {
+    final p = project;
+    if (p == null || running || cleaning) return false;
+    cleaning = true;
+    cleanResult = null;
+    missingCommand = null;
+    hint = null;
+    statuses = const [];
+    notifyListeners();
+    var ok = true;
+    for (final args in const [
+      ['flutter', 'clean'],
+      ['flutter', 'pub', 'get'],
+    ]) {
+      final r = await runner.run(args, workingDirectory: p.path);
+      if (!r.ok) {
+        ok = false;
+        if (r.exitCode == 127) missingCommand = args.first;
+        break;
+      }
+    }
+    cleaning = false;
+    cleanResult = ok;
+    notifyListeners();
+    return ok;
   }
 
   /// 프로젝트 폴더를 VS Code로 연다. 명령은 기록 탭에도 남는다.
