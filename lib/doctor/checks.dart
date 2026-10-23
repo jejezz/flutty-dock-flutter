@@ -16,6 +16,8 @@ enum CheckId {
   team,
   profile,
   androidSigning,
+  windowsDeveloperMode,
+  visualStudio,
 }
 
 /// 점검 결과 한 줄. 문구는 화면이 [id]와 [params]로 만든다.
@@ -35,6 +37,7 @@ List<CheckItem> buildChecks({
   required String? teamId,
   required bool hostIsMac,
   required DateTime now,
+  bool hostIsWindows = false,
 }) {
   final d = diagnostics;
   if (d == null) return const [];
@@ -47,6 +50,22 @@ List<CheckItem> buildChecks({
       CheckItem(CheckId.xcode, d.xcode.found ? CheckStatus.ok : CheckStatus.fail, {'version': d.xcode.version ?? ''}),
     CheckItem(CheckId.adb, d.adb.found ? CheckStatus.ok : CheckStatus.warn, {'version': d.adb.version ?? ''}),
   ];
+
+  // Windows: 개발자 모드가 꺼져 있으면 플러그인 링크를 만들지 못해 빌드가 실패할 수 있다(경고).
+  // Visual Studio는 이 컴퓨터(Windows 앱)를 빌드 대상으로 골랐을 때만 의미가 있다 — 없으면 막힌 것이다.
+  final win = d.windows;
+  if (hostIsWindows && win != null) {
+    if (win.developerMode != null) {
+      items.add(CheckItem(CheckId.windowsDeveloperMode, win.developerMode! ? CheckStatus.ok : CheckStatus.warn));
+    }
+    if (device?.platform == DevicePlatform.windows) {
+      items.add(
+        CheckItem(CheckId.visualStudio, win.visualStudio != null ? CheckStatus.ok : CheckStatus.fail, {
+          'version': win.visualStudio ?? '',
+        }),
+      );
+    }
+  }
 
   // 이 컴퓨터(데스크톱)는 케이블·권한 점검이 필요 없다.
   if (device != null && !device.isDesktop) {

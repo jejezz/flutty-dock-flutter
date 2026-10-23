@@ -25,6 +25,31 @@ enum AndroidSigning {
   keystoreMissing,
 }
 
+/// Windows에서만 읽는 환경: 플러그인 링크에 쓰는 개발자 모드와 Windows 앱 빌드용 Visual Studio.
+class WindowsEnv {
+  const WindowsEnv({this.developerMode, this.visualStudio});
+
+  /// Windows 개발자 모드가 켜져 있는지. 읽지 못했으면 null.
+  final bool? developerMode;
+
+  /// C++ 데스크톱 도구가 있는 Visual Studio의 버전. 없으면 null.
+  final String? visualStudio;
+}
+
+/// `reg query ... AllowDevelopmentWithoutDevLicense` 출력에서 개발자 모드가 켜져 있는지 읽는다.
+/// 값이 0x1이면 켜짐, 그 밖이면 꺼짐.
+bool parseDeveloperMode(String output) =>
+    RegExp(r'AllowDevelopmentWithoutDevLicense\s+REG_DWORD\s+0x1\b').hasMatch(output);
+
+/// `vswhere -property installationVersion` 출력의 첫 줄(버전). 비어 있으면 null.
+String? parseVsWhereVersion(String output) {
+  for (final line in output.split(RegExp(r'\r?\n'))) {
+    final t = line.trim();
+    if (t.isNotEmpty) return t;
+  }
+  return null;
+}
+
 /// 한 번 모은 환경 정보. 점검 탭과 서명 탭이 같은 값을 본다.
 class Diagnostics {
   const Diagnostics({
@@ -34,6 +59,7 @@ class Diagnostics {
     this.certs = const [],
     this.profiles = const [],
     this.androidSigning,
+    this.windows,
     required this.collectedAt,
   });
 
@@ -46,6 +72,9 @@ class Diagnostics {
   List<SigningCert> get distinctCerts => uniqueCerts(certs);
   final List<ProfileInfo> profiles;
   final AndroidSigning? androidSigning;
+
+  /// Windows 호스트에서만 채워진다.
+  final WindowsEnv? windows;
   final DateTime collectedAt;
 
   /// 개인 키가 있는 개발 인증서의 Team ID들.
@@ -83,6 +112,7 @@ class ProcessDiagnosticsService implements DiagnosticsService {
       if (Platform.isMacOS) _certs() else Future.value(const <SigningCert>[]),
       if (Platform.isMacOS) _profiles() else Future.value(const <ProfileInfo>[]),
       _androidSigning(project),
+      if (Platform.isWindows) _windowsEnv() else Future.value(null),
     ]);
     return Diagnostics(
       flutter: results[0] as ToolInfo,
@@ -91,8 +121,46 @@ class ProcessDiagnosticsService implements DiagnosticsService {
       certs: results[3] as List<SigningCert>,
       profiles: results[4] as List<ProfileInfo>,
       androidSigning: results[5] as AndroidSigning?,
+      windows: results[6] as WindowsEnv?,
       collectedAt: DateTime.now(),
     );
+  }
+
+  Future<WindowsEnv> _windowsEnv() async {
+    final results = await Future.wait<Object?>([_windowsDeveloperMode(), _visualStudio()]);
+    return WindowsEnv(developerMode: results[0] as bool?, visualStudio: results[1] as String?);
+  }
+
+  /// 레지스트리의 개발자 모드 값. reg.exe를 못 찾으면 null(모름), 키가 없으면 꺼짐.
+  Future<bool?> _windowsDeveloperMode() async {
+    final root = Platform.environment['SystemRoot'] ?? r'C:\Windows';
+    final r = await runner.run([
+      '$root\\System32\\reg.exe',
+      'query',
+      r'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock',
+      '/v',
+      'AllowDevelopmentWithoutDevLicense',
+    ], quiet: true);
+    if (r.exitCode == 127) return null;
+    return r.ok && parseDeveloperMode(r.stdout);
+  }
+
+  /// `vswhere`로 "C++ x64/x86 빌드 도구"가 있는 가장 최신 Visual Studio의 버전. 없으면 null.
+  Future<String?> _visualStudio() async {
+    final x86 = Platform.environment['ProgramFiles(x86)'] ?? r'C:\Program Files (x86)';
+    final vswhere = '$x86\\Microsoft Visual Studio\\Installer\\vswhere.exe';
+    if (!await File(vswhere).exists()) return null;
+    final r = await runner.run([
+      vswhere,
+      '-latest',
+      '-products',
+      '*',
+      '-requires',
+      'Microsoft.VisualStudio.Component.VC.Tools.x86.x64',
+      '-property',
+      'installationVersion',
+    ], quiet: true);
+    return r.ok ? parseVsWhereVersion(r.stdout) : null;
   }
 
   Future<List<SigningCert>> _certs() async {

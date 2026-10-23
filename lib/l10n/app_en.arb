@@ -583,5 +583,10 @@
   "gitPullDone": "Pulled",
   "gitFailed": "Failed. See the output in the Log tab. If credentials are needed, sign in once in a terminal",
   "stepsCocoapods": "1. Run brew install cocoapods in a terminal\n2. Build again",
+  "checkWindowsDevModeOk": "Windows Developer Mode is on (plugin links can be created)",
+  "checkWindowsDevModeWarn": "Windows Developer Mode is off (builds can fail because plugin links can't be created)",
+  "checkVisualStudioOk": "Visual Studio {version} (C++ tools found)",
+  "checkVisualStudioFail": "Visual Studio's 'Desktop development with C++' is missing (needed to build the Windows app)",
+  "stepsWindowsDevMode": "1. Open Windows Settings and search for 'For developers'\n2. Turn on 'Developer Mode'\n3. Press Check again",
   "stepsVisualStudio": "1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick 'Desktop development with C++'\n3. Build again"
 }

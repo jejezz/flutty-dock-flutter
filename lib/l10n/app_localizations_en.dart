@@ -1044,6 +1044,27 @@ class AppLocalizationsEn extends AppLocalizations {
       '1. Run brew install cocoapods in a terminal\n2. Build again';
 
   @override
+  String get checkWindowsDevModeOk =>
+      'Windows Developer Mode is on (plugin links can be created)';
+
+  @override
+  String get checkWindowsDevModeWarn =>
+      'Windows Developer Mode is off (builds can fail because plugin links can\'t be created)';
+
+  @override
+  String checkVisualStudioOk(String version) {
+    return 'Visual Studio $version (C++ tools found)';
+  }
+
+  @override
+  String get checkVisualStudioFail =>
+      'Visual Studio\'s \'Desktop development with C++\' is missing (needed to build the Windows app)';
+
+  @override
+  String get stepsWindowsDevMode =>
+      '1. Open Windows Settings and search for \'For developers\'\n2. Turn on \'Developer Mode\'\n3. Press Check again';
+
+  @override
   String get stepsVisualStudio =>
       '1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick \'Desktop development with C++\'\n3. Build again';
 }

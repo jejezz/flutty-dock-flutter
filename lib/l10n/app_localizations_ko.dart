@@ -1019,6 +1019,26 @@ class AppLocalizationsKo extends AppLocalizations {
       '1. 터미널에서 brew install cocoapods 를 실행합니다\n2. 다시 빌드합니다';
 
   @override
+  String get checkWindowsDevModeOk => 'Windows 개발자 모드 켜짐 (플러그인 링크를 만들 수 있음)';
+
+  @override
+  String get checkWindowsDevModeWarn =>
+      'Windows 개발자 모드가 꺼져 있습니다 (플러그인 링크를 만들지 못해 빌드가 실패할 수 있음)';
+
+  @override
+  String checkVisualStudioOk(String version) {
+    return 'Visual Studio $version (C++ 도구 있음)';
+  }
+
+  @override
+  String get checkVisualStudioFail =>
+      'Visual Studio의 \'C++를 사용한 데스크톱 개발\'이 없습니다 (Windows 앱 빌드에 필요)';
+
+  @override
+  String get stepsWindowsDevMode =>
+      '1. Windows 설정을 열고 \'개발자용\'(개발자 설정)을 검색해 엽니다\n2. \'개발자 모드\'를 켭니다\n3. 다시 점검을 누릅니다';
+
+  @override
   String get stepsVisualStudio =>
       '1. Visual Studio 2022(Community 가능)를 설치합니다\n2. 설치 관리자에서 \'C++를 사용한 데스크톱 개발\'을 선택합니다\n3. 다시 빌드합니다';
 }

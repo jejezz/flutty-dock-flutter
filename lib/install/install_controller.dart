@@ -151,6 +151,7 @@ class InstallController extends ChangeNotifier {
     device: device,
     teamId: effectiveTeamId,
     hostIsMac: hostIsMac,
+    hostIsWindows: hostIsWindows,
     now: DateTime.now(),
   );
 

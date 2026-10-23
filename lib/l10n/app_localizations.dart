@@ -1856,6 +1856,36 @@ abstract class AppLocalizations {
   /// **'1. 터미널에서 brew install cocoapods 를 실행합니다\n2. 다시 빌드합니다'**
   String get stepsCocoapods;
 
+  /// No description provided for @checkWindowsDevModeOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Windows 개발자 모드 켜짐 (플러그인 링크를 만들 수 있음)'**
+  String get checkWindowsDevModeOk;
+
+  /// No description provided for @checkWindowsDevModeWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'Windows 개발자 모드가 꺼져 있습니다 (플러그인 링크를 만들지 못해 빌드가 실패할 수 있음)'**
+  String get checkWindowsDevModeWarn;
+
+  /// No description provided for @checkVisualStudioOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Visual Studio {version} (C++ 도구 있음)'**
+  String checkVisualStudioOk(String version);
+
+  /// No description provided for @checkVisualStudioFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'Visual Studio의 \'C++를 사용한 데스크톱 개발\'이 없습니다 (Windows 앱 빌드에 필요)'**
+  String get checkVisualStudioFail;
+
+  /// No description provided for @stepsWindowsDevMode.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Windows 설정을 열고 \'개발자용\'(개발자 설정)을 검색해 엽니다\n2. \'개발자 모드\'를 켭니다\n3. 다시 점검을 누릅니다'**
+  String get stepsWindowsDevMode;
+
   /// No description provided for @stepsVisualStudio.
   ///
   /// In ko, this message translates to:
