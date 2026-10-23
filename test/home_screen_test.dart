@@ -9,6 +9,7 @@ import 'package:flutty_dock/doctor/diagnostics.dart';
 import 'package:flutty_dock/doctor/signing_info.dart';
 import 'package:flutty_dock/flutter/flutter_project.dart';
 import 'package:flutty_dock/install/install_controller.dart';
+import 'package:flutty_dock/install/build_options.dart';
 import 'package:flutty_dock/install/install_plan.dart';
 import 'package:flutty_dock/l10n/app_localizations.dart';
 import 'package:flutty_dock/settings/app_settings.dart';
@@ -255,6 +256,45 @@ void main() {
     await _pump(tester, c);
     expect(c.plan.steps, isEmpty);
     expect(find.text('Clean & get packages'), findsOneWidget);
+  });
+
+  testWidgets('build options start collapsed and typing a flavor shows up in the command', (tester) async {
+    final c = _controller()
+      ..project = _project
+      ..devices = const [_galaxy]
+      ..selectedId = _galaxy.id
+      ..mode = BuildMode.release;
+    await _pump(tester, c);
+    expect(find.text('Build options'), findsOneWidget);
+    expect(find.text('Defaults'), findsOneWidget);
+    expect(find.widgetWithText(TextField, 'Flavor'), findsNothing, reason: 'collapsed');
+
+    await tester.tap(find.text('Build options'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextField, 'Flavor'), 'dev');
+    await tester.pumpAndSettle();
+    expect(c.options.flavor, 'dev');
+    expect(find.textContaining('flutter build apk --release --flavor dev'), findsWidgets);
+    expect(find.text('Clear options'), findsOneWidget);
+
+    await tester.tap(find.text('Clear options'));
+    await tester.pumpAndSettle();
+    expect(c.options.isEmpty, isTrue);
+    // (입력칸의 도움말에도 '--flavor'가 있으므로 명령 줄로 좁혀서 본다.)
+    expect(find.textContaining('flutter build apk --release --flavor'), findsNothing);
+    expect(find.textContaining('flutter build apk --release'), findsOneWidget);
+  });
+
+  testWidgets('an invalid flavor is flagged and not used; Windows turns the flavor field off', (tester) async {
+    final c = _controller()
+      ..project = _project
+      ..devices = const [_galaxy]
+      ..selectedId = _galaxy.id
+      ..mode = BuildMode.release
+      ..options = const BuildOptions(flavor: 'dev;x');
+    await _pump(tester, c);
+    expect(find.text('Start with a letter; letters, digits, _ and - only'), findsOneWidget);
+    expect(find.textContaining('--flavor'), findsNothing);
   });
 
   testWidgets('a desktop target runs, a phone gets installed', (tester) async {

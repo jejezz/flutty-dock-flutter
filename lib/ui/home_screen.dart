@@ -14,6 +14,7 @@ import '../secrets/secrets_screen.dart';
 import '../settings/settings_menus.dart';
 import '../theme/app_theme.dart';
 import 'banner.dart';
+import 'build_options_section.dart';
 import 'command_text.dart';
 import 'check_text.dart';
 import 'copy_output_button.dart';
@@ -346,6 +347,11 @@ class _BuildSectionState extends State<_BuildSection> {
           selected: {c.mode},
           onSelectionChanged: c.running ? null : (s) => c.setMode(s.first),
         ),
+        if (c.project != null) ...[
+          const SizedBox(height: AppSpacing.xs),
+          // 프로젝트마다 입력 칸을 새로 만든다 (저장된 옵션이 그 프로젝트 것으로 채워지게).
+          BuildOptionsSection(key: ValueKey(c.project!.path), controller: c),
+        ],
         if (isIos) ...[
           const SizedBox(height: AppSpacing.md),
           TextField(

@@ -1,6 +1,7 @@
 import '../core/command_log.dart';
 import '../devices/mobile_device.dart';
 import '../flutter/flutter_project.dart';
+import 'build_options.dart';
 
 enum BuildMode { debug, release }
 
@@ -81,6 +82,7 @@ InstallPlan buildInstallPlan({
   required String? teamId,
   required bool hostIsMac,
   String windowsArch = 'x64',
+  BuildOptions options = const BuildOptions(),
 }) {
   if (project == null) return const InstallPlan([], [Blocker.noProject]);
   if (device == null) return const InstallPlan([], [Blocker.noDevice]);
@@ -88,6 +90,12 @@ InstallPlan buildInstallPlan({
   final steps = <PlanStep>[];
   String? artifact;
   final dir = project.path;
+  // flavor는 Windows에서 쓸 수 없다. 나머지 옵션(-t, dart-define, 추가 인자)은 모든 대상에 붙는다.
+  final flavorOk = device.platform != DevicePlatform.windows;
+  final flavor = flavorOk ? options.validFlavor : '';
+  final flags = options.flutterArgs(flavorSupported: flavorOk);
+  // flavor가 있으면 Flutter 규칙대로 scheme은 flavor 이름, configuration은 `Release-<flavor>`.
+  final releaseConfig = flavor.isEmpty ? 'Release' : 'Release-$flavor';
 
   if (device.platform == DevicePlatform.ios) {
     if (!project.hasIos) blockers.add(Blocker.platformMissing);
@@ -103,7 +111,7 @@ InstallPlan buildInstallPlan({
       steps.add(
         PlanStep(
           StepKind.run,
-          ['flutter', 'run', '-d', device.id, '--debug'],
+          ['flutter', 'run', '-d', device.id, '--debug', ...flags],
           workingDirectory: dir,
           environment: {
             if (team != null && team.isNotEmpty) ...{
@@ -114,7 +122,7 @@ InstallPlan buildInstallPlan({
         ),
       );
     } else {
-      final config = 'Release';
+      final config = releaseConfig;
       final app = '$dir/build/ios_dd/Build/Products/$config-iphoneos/Runner.app';
       artifact = app;
       steps.addAll([
@@ -125,13 +133,14 @@ InstallPlan buildInstallPlan({
           '--release',
           '--config-only',
           '--no-codesign',
+          ...flags,
         ], workingDirectory: dir),
         PlanStep(StepKind.build, [
           'xcodebuild',
           '-workspace',
           'Runner.xcworkspace',
           '-scheme',
-          'Runner',
+          flavor.isEmpty ? 'Runner' : flavor,
           '-configuration',
           config,
           '-destination',
@@ -144,7 +153,7 @@ InstallPlan buildInstallPlan({
           'build',
         ], workingDirectory: '$dir/ios'),
         PlanStep(StepKind.install, ['xcrun', 'devicectl', 'device', 'install', 'app', '--device', device.id, app]),
-        if (project.iosBundleId != null)
+        if (options.appIdOr(project.iosBundleId) != null)
           PlanStep(StepKind.launch, [
             'xcrun',
             'devicectl',
@@ -153,7 +162,7 @@ InstallPlan buildInstallPlan({
             'launch',
             '--device',
             device.id,
-            project.iosBundleId!,
+            options.appIdOr(project.iosBundleId)!,
           ]),
       ]);
     }
@@ -161,15 +170,15 @@ InstallPlan buildInstallPlan({
     // 이 컴퓨터(Mac)의 데스크톱 빌드 — 프로젝트에 macos/가 이미 있을 때만. 설치할 곳이 따로 없어서 빌드하고 연다.
     if (!project.hasMacos) blockers.add(Blocker.platformMissing);
     if (mode == BuildMode.debug) {
-      steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', 'macos', '--debug'], workingDirectory: dir));
+      steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', 'macos', '--debug', ...flags], workingDirectory: dir));
     } else {
       if (project.macosAppName != null) {
-        artifact = '$dir/build/macos/Build/Products/Release/${project.macosAppName}.app';
+        artifact = '$dir/build/macos/Build/Products/$releaseConfig/${project.macosAppName}.app';
       }
       steps.addAll([
-        PlanStep(StepKind.build, ['flutter', 'build', 'macos', '--release'], workingDirectory: dir),
+        PlanStep(StepKind.build, ['flutter', 'build', 'macos', '--release', ...flags], workingDirectory: dir),
         if (project.macosAppName != null)
-          PlanStep(StepKind.launch, ['open', '$dir/build/macos/Build/Products/Release/${project.macosAppName}.app']),
+          PlanStep(StepKind.launch, ['open', '$dir/build/macos/Build/Products/$releaseConfig/${project.macosAppName}.app']),
       ]);
     }
   } else if (device.platform == DevicePlatform.windows) {
@@ -177,13 +186,13 @@ InstallPlan buildInstallPlan({
     // explorer.exe는 실행하고 바로 돌아온다 (앱이 끝날 때까지 이 단계가 붙잡히지 않는다).
     if (!project.hasWindows) blockers.add(Blocker.platformMissing);
     if (mode == BuildMode.debug) {
-      steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', 'windows', '--debug'], workingDirectory: dir));
+      steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', 'windows', '--debug', ...flags], workingDirectory: dir));
     } else {
       if (project.windowsBinaryName != null) {
         artifact = '$dir\\build\\windows\\$windowsArch\\runner\\Release\\${project.windowsBinaryName}.exe';
       }
       steps.addAll([
-        PlanStep(StepKind.build, ['flutter', 'build', 'windows', '--release'], workingDirectory: dir),
+        PlanStep(StepKind.build, ['flutter', 'build', 'windows', '--release', ...flags], workingDirectory: dir),
         if (project.windowsBinaryName != null)
           PlanStep(StepKind.launch, [
             'explorer.exe',
@@ -195,20 +204,22 @@ InstallPlan buildInstallPlan({
     if (!project.hasAndroid) blockers.add(Blocker.platformMissing);
     if (!device.authorized) blockers.add(Blocker.androidUnauthorized);
     if (mode == BuildMode.debug) {
-      steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', device.id, '--debug'], workingDirectory: dir));
+      steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', device.id, '--debug', ...flags], workingDirectory: dir));
     } else {
-      artifact = '$dir/build/app/outputs/flutter-apk/app-release.apk';
+      // flavor가 있으면 APK 이름에 들어간다: app-<flavor>-release.apk.
+      final apk = '$dir/build/app/outputs/flutter-apk/${flavor.isEmpty ? 'app-release' : 'app-$flavor-release'}.apk';
+      artifact = apk;
       steps.addAll([
-        PlanStep(StepKind.build, ['flutter', 'build', 'apk', '--release'], workingDirectory: dir),
+        PlanStep(StepKind.build, ['flutter', 'build', 'apk', '--release', ...flags], workingDirectory: dir),
         PlanStep(StepKind.install, [
           'adb',
           '-s',
           device.id,
           'install',
           '-r',
-          '$dir/build/app/outputs/flutter-apk/app-release.apk',
+          apk,
         ]),
-        if (project.androidApplicationId != null)
+        if (options.appIdOr(project.androidApplicationId) != null)
           PlanStep(StepKind.launch, [
             'adb',
             '-s',
@@ -216,7 +227,7 @@ InstallPlan buildInstallPlan({
             'shell',
             'monkey',
             '-p',
-            project.androidApplicationId!,
+            options.appIdOr(project.androidApplicationId)!,
             '-c',
             'android.intent.category.LAUNCHER',
             '1',

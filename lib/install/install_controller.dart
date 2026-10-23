@@ -11,6 +11,7 @@ import '../doctor/checks.dart';
 import '../doctor/diagnostics.dart';
 import '../devices/mobile_device.dart';
 import '../flutter/flutter_project.dart';
+import 'build_options.dart';
 import 'install_plan.dart';
 
 enum VsCodeResult { opened, notFound, failed }
@@ -42,6 +43,7 @@ class InstallController extends ChangeNotifier {
   static const _modeKey = 'build_mode';
   static const _tabKey = 'last_tab';
   static const _toolKeyPrefix = 'tool_path_';
+  static const _optionsKeyPrefix = 'build_options:';
 
   /// 사용자가 위치를 지정할 수 있는 도구.
   static const configurableTools = ['flutter', 'adb'];
@@ -62,6 +64,9 @@ class InstallController extends ChangeNotifier {
   String? selectedId;
   BuildMode mode = BuildMode.release;
   String? teamId;
+
+  /// 이 프로젝트의 빌드 옵션 (flavor, 진입 파일, dart-define 파일 …). 프로젝트마다 따로 저장한다.
+  BuildOptions options = const BuildOptions();
 
   Diagnostics? diagnostics;
   bool diagnosing = false;
@@ -137,6 +142,7 @@ class InstallController extends ChangeNotifier {
     hostIsMac: hostIsMac,
     // Windows ARM에서는 산출물이 build\windows\arm64 아래에 생긴다.
     windowsArch: Platform.environment['PROCESSOR_ARCHITECTURE']?.toUpperCase() == 'ARM64' ? 'arm64' : 'x64',
+    options: options,
   );
 
   List<CheckItem> get checks => buildChecks(
@@ -184,6 +190,7 @@ class InstallController extends ChangeNotifier {
       }
       final last = _prefs!.getString(_projectKey);
       if (last != null) project = await FlutterProject.detect(last);
+      _loadOptions();
     } on Object {
       // 기억해 둔 값은 편의일 뿐이다.
     }
@@ -196,6 +203,7 @@ class InstallController extends ChangeNotifier {
     projectError = found == null ? dir : null;
     if (found != null) {
       project = found;
+      _loadOptions();
       statuses = const [];
       hint = null;
       await _prefs?.setString(_projectKey, dir);
@@ -248,6 +256,27 @@ class InstallController extends ChangeNotifier {
 
   void select(MobileDevice d) {
     selectedId = d.id;
+    notifyListeners();
+  }
+
+  void _loadOptions() {
+    final p = project;
+    options = p == null ? const BuildOptions() : BuildOptions.decode(_prefs?.getString('$_optionsKeyPrefix${p.path}'));
+  }
+
+  /// 빌드 옵션을 바꾸고 이 프로젝트용으로 저장한다 (비우면 저장된 것도 지운다).
+  void setOptions(BuildOptions value) {
+    final p = project;
+    if (running || value == options) return;
+    options = value;
+    if (p != null) {
+      final key = '$_optionsKeyPrefix${p.path}';
+      if (value.isEmpty) {
+        _prefs?.remove(key);
+      } else {
+        _prefs?.setString(key, value.encode());
+      }
+    }
     notifyListeners();
   }
 
