@@ -418,6 +418,66 @@ class AppLocalizationsEn extends AppLocalizations {
       'flutter clean → flutter pub get. Worth trying when a build fails for no clear reason.';
 
   @override
+  String get optTitle => 'Build options';
+
+  @override
+  String get optDefault => 'Defaults';
+
+  @override
+  String get optFlavor => 'Flavor';
+
+  @override
+  String get optFlavorHelp =>
+      '--flavor. Only if the project defines flavors (Windows needs Flutter 3.47+)';
+
+  @override
+  String get optFlavorInvalid =>
+      'Start with a letter; letters, digits, _ and - only';
+
+  @override
+  String get optHelp => 'Help';
+
+  @override
+  String get optHelpLink =>
+      'Opens the Flutter docs on setting up flavors for the selected target (Android, iOS, Windows …) in a browser';
+
+  @override
+  String get optTarget => 'Entry point';
+
+  @override
+  String get optTargetHelp => '-t. Empty means lib/main.dart';
+
+  @override
+  String get optDefineFile => 'dart-define file';
+
+  @override
+  String get optDefineFileHelp =>
+      '--dart-define-from-file. Only the path is stored; the file is never read or saved';
+
+  @override
+  String get optFileMissing => 'File not found';
+
+  @override
+  String get optAppId => 'App ID (optional)';
+
+  @override
+  String get optAppIdHelp =>
+      'When the flavor changes the app ID, the ID to launch after installing (e.g. art.zoomon.app.dev)';
+
+  @override
+  String get optExtra => 'Extra arguments';
+
+  @override
+  String get optExtraHelp =>
+      'e.g. --obfuscate --split-debug-info=build/symbols';
+
+  @override
+  String get optPick => 'Choose file';
+
+  @override
+  String get optClear => 'Clear options';
+
+  @override
   String get homeCleanDone =>
       'Cleaned and packages restored. Try building again.';
 

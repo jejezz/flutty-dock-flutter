@@ -408,6 +408,64 @@ class AppLocalizationsKo extends AppLocalizations {
       'flutter clean → flutter pub get. 이유 없이 빌드가 실패할 때 해 볼 만합니다.';
 
   @override
+  String get optTitle => '빌드 옵션';
+
+  @override
+  String get optDefault => '기본값';
+
+  @override
+  String get optFlavor => 'Flavor';
+
+  @override
+  String get optFlavorHelp =>
+      '--flavor. 프로젝트에 flavor가 있을 때만 입력하세요 (Windows는 Flutter 3.47 이상)';
+
+  @override
+  String get optFlavorInvalid => '영문자로 시작하고 영문자·숫자·_·-만 쓸 수 있습니다';
+
+  @override
+  String get optHelp => '도움말';
+
+  @override
+  String get optHelpLink =>
+      '선택한 대상(Android·iOS·Windows …)에 맞는 Flutter 문서의 flavor 설정 방법을 브라우저로 엽니다';
+
+  @override
+  String get optTarget => '진입 파일';
+
+  @override
+  String get optTargetHelp => '-t. 비우면 lib/main.dart';
+
+  @override
+  String get optDefineFile => 'dart-define 파일';
+
+  @override
+  String get optDefineFileHelp =>
+      '--dart-define-from-file. 경로만 저장하고 파일 내용은 읽거나 저장하지 않습니다';
+
+  @override
+  String get optFileMissing => '파일을 찾을 수 없습니다';
+
+  @override
+  String get optAppId => '앱 ID (선택)';
+
+  @override
+  String get optAppIdHelp =>
+      'flavor가 앱 ID를 바꿀 때, 설치 뒤 실행에 쓸 ID (예: art.zoomon.app.dev)';
+
+  @override
+  String get optExtra => '추가 인자';
+
+  @override
+  String get optExtraHelp => '예: --obfuscate --split-debug-info=build/symbols';
+
+  @override
+  String get optPick => '파일 고르기';
+
+  @override
+  String get optClear => '옵션 지우기';
+
+  @override
   String get homeCleanDone => '정리했고 패키지를 다시 받았습니다. 이제 빌드해 보세요.';
 
   @override

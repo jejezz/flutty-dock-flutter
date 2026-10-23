@@ -806,6 +806,114 @@ abstract class AppLocalizations {
   /// **'flutter clean → flutter pub get. 이유 없이 빌드가 실패할 때 해 볼 만합니다.'**
   String get homeCleanHelp;
 
+  /// No description provided for @optTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 옵션'**
+  String get optTitle;
+
+  /// No description provided for @optDefault.
+  ///
+  /// In ko, this message translates to:
+  /// **'기본값'**
+  String get optDefault;
+
+  /// No description provided for @optFlavor.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flavor'**
+  String get optFlavor;
+
+  /// No description provided for @optFlavorHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'--flavor. 프로젝트에 flavor가 있을 때만 입력하세요 (Windows는 Flutter 3.47 이상)'**
+  String get optFlavorHelp;
+
+  /// No description provided for @optFlavorInvalid.
+  ///
+  /// In ko, this message translates to:
+  /// **'영문자로 시작하고 영문자·숫자·_·-만 쓸 수 있습니다'**
+  String get optFlavorInvalid;
+
+  /// No description provided for @optHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'도움말'**
+  String get optHelp;
+
+  /// No description provided for @optHelpLink.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택한 대상(Android·iOS·Windows …)에 맞는 Flutter 문서의 flavor 설정 방법을 브라우저로 엽니다'**
+  String get optHelpLink;
+
+  /// No description provided for @optTarget.
+  ///
+  /// In ko, this message translates to:
+  /// **'진입 파일'**
+  String get optTarget;
+
+  /// No description provided for @optTargetHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'-t. 비우면 lib/main.dart'**
+  String get optTargetHelp;
+
+  /// No description provided for @optDefineFile.
+  ///
+  /// In ko, this message translates to:
+  /// **'dart-define 파일'**
+  String get optDefineFile;
+
+  /// No description provided for @optDefineFileHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'--dart-define-from-file. 경로만 저장하고 파일 내용은 읽거나 저장하지 않습니다'**
+  String get optDefineFileHelp;
+
+  /// No description provided for @optFileMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일을 찾을 수 없습니다'**
+  String get optFileMissing;
+
+  /// No description provided for @optAppId.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱 ID (선택)'**
+  String get optAppId;
+
+  /// No description provided for @optAppIdHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'flavor가 앱 ID를 바꿀 때, 설치 뒤 실행에 쓸 ID (예: art.zoomon.app.dev)'**
+  String get optAppIdHelp;
+
+  /// No description provided for @optExtra.
+  ///
+  /// In ko, this message translates to:
+  /// **'추가 인자'**
+  String get optExtra;
+
+  /// No description provided for @optExtraHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: --obfuscate --split-debug-info=build/symbols'**
+  String get optExtraHelp;
+
+  /// No description provided for @optPick.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 고르기'**
+  String get optPick;
+
+  /// No description provided for @optClear.
+  ///
+  /// In ko, this message translates to:
+  /// **'옵션 지우기'**
+  String get optClear;
+
   /// No description provided for @homeCleanDone.
   ///
   /// In ko, this message translates to:
