@@ -19,6 +19,7 @@ import 'check_text.dart';
 import 'copy_output_button.dart';
 import 'devices_tab.dart';
 import 'doctor_tab.dart';
+import 'git_section.dart';
 import 'log_tab.dart';
 import 'output_viewer.dart';
 import 'signing_tab.dart';
@@ -127,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         padding: const EdgeInsets.all(AppSpacing.lg),
                         children: [
                           _ProjectSection(controller: controller, onOpen: _open),
+                          GitSection(controller: controller),
                           const SizedBox(height: AppSpacing.lg),
                           _BuildSection(controller: controller),
                           const SizedBox(height: AppSpacing.lg),
@@ -279,6 +281,16 @@ class _BuildSectionState extends State<_BuildSection> {
     StepKind.run => l10n.homeStepRun,
   };
 
+  Widget _runOnlyButton(InstallController c, AppLocalizations l10n, InstallPlan plan) {
+    final ready = plan.runnable && c.artifactReady;
+    final button = OutlinedButton(
+      onPressed: ready ? () => c.start(phase: RunPhase.run) : null,
+      child: Text(l10n.homeActionRunOnly),
+    );
+    // 결과물이 없어서 눌 수 없을 때만 이유를 알려 준다.
+    return plan.runnable && !c.artifactReady ? Tooltip(message: l10n.homeRunOnlyNeedsBuild, child: button) : button;
+  }
+
   Widget _statusIcon(StepStatus? s, ThemeData theme) => switch (s) {
     StepStatus.running => const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
     StepStatus.done => const Icon(Icons.check_circle_rounded, size: 16, color: AppColors.success),
@@ -391,6 +403,22 @@ class _BuildSectionState extends State<_BuildSection> {
             ],
           ],
         ),
+        // release: 빌드와 실행을 따로 할 수 있다. 실행만은 이미 만든 결과물이 있을 때 쓴다.
+        if (plan.splittable && !c.running) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: plan.runnable ? () => c.start(phase: RunPhase.build) : null,
+                  child: Text(l10n.homeActionBuildOnly),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(child: _runOnlyButton(c, l10n, plan)),
+            ],
+          ),
+        ],
         if (c.project != null) ...[
           const SizedBox(height: AppSpacing.sm),
           Tooltip(

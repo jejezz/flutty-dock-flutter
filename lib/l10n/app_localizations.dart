@@ -758,7 +758,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeStepInstall.
   ///
   /// In ko, this message translates to:
-  /// **'설치'**
+  /// **'기기에 올리기'**
   String get homeStepInstall;
 
   /// No description provided for @homeStepLaunch.
@@ -776,7 +776,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeActionInstall.
   ///
   /// In ko, this message translates to:
-  /// **'빌드 & 설치'**
+  /// **'빌드 & 실행'**
   String get homeActionInstall;
 
   /// No description provided for @homeActionClean.
@@ -938,7 +938,7 @@ abstract class AppLocalizations {
   /// No description provided for @tabInstall.
   ///
   /// In ko, this message translates to:
-  /// **'설치'**
+  /// **'실행'**
   String get tabInstall;
 
   /// No description provided for @tabDevices.
@@ -1594,6 +1594,138 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'종료 후 다시 실행'**
   String get restartAppButton;
+
+  /// No description provided for @homeActionBuildOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드만'**
+  String get homeActionBuildOnly;
+
+  /// No description provided for @homeActionRunOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행만'**
+  String get homeActionRunOnly;
+
+  /// No description provided for @homeRunOnlyNeedsBuild.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행할 release 결과물이 없습니다. 먼저 빌드하세요'**
+  String get homeRunOnlyNeedsBuild;
+
+  /// No description provided for @gitTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'Git'**
+  String get gitTitle;
+
+  /// No description provided for @gitDetached.
+  ///
+  /// In ko, this message translates to:
+  /// **'분리된 HEAD'**
+  String get gitDetached;
+
+  /// No description provided for @gitUpToDate.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격과 같음'**
+  String get gitUpToDate;
+
+  /// No description provided for @gitAhead.
+  ///
+  /// In ko, this message translates to:
+  /// **'로컬이 {count}개 앞섬'**
+  String gitAhead(int count);
+
+  /// No description provided for @gitBehind.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격이 {count}개 앞섬'**
+  String gitBehind(int count);
+
+  /// No description provided for @gitNoUpstream.
+  ///
+  /// In ko, this message translates to:
+  /// **'추적하는 원격 브랜치 없음'**
+  String get gitNoUpstream;
+
+  /// No description provided for @gitDirty.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋하지 않은 변경 있음'**
+  String get gitDirty;
+
+  /// No description provided for @gitNoRemote.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격 주소 없음'**
+  String get gitNoRemote;
+
+  /// No description provided for @gitOpenRemote.
+  ///
+  /// In ko, this message translates to:
+  /// **'브라우저로 원격 저장소 열기'**
+  String get gitOpenRemote;
+
+  /// No description provided for @gitFetch.
+  ///
+  /// In ko, this message translates to:
+  /// **'가져오기 (fetch)'**
+  String get gitFetch;
+
+  /// No description provided for @gitPull.
+  ///
+  /// In ko, this message translates to:
+  /// **'받기 (pull)'**
+  String get gitPull;
+
+  /// No description provided for @gitPullHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'git pull --ff-only — 충돌 없이 앞으로만 합칩니다'**
+  String get gitPullHelp;
+
+  /// No description provided for @gitPullBlockedDirty.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋하지 않은 변경이 있어 받지 않습니다'**
+  String get gitPullBlockedDirty;
+
+  /// No description provided for @gitPullBlockedDiverged.
+  ///
+  /// In ko, this message translates to:
+  /// **'로컬과 원격이 갈라졌습니다. 터미널에서 병합하세요'**
+  String get gitPullBlockedDiverged;
+
+  /// No description provided for @gitPullBlockedNoUpstream.
+  ///
+  /// In ko, this message translates to:
+  /// **'추적하는 원격 브랜치가 없습니다'**
+  String get gitPullBlockedNoUpstream;
+
+  /// No description provided for @gitPullBlockedUpToDate.
+  ///
+  /// In ko, this message translates to:
+  /// **'받을 변경이 없습니다 (먼저 가져오기를 누르세요)'**
+  String get gitPullBlockedUpToDate;
+
+  /// No description provided for @gitFetchDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'가져왔습니다'**
+  String get gitFetchDone;
+
+  /// No description provided for @gitPullDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'받았습니다'**
+  String get gitPullDone;
+
+  /// No description provided for @gitFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'실패했습니다. 기록 탭에서 출력을 확인하세요. 자격 증명이 필요하면 터미널에서 한 번 로그인해 두세요'**
+  String get gitFailed;
 
   /// No description provided for @stepsCocoapods.
   ///

@@ -371,7 +371,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeStepBuild => '빌드';
 
   @override
-  String get homeStepInstall => '설치';
+  String get homeStepInstall => '기기에 올리기';
 
   @override
   String get homeStepLaunch => '실행';
@@ -380,7 +380,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeStepRun => '실행 (핫 리로드)';
 
   @override
-  String get homeActionInstall => '빌드 & 설치';
+  String get homeActionInstall => '빌드 & 실행';
 
   @override
   String get homeActionClean => '정리 후 패키지 다시 받기';
@@ -463,7 +463,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get tabInstall => '설치';
+  String get tabInstall => '실행';
 
   @override
   String get tabDevices => '기기';
@@ -839,6 +839,76 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get restartAppButton => '종료 후 다시 실행';
+
+  @override
+  String get homeActionBuildOnly => '빌드만';
+
+  @override
+  String get homeActionRunOnly => '실행만';
+
+  @override
+  String get homeRunOnlyNeedsBuild => '실행할 release 결과물이 없습니다. 먼저 빌드하세요';
+
+  @override
+  String get gitTitle => 'Git';
+
+  @override
+  String get gitDetached => '분리된 HEAD';
+
+  @override
+  String get gitUpToDate => '원격과 같음';
+
+  @override
+  String gitAhead(int count) {
+    return '로컬이 $count개 앞섬';
+  }
+
+  @override
+  String gitBehind(int count) {
+    return '원격이 $count개 앞섬';
+  }
+
+  @override
+  String get gitNoUpstream => '추적하는 원격 브랜치 없음';
+
+  @override
+  String get gitDirty => '커밋하지 않은 변경 있음';
+
+  @override
+  String get gitNoRemote => '원격 주소 없음';
+
+  @override
+  String get gitOpenRemote => '브라우저로 원격 저장소 열기';
+
+  @override
+  String get gitFetch => '가져오기 (fetch)';
+
+  @override
+  String get gitPull => '받기 (pull)';
+
+  @override
+  String get gitPullHelp => 'git pull --ff-only — 충돌 없이 앞으로만 합칩니다';
+
+  @override
+  String get gitPullBlockedDirty => '커밋하지 않은 변경이 있어 받지 않습니다';
+
+  @override
+  String get gitPullBlockedDiverged => '로컬과 원격이 갈라졌습니다. 터미널에서 병합하세요';
+
+  @override
+  String get gitPullBlockedNoUpstream => '추적하는 원격 브랜치가 없습니다';
+
+  @override
+  String get gitPullBlockedUpToDate => '받을 변경이 없습니다 (먼저 가져오기를 누르세요)';
+
+  @override
+  String get gitFetchDone => '가져왔습니다';
+
+  @override
+  String get gitPullDone => '받았습니다';
+
+  @override
+  String get gitFailed => '실패했습니다. 기록 탭에서 출력을 확인하세요. 자격 증명이 필요하면 터미널에서 한 번 로그인해 두세요';
 
   @override
   String get stepsCocoapods => '1. 터미널에서 brew install cocoapods 를 실행합니다\n2. 다시 빌드합니다';

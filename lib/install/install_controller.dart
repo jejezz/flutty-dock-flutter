@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/command_runner.dart';
+import '../core/git_client.dart';
 import '../core/vscode.dart';
 import '../devices/device_service.dart';
 import '../doctor/checks.dart';
@@ -14,6 +15,8 @@ import 'install_plan.dart';
 
 enum VsCodeResult { opened, notFound, failed }
 
+enum GitAction { fetch, pull }
+
 enum StepStatus { pending, running, done, failed, cancelled }
 
 /// 프로젝트·기기·모드를 고르고 계획을 실행하는 화면의 상태.
@@ -22,10 +25,12 @@ class InstallController extends ChangeNotifier {
     required this.runner,
     required this.deviceService,
     this.diagnosticsService,
+    GitClient? gitClient,
     this.vscodeCommand = vscodeOpenCommand,
     bool? hostIsMac,
     bool? hostIsWindows,
-  }) : hostIsMac = hostIsMac ?? Platform.isMacOS,
+  }) : git = gitClient ?? GitClient(runner),
+       hostIsMac = hostIsMac ?? Platform.isMacOS,
        hostIsWindows = hostIsWindows ?? Platform.isWindows;
 
   /// 이 앱이 도는 OS. 이 컴퓨터를 빌드 대상으로 보여 줄지(데스크톱)와 iOS 설치 가능 여부가 여기에 달렸다.
@@ -44,6 +49,7 @@ class InstallController extends ChangeNotifier {
   final CommandRunner runner;
   final DeviceService deviceService;
   final DiagnosticsService? diagnosticsService;
+  final GitClient git;
 
   /// VS Code로 폴더를 여는 명령을 찾는다. 테스트에서 바꾼다.
   final Future<List<String>?> Function(String dir, {required String path}) vscodeCommand;
@@ -182,7 +188,7 @@ class InstallController extends ChangeNotifier {
       // 기억해 둔 값은 편의일 뿐이다.
     }
     notifyListeners();
-    await Future.wait([refreshDevices(), runDiagnostics()]);
+    await Future.wait([refreshDevices(), runDiagnostics(), refreshGit()]);
   }
 
   Future<bool> openProject(String dir) async {
@@ -196,8 +202,11 @@ class InstallController extends ChangeNotifier {
       // 새 프로젝트가 지금 고른 대상(예: 이 컴퓨터)을 지원하지 않으면 다시 고른다.
       if (device == null) _pickDefaultDevice();
     }
+    gitState = null;
+    lastGitAction = null;
+    lastGitOk = null;
     notifyListeners();
-    if (found != null) await runDiagnostics();
+    if (found != null) await Future.wait([runDiagnostics(), refreshGit()]);
     return found != null;
   }
 
@@ -260,16 +269,28 @@ class InstallController extends ChangeNotifier {
   }
 
   /// 계획의 단계를 차례로 실행한다. 하나라도 실패하면 거기서 멈춘다.
-  Future<void> start() async {
+  ///
+  /// [phase]가 build나 run이면 그 단계들만 실행한다 (release에서 빌드와 실행을 따로 할 때).
+  /// 다른 단계의 이전 결과(체크 표시)는 그대로 둔다.
+  Future<void> start({RunPhase phase = RunPhase.all}) async {
     final p = plan;
     if (running || !p.runnable) return;
+    final indices = p.indicesOf(phase);
+    if (indices.isEmpty) return;
     running = true;
     hint = null;
     missingCommand = null;
-    statuses = List.filled(p.steps.length, StepStatus.pending);
+    if (phase == RunPhase.all || statuses.length != p.steps.length) {
+      statuses = List.filled(p.steps.length, StepStatus.pending);
+    } else {
+      statuses = [...statuses];
+      for (final i in indices) {
+        statuses[i] = StepStatus.pending;
+      }
+    }
     final handle = _handle = RunHandle();
     notifyListeners();
-    for (var i = 0; i < p.steps.length; i++) {
+    for (final i in indices) {
       final step = p.steps[i];
       statuses[i] = StepStatus.running;
       notifyListeners();
@@ -297,6 +318,62 @@ class InstallController extends ChangeNotifier {
     running = false;
     _handle = null;
     notifyListeners();
+  }
+
+  /// 빌드 없이 실행할 수 있는지: release 결과물이 이미 있다.
+  bool get artifactReady {
+    final a = plan.artifact;
+    return a != null && FileSystemEntity.typeSync(a) != FileSystemEntityType.notFound;
+  }
+
+  /// 프로젝트 폴더의 git 상태. git 저장소가 아니면 null.
+  GitState? gitState;
+  bool gitBusy = false;
+
+  /// 마지막 fetch·pull의 결과 (null이면 아직 안 함).
+  GitAction? lastGitAction;
+  bool? lastGitOk;
+
+  Future<void> refreshGit() async {
+    final p = project;
+    if (p == null) {
+      gitState = null;
+      notifyListeners();
+      return;
+    }
+    gitState = await git.status(p.path);
+    notifyListeners();
+  }
+
+  /// `git fetch --prune`. 명령과 출력은 기록 탭에 남는다.
+  Future<bool> gitFetch() => _runGit(GitAction.fetch, git.fetch);
+
+  /// `git pull --ff-only`. 받을 수 있는 상태일 때만 실행한다.
+  Future<bool> gitPull() async {
+    if (gitState?.canPull != true) return false;
+    return _runGit(GitAction.pull, git.pull);
+  }
+
+  Future<bool> _runGit(GitAction action, Future<CommandResult> Function(String dir) run) async {
+    final p = project;
+    if (p == null || gitBusy || running || cleaning) return false;
+    gitBusy = true;
+    lastGitAction = null;
+    lastGitOk = null;
+    missingCommand = null;
+    notifyListeners();
+    final r = await run(p.path);
+    if (r.exitCode == 127) missingCommand = 'git';
+    lastGitAction = action;
+    lastGitOk = r.ok;
+    gitBusy = false;
+    // pull은 pubspec을 바꿀 수 있다 — 프로젝트 정보(버전·이름)도 다시 읽는다.
+    if (action == GitAction.pull && r.ok) {
+      final reread = await FlutterProject.detect(p.path);
+      if (reread != null) project = reread;
+    }
+    await refreshGit();
+    return r.ok;
   }
 
   /// 빌드가 알 수 없는 이유로 깨질 때의 처방: `flutter clean` 다음 `flutter pub get`.

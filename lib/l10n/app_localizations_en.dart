@@ -371,7 +371,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeStepBuild => 'Build';
 
   @override
-  String get homeStepInstall => 'Install';
+  String get homeStepInstall => 'Send to device';
 
   @override
   String get homeStepLaunch => 'Launch';
@@ -380,7 +380,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeStepRun => 'Run (hot reload)';
 
   @override
-  String get homeActionInstall => 'Build & install';
+  String get homeActionInstall => 'Build & run';
 
   @override
   String get homeActionClean => 'Clean & get packages';
@@ -463,7 +463,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get tabInstall => 'Install';
+  String get tabInstall => 'Run';
 
   @override
   String get tabDevices => 'Devices';
@@ -839,6 +839,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get restartAppButton => 'Close and reopen';
+
+  @override
+  String get homeActionBuildOnly => 'Build only';
+
+  @override
+  String get homeActionRunOnly => 'Run only';
+
+  @override
+  String get homeRunOnlyNeedsBuild => 'No release build to run. Build first';
+
+  @override
+  String get gitTitle => 'Git';
+
+  @override
+  String get gitDetached => 'Detached HEAD';
+
+  @override
+  String get gitUpToDate => 'Up to date with the remote';
+
+  @override
+  String gitAhead(int count) {
+    return '$count ahead of the remote';
+  }
+
+  @override
+  String gitBehind(int count) {
+    return '$count behind the remote';
+  }
+
+  @override
+  String get gitNoUpstream => 'No upstream branch';
+
+  @override
+  String get gitDirty => 'Uncommitted changes';
+
+  @override
+  String get gitNoRemote => 'No remote';
+
+  @override
+  String get gitOpenRemote => 'Open the remote repository in a browser';
+
+  @override
+  String get gitFetch => 'Fetch';
+
+  @override
+  String get gitPull => 'Pull';
+
+  @override
+  String get gitPullHelp => 'git pull --ff-only — fast-forwards only, never merges';
+
+  @override
+  String get gitPullBlockedDirty => 'Not pulling: there are uncommitted changes';
+
+  @override
+  String get gitPullBlockedDiverged => 'Local and remote have diverged. Merge in a terminal';
+
+  @override
+  String get gitPullBlockedNoUpstream => 'This branch has no upstream';
+
+  @override
+  String get gitPullBlockedUpToDate => 'Nothing to pull (fetch first)';
+
+  @override
+  String get gitFetchDone => 'Fetched';
+
+  @override
+  String get gitPullDone => 'Pulled';
+
+  @override
+  String get gitFailed => 'Failed. See the output in the Log tab. If credentials are needed, sign in once in a terminal';
 
   @override
   String get stepsCocoapods => '1. Run brew install cocoapods in a terminal\n2. Build again';

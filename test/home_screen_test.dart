@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutty_dock/core/command_log.dart';
 import 'package:flutty_dock/core/command_runner.dart';
+import 'package:flutty_dock/core/git_client.dart';
 import 'package:flutty_dock/devices/device_service.dart';
 import 'package:flutty_dock/devices/mobile_device.dart';
 import 'package:flutty_dock/doctor/diagnostics.dart';
 import 'package:flutty_dock/doctor/signing_info.dart';
 import 'package:flutty_dock/flutter/flutter_project.dart';
 import 'package:flutty_dock/install/install_controller.dart';
+import 'package:flutty_dock/install/install_plan.dart';
 import 'package:flutty_dock/l10n/app_localizations.dart';
 import 'package:flutty_dock/settings/app_settings.dart';
 import 'package:flutty_dock/ui/home_screen.dart';
@@ -73,6 +75,30 @@ Future<void> _pump(WidgetTester tester, InstallController c) async {
   await tester.pumpAndSettle();
 }
 
+class _FakeGit extends GitClient {
+  _FakeGit(this.state) : super(CommandRunner(CommandLog()));
+  GitState? state;
+  final calls = <String>[];
+
+  @override
+  Future<GitState?> status(String directory) async => state;
+
+  @override
+  Future<CommandResult> fetch(String directory) async {
+    calls.add('fetch');
+    return const CommandResult(0, '', '');
+  }
+
+  @override
+  Future<CommandResult> pull(String directory) async {
+    calls.add('pull');
+    state = const GitState(branch: 'main', upstream: 'origin/main', remoteUrl: 'git@github.com:o/r.git');
+    return const CommandResult(0, '', '');
+  }
+}
+
+const _galaxy = MobileDevice(id: 'R3CY', name: 'SM S931N', platform: DevicePlatform.android, link: DeviceLink.usb);
+
 InstallController _controller({List<MobileDevice> devices = const [], Diagnostics? diag}) {
   final runner = CommandRunner(CommandLog());
   return InstallController(
@@ -102,7 +128,7 @@ void main() {
   testWidgets('without a project the banner asks to open one and the five tabs exist', (tester) async {
     await _pump(tester, _controller());
     expect(find.text('Open a Flutter project first'), findsOneWidget);
-    for (final t in ['Install', 'Devices', 'Signing', 'Doctor', 'Log']) {
+    for (final t in ['Run', 'Devices', 'Signing', 'Doctor', 'Log']) {
       expect(find.widgetWithText(Tab, t), findsOneWidget);
     }
   });
@@ -148,5 +174,86 @@ void main() {
     await tester.tap(find.widgetWithText(ChoiceChip, '6N35L95QS4'));
     await tester.pumpAndSettle();
     expect(c.teamId, '6N35L95QS4');
+  });
+
+  testWidgets('the Git section shows branch, remote link and lets you fetch and pull', (tester) async {
+    final git = _FakeGit(
+      const GitState(branch: 'main', upstream: 'origin/main', behind: 2, remoteUrl: 'git@github.com:o/r.git'),
+    );
+    final c = InstallController(
+      runner: CommandRunner(CommandLog()),
+      deviceService: _Devices(const []),
+      diagnosticsService: _Diag(_diag()),
+      gitClient: git,
+    )..project = _project;
+    await c.refreshGit();
+    await _pump(tester, c);
+    expect(find.text('main'), findsOneWidget);
+    expect(find.text('github.com/o/r'), findsOneWidget);
+    expect(find.text('2 behind the remote'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('Fetch'));
+    await tester.tap(find.text('Fetch'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Pull'));
+    await tester.tap(find.text('Pull'));
+    await tester.pumpAndSettle();
+    expect(git.calls, ['fetch', 'pull']);
+    expect(find.text('Pulled'), findsOneWidget);
+    // pull 뒤 상태 갱신(앞섬·뒤처짐)은 컨트롤러 테스트에서 확인한다 — 위젯 테스트의 가짜 시계에서는
+    // 실제 파일 읽기(프로젝트 다시 읽기)가 끝나지 않는다.
+  });
+
+  testWidgets('pull is disabled while there are uncommitted changes', (tester) async {
+    final git = _FakeGit(
+      const GitState(branch: 'main', upstream: 'origin/main', behind: 1, dirty: true, remoteUrl: 'git@github.com:o/r.git'),
+    );
+    final c = InstallController(
+      runner: CommandRunner(CommandLog()),
+      deviceService: _Devices(const []),
+      diagnosticsService: _Diag(_diag()),
+      gitClient: git,
+    )..project = _project;
+    await c.refreshGit();
+    await _pump(tester, c);
+    expect(find.text('Not pulling: there are uncommitted changes'), findsWidgets);
+    await tester.ensureVisible(find.text('Pull'));
+    await tester.tap(find.text('Pull'), warnIfMissed: false);
+    await tester.pumpAndSettle();
+    expect(git.calls, isEmpty);
+  });
+
+  testWidgets('no Git section when the folder is not a repository', (tester) async {
+    final c = InstallController(
+      runner: CommandRunner(CommandLog()),
+      deviceService: _Devices(const []),
+      diagnosticsService: _Diag(_diag()),
+      gitClient: _FakeGit(null),
+    )..project = _project;
+    await c.refreshGit();
+    await _pump(tester, c);
+    expect(find.text('Fetch'), findsNothing);
+  });
+
+  testWidgets('release offers Build & run, Build only and Run only (disabled until a build exists)', (tester) async {
+    final c = _controller()
+      ..project = _project
+      ..devices = const [_galaxy]
+      ..selectedId = _galaxy.id
+      ..mode = BuildMode.release;
+    await _pump(tester, c);
+    expect(find.text('Build & run'), findsOneWidget);
+    expect(find.text('Build only'), findsOneWidget);
+    final runOnly = tester.widget<OutlinedButton>(find.widgetWithText(OutlinedButton, 'Run only'));
+    expect(runOnly.onPressed, isNull, reason: '/p/app has no APK');
+    final buildOnly = tester.widget<OutlinedButton>(find.widgetWithText(OutlinedButton, 'Build only'));
+    expect(buildOnly.onPressed, isNotNull);
+
+    c.mode = BuildMode.debug;
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+    c.notifyListeners();
+    await tester.pumpAndSettle();
+    expect(find.text('Build only'), findsNothing);
+    expect(find.text('Run debug'), findsOneWidget);
   });
 }
