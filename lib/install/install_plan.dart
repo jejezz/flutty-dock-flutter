@@ -7,6 +7,9 @@ enum BuildMode { debug, release }
 /// 단계의 역할 — 화면의 이름과 진행바가 이 값을 쓴다.
 enum StepKind { prepare, build, install, launch, run }
 
+/// 계획을 어디까지 실행할지. release는 빌드와 실행을 따로 할 수 있다.
+enum RunPhase { all, build, run }
+
 /// 실행할 명령 한 개. 화면에 보이는 명령과 실제로 실행하는 명령이 같다.
 class PlanStep {
   const PlanStep(this.kind, this.args, {this.workingDirectory, this.environment = const {}});
@@ -24,6 +27,12 @@ class PlanStep {
 
   /// 계속 실행되는 단계(`flutter run`): 끝나는 것이 아니라 사용자가 멈춘다.
   bool get interactive => kind == StepKind.run;
+
+  /// 빌드 단계(준비·빌드)인지, 기기에서 실행하는 단계(올리기·열기·`flutter run`)인지.
+  RunPhase get phase => switch (kind) {
+    StepKind.prepare || StepKind.build => RunPhase.build,
+    StepKind.install || StepKind.launch || StepKind.run => RunPhase.run,
+  };
 }
 
 /// 계획을 세울 수 없거나 실행해도 실패할 이유 — 실행 전에 알려 준다.
@@ -39,10 +48,22 @@ enum Blocker {
 }
 
 class InstallPlan {
-  const InstallPlan(this.steps, this.blockers);
+  const InstallPlan(this.steps, this.blockers, {this.artifact});
 
   final List<PlanStep> steps;
   final List<Blocker> blockers;
+
+  /// release 빌드가 만드는 결과물의 경로(`Runner.app`, `app-release.apk`, `.exe`). 빌드 없이 실행하려면 이게 있어야 한다.
+  final String? artifact;
+
+  /// [phase]에 해당하는 단계들의 위치(전체 계획 안에서).
+  List<int> indicesOf(RunPhase phase) => [
+    for (var i = 0; i < steps.length; i++)
+      if (phase == RunPhase.all || steps[i].phase == phase) i,
+  ];
+
+  /// 빌드와 실행을 따로 할 수 있는지 — 두 단계가 모두 있을 때만.
+  bool get splittable => indicesOf(RunPhase.build).isNotEmpty && indicesOf(RunPhase.run).isNotEmpty;
 
   bool get runnable => blockers.isEmpty && steps.isNotEmpty;
 }
@@ -65,6 +86,7 @@ InstallPlan buildInstallPlan({
   if (device == null) return const InstallPlan([], [Blocker.noDevice]);
   final blockers = <Blocker>[];
   final steps = <PlanStep>[];
+  String? artifact;
   final dir = project.path;
 
   if (device.platform == DevicePlatform.ios) {
@@ -94,6 +116,7 @@ InstallPlan buildInstallPlan({
     } else {
       final config = 'Release';
       final app = '$dir/build/ios_dd/Build/Products/$config-iphoneos/Runner.app';
+      artifact = app;
       steps.addAll([
         PlanStep(StepKind.prepare, [
           'flutter',
@@ -140,6 +163,9 @@ InstallPlan buildInstallPlan({
     if (mode == BuildMode.debug) {
       steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', 'macos', '--debug'], workingDirectory: dir));
     } else {
+      if (project.macosAppName != null) {
+        artifact = '$dir/build/macos/Build/Products/Release/${project.macosAppName}.app';
+      }
       steps.addAll([
         PlanStep(StepKind.build, ['flutter', 'build', 'macos', '--release'], workingDirectory: dir),
         if (project.macosAppName != null)
@@ -153,6 +179,9 @@ InstallPlan buildInstallPlan({
     if (mode == BuildMode.debug) {
       steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', 'windows', '--debug'], workingDirectory: dir));
     } else {
+      if (project.windowsBinaryName != null) {
+        artifact = '$dir\\build\\windows\\$windowsArch\\runner\\Release\\${project.windowsBinaryName}.exe';
+      }
       steps.addAll([
         PlanStep(StepKind.build, ['flutter', 'build', 'windows', '--release'], workingDirectory: dir),
         if (project.windowsBinaryName != null)
@@ -168,6 +197,7 @@ InstallPlan buildInstallPlan({
     if (mode == BuildMode.debug) {
       steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', device.id, '--debug'], workingDirectory: dir));
     } else {
+      artifact = '$dir/build/app/outputs/flutter-apk/app-release.apk';
       steps.addAll([
         PlanStep(StepKind.build, ['flutter', 'build', 'apk', '--release'], workingDirectory: dir),
         PlanStep(StepKind.install, [
@@ -194,7 +224,7 @@ InstallPlan buildInstallPlan({
       ]);
     }
   }
-  return InstallPlan(steps, blockers);
+  return InstallPlan(steps, blockers, artifact: artifact);
 }
 
 /// 실패한 출력에서 흔한 원인을 찾는다. 모르면 null (원문 로그를 그대로 보여 준다).

@@ -14,6 +14,8 @@ https://github.com/jejezz/application-release-templates/tree/main/conventions
 - 앱 이름에 "Flutter"를 넣지 않는다 (Flutter 상표). 소개 문구에서만 "for Flutter apps"처럼 쓴다.
 - 대상: USB로 연결된 iPhone·Android, 그리고 프로젝트에 `macos/`·`windows/`가 이미 있을 때만 이 컴퓨터(현재 OS)의 데스크톱. 없는 플랫폼은 만들어 주지 않는다.
 - 대상 프로젝트는 수정하지 않는다: 서명 Team 등은 빌드 인자로 주입하고, 설정은 앱 쪽에만 저장한다.
+  유일한 예외는 사용자가 직접 누른 git 동작이다. git은 상태 표시, `fetch --prune`, `pull --ff-only`까지만 한다
+  (깨끗하고 앞으로만 합칠 수 있을 때만 pull; push·병합·강제 동작은 두지 않는다).
 - 비밀값(키, 비밀번호)은 저장하지 않고 경로만 참조한다.
 - 창은 도킹형 세로 창(440×960, 최소 380×560)이다. 구조 참고: ../branch-dock-flutter.
 - 기능 범위는 [PLAN.md](PLAN.md)(Phase 0 검증 결과 포함).

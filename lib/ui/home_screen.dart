@@ -19,6 +19,7 @@ import 'check_text.dart';
 import 'copy_output_button.dart';
 import 'devices_tab.dart';
 import 'doctor_tab.dart';
+import 'git_section.dart';
 import 'log_tab.dart';
 import 'output_viewer.dart';
 import 'signing_tab.dart';
@@ -127,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         padding: const EdgeInsets.all(AppSpacing.lg),
                         children: [
                           _ProjectSection(controller: controller, onOpen: _open),
+                          GitSection(controller: controller),
                           const SizedBox(height: AppSpacing.lg),
                           _BuildSection(controller: controller),
                           const SizedBox(height: AppSpacing.lg),
@@ -279,6 +281,43 @@ class _BuildSectionState extends State<_BuildSection> {
     StepKind.run => l10n.homeStepRun,
   };
 
+  /// `flutter clean` → `flutter pub get`을 지금 실행하는 단추와 마지막 결과.
+  Widget _cleanButton(InstallController c, AppLocalizations l10n, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Tooltip(
+          message: l10n.homeCleanHelp,
+          child: OutlinedButton.icon(
+            onPressed: c.running || c.cleaning ? null : c.cleanProject,
+            icon: c.cleaning
+                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                : const Icon(Icons.cleaning_services_rounded, size: 18),
+            label: Text(l10n.homeActionClean),
+          ),
+        ),
+        if (c.cleanResult != null && !c.cleaning)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
+            child: Text(
+              c.cleanResult! ? l10n.homeCleanDone : l10n.homeCleanFailed,
+              style: TextStyle(fontSize: 12, color: c.cleanResult! ? AppColors.success : theme.colorScheme.error),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _runOnlyButton(InstallController c, AppLocalizations l10n, InstallPlan plan) {
+    final ready = plan.runnable && c.artifactReady;
+    final button = OutlinedButton(
+      onPressed: ready ? () => c.start(phase: RunPhase.run) : null,
+      child: Text((c.device?.isDesktop ?? false) ? l10n.homeActionRunOnly : l10n.homeActionInstallOnly),
+    );
+    // 결과물이 없어서 눌 수 없을 때만 이유를 알려 준다.
+    return plan.runnable && !c.artifactReady ? Tooltip(message: l10n.homeRunOnlyNeedsBuild, child: button) : button;
+  }
+
   Widget _statusIcon(StepStatus? s, ThemeData theme) => switch (s) {
     StepStatus.running => const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
     StepStatus.done => const Icon(Icons.check_circle_rounded, size: 16, color: AppColors.success),
@@ -331,6 +370,9 @@ class _BuildSectionState extends State<_BuildSection> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 빌드 전에 하는 일이라 목록 맨 위에 둔다. 누르면 바로 실행하고, 안 눌러도 빌드는 된다.
+                  _cleanButton(c, l10n, theme),
+                  const Divider(height: AppSpacing.xl),
                   for (var i = 0; i < plan.steps.length; i++)
                     Padding(
                       padding: EdgeInsets.only(bottom: i == plan.steps.length - 1 ? 0 : AppSpacing.md),
@@ -373,7 +415,14 @@ class _BuildSectionState extends State<_BuildSection> {
                     )
                   : FilledButton(
                       onPressed: plan.runnable ? c.start : null,
-                      child: Text(interactive ? l10n.homeActionRun : l10n.homeActionInstall),
+                      // 데스크톱(이 컴퓨터)은 바로 실행하고, 폰은 설치한다.
+                      child: Text(
+                        interactive
+                            ? l10n.homeActionRun
+                            : (c.device?.isDesktop ?? false)
+                            ? l10n.homeActionBuildRun
+                            : l10n.homeActionInstall,
+                      ),
                     ),
             ),
             if (c.running && interactive) ...[
@@ -391,29 +440,26 @@ class _BuildSectionState extends State<_BuildSection> {
             ],
           ],
         ),
-        if (c.project != null) ...[
+        // release: 빌드와 실행을 따로 할 수 있다. 실행만은 이미 만든 결과물이 있을 때 쓴다.
+        if (plan.splittable && !c.running) ...[
           const SizedBox(height: AppSpacing.sm),
-          Tooltip(
-            message: l10n.homeCleanHelp,
-            child: OutlinedButton.icon(
-              onPressed: c.running || c.cleaning ? null : c.cleanProject,
-              icon: c.cleaning
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.cleaning_services_rounded, size: 18),
-              label: Text(l10n.homeActionClean),
-            ),
-          ),
-          if (c.cleanResult != null && !c.cleaning)
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.xs),
-              child: Text(
-                c.cleanResult! ? l10n.homeCleanDone : l10n.homeCleanFailed,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: c.cleanResult! ? AppColors.success : theme.colorScheme.error,
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: plan.runnable ? () => c.start(phase: RunPhase.build) : null,
+                  child: Text(l10n.homeActionBuildOnly),
                 ),
               ),
-            ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(child: _runOnlyButton(c, l10n, plan)),
+            ],
+          ),
+        ],
+        // 실행할 명령이 없을 때(기기를 아직 못 골랐을 때 등)는 카드가 없으므로 정리 단추만 따로 둔다.
+        if (c.project != null && plan.steps.isEmpty) ...[
+          const SizedBox(height: AppSpacing.sm),
+          _cleanButton(c, l10n, theme),
         ],
         if (c.missingCommand != null)
           Padding(
