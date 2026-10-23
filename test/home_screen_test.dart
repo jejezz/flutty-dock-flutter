@@ -235,6 +235,28 @@ void main() {
     expect(find.text('Fetch'), findsNothing);
   });
 
+  testWidgets('the clean button sits at the top of the commands card, above the first step', (tester) async {
+    final c = _controller()
+      ..project = _project
+      ..devices = const [_galaxy]
+      ..selectedId = _galaxy.id
+      ..mode = BuildMode.release;
+    await _pump(tester, c);
+    final clean = find.text('Clean & get packages');
+    expect(clean, findsOneWidget);
+    expect(tester.getTopLeft(clean).dy, lessThan(tester.getTopLeft(find.textContaining('1. ')).dy));
+    // 같은 카드 안에 있다 — 단계 목록과 같은 Card의 자손이다.
+    expect(find.descendant(of: find.byType(Card), matching: clean), findsOneWidget);
+    expect(find.descendant(of: find.byType(Card), matching: find.textContaining('1. ')), findsOneWidget);
+  });
+
+  testWidgets('without steps (no device yet) the clean button is still offered on its own', (tester) async {
+    final c = _controller()..project = _project;
+    await _pump(tester, c);
+    expect(c.plan.steps, isEmpty);
+    expect(find.text('Clean & get packages'), findsOneWidget);
+  });
+
   testWidgets('a desktop target runs, a phone gets installed', (tester) async {
     const winProject = FlutterProject(
       path: '/p/app',

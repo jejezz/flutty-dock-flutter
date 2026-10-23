@@ -281,6 +281,33 @@ class _BuildSectionState extends State<_BuildSection> {
     StepKind.run => l10n.homeStepRun,
   };
 
+  /// `flutter clean` → `flutter pub get`을 지금 실행하는 단추와 마지막 결과.
+  Widget _cleanButton(InstallController c, AppLocalizations l10n, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Tooltip(
+          message: l10n.homeCleanHelp,
+          child: OutlinedButton.icon(
+            onPressed: c.running || c.cleaning ? null : c.cleanProject,
+            icon: c.cleaning
+                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                : const Icon(Icons.cleaning_services_rounded, size: 18),
+            label: Text(l10n.homeActionClean),
+          ),
+        ),
+        if (c.cleanResult != null && !c.cleaning)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
+            child: Text(
+              c.cleanResult! ? l10n.homeCleanDone : l10n.homeCleanFailed,
+              style: TextStyle(fontSize: 12, color: c.cleanResult! ? AppColors.success : theme.colorScheme.error),
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _runOnlyButton(InstallController c, AppLocalizations l10n, InstallPlan plan) {
     final ready = plan.runnable && c.artifactReady;
     final button = OutlinedButton(
@@ -343,6 +370,9 @@ class _BuildSectionState extends State<_BuildSection> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 빌드 전에 하는 일이라 목록 맨 위에 둔다. 누르면 바로 실행하고, 안 눌러도 빌드는 된다.
+                  _cleanButton(c, l10n, theme),
+                  const Divider(height: AppSpacing.xl),
                   for (var i = 0; i < plan.steps.length; i++)
                     Padding(
                       padding: EdgeInsets.only(bottom: i == plan.steps.length - 1 ? 0 : AppSpacing.md),
@@ -426,29 +456,10 @@ class _BuildSectionState extends State<_BuildSection> {
             ],
           ),
         ],
-        if (c.project != null) ...[
+        // 실행할 명령이 없을 때(기기를 아직 못 골랐을 때 등)는 카드가 없으므로 정리 단추만 따로 둔다.
+        if (c.project != null && plan.steps.isEmpty) ...[
           const SizedBox(height: AppSpacing.sm),
-          Tooltip(
-            message: l10n.homeCleanHelp,
-            child: OutlinedButton.icon(
-              onPressed: c.running || c.cleaning ? null : c.cleanProject,
-              icon: c.cleaning
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.cleaning_services_rounded, size: 18),
-              label: Text(l10n.homeActionClean),
-            ),
-          ),
-          if (c.cleanResult != null && !c.cleaning)
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.xs),
-              child: Text(
-                c.cleanResult! ? l10n.homeCleanDone : l10n.homeCleanFailed,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: c.cleanResult! ? AppColors.success : theme.colorScheme.error,
-                ),
-              ),
-            ),
+          _cleanButton(c, l10n, theme),
         ],
         if (c.missingCommand != null)
           Padding(
