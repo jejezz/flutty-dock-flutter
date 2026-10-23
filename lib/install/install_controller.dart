@@ -210,10 +210,12 @@ class InstallController extends ChangeNotifier {
       await _prefs?.setString(_projectKey, dir);
       // 새 프로젝트가 지금 고른 대상(예: 이 컴퓨터)을 지원하지 않으면 다시 고른다.
       if (device == null) _pickDefaultDevice();
+      // 다른 프로젝트의 git 상태를 새로 읽기 전까지 비워 둔다. (열지 못했으면 지금 프로젝트가 그대로이니 그대로 둔다.)
+      gitState = null;
+      gitMissing = false;
+      lastGitAction = null;
+      lastGitOk = null;
     }
-    gitState = null;
-    lastGitAction = null;
-    lastGitOk = null;
     notifyListeners();
     if (found != null) await Future.wait([runDiagnostics(), refreshGit()]);
     return found != null;
@@ -364,15 +366,47 @@ class InstallController extends ChangeNotifier {
   GitAction? lastGitAction;
   bool? lastGitOk;
 
+  /// 이 저장소의 worktree들 (원래 작업 폴더 포함). 저장소가 아니거나 읽지 못하면 비어 있다.
+  List<GitWorktree> worktrees = const [];
+
+  /// git을 실행하지 못해서(설치 안 됨) 상태를 못 읽었다. 저장소가 아니어서 못 읽은 것과 구분한다.
+  bool gitMissing = false;
+
   Future<void> refreshGit() async {
     final p = project;
     if (p == null) {
       gitState = null;
+      worktrees = const [];
+      gitMissing = false;
       notifyListeners();
       return;
     }
-    gitState = await git.status(p.path);
+    final state = await git.status(p.path);
+    gitState = state;
+    if (state == null) {
+      // 저장소가 아닌 것과 git이 없는 것을 가른다 — 앞의 것은 조용히 숨기고 뒤의 것만 알린다.
+      worktrees = const [];
+      gitMissing = !await git.available();
+    } else {
+      gitMissing = false;
+      worktrees = await git.worktrees(p.path);
+    }
     notifyListeners();
+  }
+
+  /// 지금 프로젝트가 속한 worktree.
+  GitWorktree? get currentWorktree {
+    final p = project;
+    return p == null ? null : worktreeContaining(worktrees, p.path);
+  }
+
+  /// 다른 worktree의 같은 프로젝트를 연다 (모노레포의 하위 프로젝트면 같은 하위 폴더).
+  /// 파일은 바꾸지 않고 프로젝트 폴더만 바꾼다. 열 수 없는 폴더면 false.
+  Future<bool> switchWorktree(GitWorktree target) async {
+    final p = project;
+    final from = currentWorktree;
+    if (p == null || from == null || running || gitBusy || target == from) return false;
+    return openProject(projectPathIn(from, target, p.path));
   }
 
   /// `git fetch --prune`. 명령과 출력은 기록 탭에 남는다.

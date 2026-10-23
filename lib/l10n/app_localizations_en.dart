@@ -978,6 +978,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gitTitle => 'Git';
 
   @override
+  String get gitWorktree => 'Worktree';
+
+  @override
+  String get gitWorktreeHelp =>
+      'Choosing another worktree opens the same project in that folder. No files are changed';
+
+  @override
   String get gitDetached => 'Detached HEAD';
 
   @override

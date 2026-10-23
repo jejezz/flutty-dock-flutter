@@ -1742,6 +1742,18 @@ abstract class AppLocalizations {
   /// **'Git'**
   String get gitTitle;
 
+  /// No description provided for @gitWorktree.
+  ///
+  /// In ko, this message translates to:
+  /// **'Worktree'**
+  String get gitWorktree;
+
+  /// No description provided for @gitWorktreeHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 worktree를 고르면 그 폴더의 같은 프로젝트를 엽니다. 파일은 바꾸지 않습니다'**
+  String get gitWorktreeHelp;
+
   /// No description provided for @gitDetached.
   ///
   /// In ko, this message translates to:

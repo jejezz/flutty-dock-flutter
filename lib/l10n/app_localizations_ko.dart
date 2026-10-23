@@ -956,6 +956,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get gitTitle => 'Git';
 
   @override
+  String get gitWorktree => 'Worktree';
+
+  @override
+  String get gitWorktreeHelp =>
+      '다른 worktree를 고르면 그 폴더의 같은 프로젝트를 엽니다. 파일은 바꾸지 않습니다';
+
+  @override
   String get gitDetached => '분리된 HEAD';
 
   @override
