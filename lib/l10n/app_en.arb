@@ -564,6 +564,8 @@
   "homeActionRunOnly": "Run only",
   "homeRunOnlyNeedsBuild": "No release build to run. Build first",
   "gitTitle": "Git",
+  "gitWorktree": "Worktree",
+  "gitWorktreeHelp": "Choosing another worktree opens the same project in that folder. No files are changed",
   "gitDetached": "Detached HEAD",
   "gitUpToDate": "Up to date with the remote",
   "gitAhead": "{count} ahead of the remote",
