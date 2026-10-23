@@ -4,13 +4,22 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../devices/mobile_device.dart';
 import '../install/build_options.dart';
 import '../install/install_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 
-/// Flutter 공식 문서: flavor 설정(Android). iOS·macOS·Windows·Linux 문서는 같은 Deployment 목록에 있다.
-final flavorDocsUrl = Uri.parse('https://docs.flutter.dev/deployment/flavors');
+/// 고른 대상에 맞는 Flutter 공식 flavor 문서. 문서가 플랫폼별로 나뉘어 있다
+/// (Android / iOS·macOS / Windows). 대상을 아직 안 골랐으면 Android 문서.
+Uri flavorDocsUrlFor(DevicePlatform? platform) {
+  final page = switch (platform) {
+    DevicePlatform.ios || DevicePlatform.macos => 'flavors-ios',
+    DevicePlatform.windows => 'flavors-windows',
+    DevicePlatform.android || null => 'flavors',
+  };
+  return Uri.parse('https://docs.flutter.dev/deployment/$page');
+}
 
 /// "빌드" 섹션 안의 접히는 빌드 옵션: flavor, 진입 파일, dart-define 파일, 앱 ID, 추가 인자.
 /// 프로젝트마다 따로 저장되고, 입력한 옵션은 "실행할 명령"의 명령에 그대로 보인다.
@@ -110,13 +119,20 @@ class _BuildOptionsSectionState extends State<BuildOptionsSection> {
         title: Row(
           children: [
             Flexible(child: Text(l10n.optTitle, style: theme.textTheme.labelLarge)),
-            // 펼치지 않아도 바로 열 수 있게 제목 옆에 둔다.
-            IconButton(
-              tooltip: l10n.optHelpLink,
-              visualDensity: VisualDensity.compact,
-              iconSize: 16,
-              icon: const Icon(Icons.help_outline_rounded),
-              onPressed: () => launchUrl(flavorDocsUrl, mode: LaunchMode.externalApplication),
+            // 펼치지 않아도 바로 열 수 있게 제목 옆에 둔다. 고른 대상(Android·iOS·Windows …)에 맞는 문서가 열린다.
+            const SizedBox(width: AppSpacing.xs),
+            Tooltip(
+              message: l10n.optHelpLink,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                  minimumSize: const Size(0, 28),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                ),
+                onPressed: () =>
+                    launchUrl(flavorDocsUrlFor(c.device?.platform), mode: LaunchMode.externalApplication),
+                child: Text(l10n.optHelp),
+              ),
             ),
           ],
         ),

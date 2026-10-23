@@ -435,8 +435,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Start with a letter; letters, digits, _ and - only';
 
   @override
+  String get optHelp => 'Help';
+
+  @override
   String get optHelpLink =>
-      'Flutter docs: setting up flavors (opens in a browser)';
+      'Opens the Flutter docs on setting up flavors for the selected target (Android, iOS, Windows …) in a browser';
 
   @override
   String get optTarget => 'Entry point';

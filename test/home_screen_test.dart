@@ -13,7 +13,7 @@ import 'package:flutty_dock/install/build_options.dart';
 import 'package:flutty_dock/install/install_plan.dart';
 import 'package:flutty_dock/l10n/app_localizations.dart';
 import 'package:flutty_dock/settings/app_settings.dart';
-import 'package:flutty_dock/ui/build_options_section.dart' show flavorDocsUrl;
+import 'package:flutty_dock/ui/build_options_section.dart' show flavorDocsUrlFor;
 import 'package:flutty_dock/ui/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -286,15 +286,23 @@ void main() {
     expect(find.textContaining('flutter build apk --release'), findsOneWidget);
   });
 
-  testWidgets('a help link sits next to the build options title, visible while collapsed', (tester) async {
+  testWidgets('a Help button sits next to the build options title, visible while collapsed', (tester) async {
     final c = _controller()..project = _project;
     await _pump(tester, c);
-    final link = find.byTooltip('Flutter docs: setting up flavors (opens in a browser)');
-    expect(link, findsOneWidget);
+    final help = find.widgetWithText(TextButton, 'Help');
+    expect(help, findsOneWidget);
     expect(find.widgetWithText(TextField, 'Flavor'), findsNothing, reason: 'still collapsed');
     // 제목 바로 옆에 있다 (같은 줄).
-    expect((tester.getCenter(link).dy - tester.getCenter(find.text('Build options')).dy).abs(), lessThan(12));
-    expect(flavorDocsUrl.toString(), 'https://docs.flutter.dev/deployment/flavors');
+    expect((tester.getCenter(help).dy - tester.getCenter(find.text('Build options')).dy).abs(), lessThan(12));
+  });
+
+  test('the help page follows the selected target', () {
+    String page(DevicePlatform? p) => flavorDocsUrlFor(p).toString();
+    expect(page(DevicePlatform.android), 'https://docs.flutter.dev/deployment/flavors');
+    expect(page(DevicePlatform.ios), 'https://docs.flutter.dev/deployment/flavors-ios');
+    expect(page(DevicePlatform.macos), 'https://docs.flutter.dev/deployment/flavors-ios');
+    expect(page(DevicePlatform.windows), 'https://docs.flutter.dev/deployment/flavors-windows');
+    expect(page(null), 'https://docs.flutter.dev/deployment/flavors');
   });
 
   testWidgets('an invalid flavor is flagged and not used', (tester) async {

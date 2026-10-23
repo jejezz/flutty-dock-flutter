@@ -836,10 +836,16 @@ abstract class AppLocalizations {
   /// **'영문자로 시작하고 영문자·숫자·_·-만 쓸 수 있습니다'**
   String get optFlavorInvalid;
 
+  /// No description provided for @optHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'도움말'**
+  String get optHelp;
+
   /// No description provided for @optHelpLink.
   ///
   /// In ko, this message translates to:
-  /// **'Flutter 문서: flavor 설정 방법 (브라우저로 열기)'**
+  /// **'선택한 대상(Android·iOS·Windows …)에 맞는 Flutter 문서의 flavor 설정 방법을 브라우저로 엽니다'**
   String get optHelpLink;
 
   /// No description provided for @optTarget.

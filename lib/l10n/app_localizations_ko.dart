@@ -424,7 +424,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get optFlavorInvalid => '영문자로 시작하고 영문자·숫자·_·-만 쓸 수 있습니다';
 
   @override
-  String get optHelpLink => 'Flutter 문서: flavor 설정 방법 (브라우저로 열기)';
+  String get optHelp => '도움말';
+
+  @override
+  String get optHelpLink =>
+      '선택한 대상(Android·iOS·Windows …)에 맞는 Flutter 문서의 flavor 설정 방법을 브라우저로 엽니다';
 
   @override
   String get optTarget => '진입 파일';
