@@ -2,12 +2,15 @@ import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import '../devices/mobile_device.dart';
 import '../install/build_options.dart';
 import '../install/install_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
+
+/// Flutter 공식 문서: flavor 설정(Android). iOS·macOS·Windows·Linux 문서는 같은 Deployment 목록에 있다.
+final flavorDocsUrl = Uri.parse('https://docs.flutter.dev/deployment/flavors');
 
 /// "빌드" 섹션 안의 접히는 빌드 옵션: flavor, 진입 파일, dart-define 파일, 앱 ID, 추가 인자.
 /// 프로젝트마다 따로 저장되고, 입력한 옵션은 "실행할 명령"의 명령에 그대로 보인다.
@@ -94,8 +97,7 @@ class _BuildOptionsSectionState extends State<BuildOptionsSection> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final locked = c.running;
-    final windows = c.device?.platform == DevicePlatform.windows;
-    final summary = o.isEmpty ? l10n.optDefault : o.flutterArgs(flavorSupported: !windows).join(' ');
+    final summary = o.isEmpty ? l10n.optDefault : o.flutterArgs(flavorSupported: true).join(' ');
 
     return Theme(
       data: theme.copyWith(dividerColor: Colors.transparent),
@@ -105,7 +107,19 @@ class _BuildOptionsSectionState extends State<BuildOptionsSection> {
         initiallyExpanded: !o.isEmpty,
         dense: true,
         visualDensity: VisualDensity.compact,
-        title: Text(l10n.optTitle, style: theme.textTheme.labelLarge),
+        title: Row(
+          children: [
+            Flexible(child: Text(l10n.optTitle, style: theme.textTheme.labelLarge)),
+            // 펼치지 않아도 바로 열 수 있게 제목 옆에 둔다.
+            IconButton(
+              tooltip: l10n.optHelpLink,
+              visualDensity: VisualDensity.compact,
+              iconSize: 16,
+              icon: const Icon(Icons.help_outline_rounded),
+              onPressed: () => launchUrl(flavorDocsUrl, mode: LaunchMode.externalApplication),
+            ),
+          ],
+        ),
         subtitle: Text(
           summary,
           maxLines: 1,
@@ -116,12 +130,12 @@ class _BuildOptionsSectionState extends State<BuildOptionsSection> {
         children: [
           TextField(
             controller: _flavor,
-            enabled: !locked && !windows,
+            enabled: !locked,
             decoration: InputDecoration(
               labelText: l10n.optFlavor,
-              helperText: windows ? l10n.optFlavorWindows : l10n.optFlavorHelp,
+              helperText: l10n.optFlavorHelp,
               helperMaxLines: 2,
-              errorText: o.flavorInvalid && !windows ? l10n.optFlavorInvalid : null,
+              errorText: o.flavorInvalid ? l10n.optFlavorInvalid : null,
               isDense: true,
             ),
             onChanged: (_) => _push(),

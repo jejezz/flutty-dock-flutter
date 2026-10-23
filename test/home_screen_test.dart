@@ -13,6 +13,7 @@ import 'package:flutty_dock/install/build_options.dart';
 import 'package:flutty_dock/install/install_plan.dart';
 import 'package:flutty_dock/l10n/app_localizations.dart';
 import 'package:flutty_dock/settings/app_settings.dart';
+import 'package:flutty_dock/ui/build_options_section.dart' show flavorDocsUrl;
 import 'package:flutty_dock/ui/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -285,7 +286,18 @@ void main() {
     expect(find.textContaining('flutter build apk --release'), findsOneWidget);
   });
 
-  testWidgets('an invalid flavor is flagged and not used; Windows turns the flavor field off', (tester) async {
+  testWidgets('a help link sits next to the build options title, visible while collapsed', (tester) async {
+    final c = _controller()..project = _project;
+    await _pump(tester, c);
+    final link = find.byTooltip('Flutter docs: setting up flavors (opens in a browser)');
+    expect(link, findsOneWidget);
+    expect(find.widgetWithText(TextField, 'Flavor'), findsNothing, reason: 'still collapsed');
+    // 제목 바로 옆에 있다 (같은 줄).
+    expect((tester.getCenter(link).dy - tester.getCenter(find.text('Build options')).dy).abs(), lessThan(12));
+    expect(flavorDocsUrl.toString(), 'https://docs.flutter.dev/deployment/flavors');
+  });
+
+  testWidgets('an invalid flavor is flagged and not used', (tester) async {
     final c = _controller()
       ..project = _project
       ..devices = const [_galaxy]

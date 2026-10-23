@@ -90,10 +90,9 @@ InstallPlan buildInstallPlan({
   final steps = <PlanStep>[];
   String? artifact;
   final dir = project.path;
-  // flavor는 Windows에서 쓸 수 없다. 나머지 옵션(-t, dart-define, 추가 인자)은 모든 대상에 붙는다.
-  final flavorOk = device.platform != DevicePlatform.windows;
-  final flavor = flavorOk ? options.validFlavor : '';
-  final flags = options.flutterArgs(flavorSupported: flavorOk);
+  // 옵션은 모든 대상에 붙는다. flavor는 Windows도 Flutter 3.47부터 지원한다 (그보다 낮으면 flutter가 알려 준다).
+  final flavor = options.validFlavor;
+  final flags = options.flutterArgs(flavorSupported: true);
   // flavor가 있으면 Flutter 규칙대로 scheme은 flavor 이름, configuration은 `Release-<flavor>`.
   final releaseConfig = flavor.isEmpty ? 'Release' : 'Release-$flavor';
 
@@ -188,16 +187,13 @@ InstallPlan buildInstallPlan({
     if (mode == BuildMode.debug) {
       steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', 'windows', '--debug', ...flags], workingDirectory: dir));
     } else {
-      if (project.windowsBinaryName != null) {
-        artifact = '$dir\\build\\windows\\$windowsArch\\runner\\Release\\${project.windowsBinaryName}.exe';
-      }
+      // flavor가 있으면 산출물이 build\windows\<아키텍처>\<flavor>\runner\Release 아래에 생긴다.
+      final winDir = flavor.isEmpty ? '$dir\\build\\windows\\$windowsArch' : '$dir\\build\\windows\\$windowsArch\\$flavor';
+      final winExe = '$winDir\\runner\\Release\\${project.windowsBinaryName}.exe';
+      if (project.windowsBinaryName != null) artifact = winExe;
       steps.addAll([
         PlanStep(StepKind.build, ['flutter', 'build', 'windows', '--release', ...flags], workingDirectory: dir),
-        if (project.windowsBinaryName != null)
-          PlanStep(StepKind.launch, [
-            'explorer.exe',
-            '$dir\\build\\windows\\$windowsArch\\runner\\Release\\${project.windowsBinaryName}.exe',
-          ]),
+        if (project.windowsBinaryName != null) PlanStep(StepKind.launch, ['explorer.exe', winExe]),
       ]);
     }
   } else {

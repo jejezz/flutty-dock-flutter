@@ -145,13 +145,21 @@ void main() {
       expect(p.steps[1].args, ['open', '/p/app/build/macos/Build/Products/Release-dev/App.app']);
     });
 
-    test('windows ignores the flavor but keeps the other options', () {
+    test('windows supports the flavor (Flutter 3.47+): flag and flavored output folder', () {
       final p = _plan(_pc, BuildMode.release, _dev, mac: false);
-      expect(p.steps[0].args, ['flutter', 'build', 'windows', '--release', '-t', 'lib/main_dev.dart', '--dart-define-from-file=env/dev.json']);
-      expect(p.artifact, contains(r'runner\Release\app.exe'));
-      final debug = _plan(_pc, BuildMode.debug, _dev, mac: false).steps.single.args;
-      expect(debug, isNot(contains('--flavor')));
-      expect(debug, contains('-t'));
+      expect(p.steps[0].args, [
+        'flutter', 'build', 'windows', '--release',
+        '--flavor', 'dev', '-t', 'lib/main_dev.dart', '--dart-define-from-file=env/dev.json',
+      ]);
+      const exe = r'/p/app\build\windows\x64\dev\runner\Release\app.exe';
+      expect(p.artifact, exe);
+      expect(p.steps[1].args, ['explorer.exe', exe]);
+      expect(_plan(_pc, BuildMode.debug, _dev, mac: false).steps.single.args, containsAllInOrder(['--debug', '--flavor', 'dev']));
+    });
+
+    test('windows without a flavor keeps the plain output folder', () {
+      final p = _plan(_pc, BuildMode.release, const BuildOptions(target: 'lib/m.dart'), mac: false);
+      expect(p.artifact, r'/p/app\build\windows\x64\runner\Release\app.exe');
     });
 
     test('options do not touch the commands that are not flutter run/build', () {
