@@ -41,7 +41,8 @@ class InstallController extends ChangeNotifier {
   static const _projectKey = 'last_project';
   static const _teamKey = 'ios_team_id';
   static const _modeKey = 'build_mode';
-  static const _tabKey = 'last_tab';
+  static const _tabKey = 'last_tab'; // 예전 번호 저장 (읽기만 한다)
+  static const _tabIdKey = 'last_tab_id';
   static const _toolKeyPrefix = 'tool_path_';
   static const _optionsKeyPrefix = 'build_options:';
 
@@ -71,7 +72,13 @@ class InstallController extends ChangeNotifier {
   Diagnostics? diagnostics;
   bool diagnosing = false;
 
-  /// 마지막으로 보던 탭 (0 설치 · 1 기기 · 2 서명 · 3 점검 · 4 기록).
+  /// 화면의 탭 순서. 저장은 번호가 아니라 이름으로 한다 — 탭이 늘어도 저장된 값이 엉뚱한 탭을 가리키지 않는다.
+  static const tabIds = ['run', 'git', 'devices', 'signing', 'doctor', 'log'];
+
+  /// 탭이 5개였을 때(번호로 저장하던 시절)의 순서. 저장된 옛 번호를 한 번 옮겨 읽는 데만 쓴다.
+  static const _legacyTabIds = ['run', 'devices', 'signing', 'doctor', 'log'];
+
+  /// 마지막으로 보던 탭의 번호 ([tabIds] 기준).
   int tabIndex = 0;
 
   /// 저장된 탭을 읽었는지 — 화면이 한 번만 그 탭으로 옮긴다.
@@ -183,7 +190,7 @@ class InstallController extends ChangeNotifier {
       _prefs = await SharedPreferences.getInstance();
       teamId = _prefs!.getString(_teamKey);
       mode = BuildMode.values.asNameMap()[_prefs!.getString(_modeKey)] ?? BuildMode.release;
-      tabIndex = (_prefs!.getInt(_tabKey) ?? 0).clamp(0, 4);
+      tabIndex = _savedTabIndex();
       tabLoaded = true;
       for (final tool in configurableTools) {
         final saved = _prefs!.getString('$_toolKeyPrefix$tool');
@@ -251,10 +258,22 @@ class InstallController extends ChangeNotifier {
     await Future.wait([refreshDevices(), runDiagnostics()]);
   }
 
+  /// 저장된 탭의 번호. 이름으로 저장된 것이 없으면 예전 번호 저장을 옮겨 읽고, 모르면 첫 탭.
+  int _savedTabIndex() {
+    final prefs = _prefs!;
+    var id = prefs.getString(_tabIdKey);
+    if (id == null) {
+      final old = prefs.getInt(_tabKey);
+      if (old != null && old >= 0 && old < _legacyTabIds.length) id = _legacyTabIds[old];
+    }
+    final i = tabIds.indexOf(id ?? '');
+    return i < 0 ? 0 : i;
+  }
+
   void setTab(int i) {
-    if (i == tabIndex) return;
+    if (i == tabIndex || i < 0 || i >= tabIds.length) return;
     tabIndex = i;
-    _prefs?.setInt(_tabKey, i);
+    _prefs?.setString(_tabIdKey, tabIds[i]);
   }
 
   void select(MobileDevice d) {
