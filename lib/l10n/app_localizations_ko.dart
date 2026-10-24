@@ -322,9 +322,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeProjectOpen => '프로젝트 열기';
 
   @override
-  String get homeProjectChange => '변경';
-
-  @override
   String get homeProjectReload => '이 프로젝트 다시 읽기';
 
   @override

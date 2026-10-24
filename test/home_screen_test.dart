@@ -268,8 +268,10 @@ void main() {
       expect(find.text('app  1.0.0+1'), findsOneWidget, reason: 'project name on the $tab tab');
       expect(find.text('✓ Up to date'), findsOneWidget, reason: 'git status on the $tab tab');
     }
-    // 프로젝트 카드의 버튼은 아이콘이고, 이름은 툴팁으로 남는다.
+    // 프로젝트 카드의 버튼은 아이콘이고, 이름은 툴팁으로 남는다. 폴더 바꾸기는 타이틀 바 메뉴로 옮겼으니 카드에는 없다.
     expect(find.byTooltip('Open in VS Code'), findsOneWidget);
+    expect(find.byTooltip('Reload this project'), findsOneWidget);
+    expect(find.byIcon(Icons.folder_open_rounded), findsNothing);
   });
 
   for (final locale in const [Locale('en'), Locale('ko')]) {

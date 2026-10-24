@@ -211,7 +211,6 @@
   "commonCancel": "취소",
   "homeProjectTitle": "프로젝트",
   "homeProjectOpen": "프로젝트 열기",
-  "homeProjectChange": "변경",
   "homeProjectReload": "이 프로젝트 다시 읽기",
   "homeProjectDrop": "Flutter 프로젝트 폴더를 여기로 끌어다 놓거나 [프로젝트 열기]를 누르세요",
   "homeProjectNotFlutter": "Flutter 프로젝트가 아닙니다: {path}",

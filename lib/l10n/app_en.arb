@@ -194,7 +194,6 @@
   "commonCancel": "Cancel",
   "homeProjectTitle": "Project",
   "homeProjectOpen": "Open project",
-  "homeProjectChange": "Change",
   "homeProjectReload": "Reload this project",
   "homeProjectDrop": "Drop a Flutter project folder here, or press Open project",
   "homeProjectNotFlutter": "Not a Flutter project: {path}",

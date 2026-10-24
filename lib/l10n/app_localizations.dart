@@ -644,12 +644,6 @@ abstract class AppLocalizations {
   /// **'프로젝트 열기'**
   String get homeProjectOpen;
 
-  /// No description provided for @homeProjectChange.
-  ///
-  /// In ko, this message translates to:
-  /// **'변경'**
-  String get homeProjectChange;
-
   /// No description provided for @homeProjectReload.
   ///
   /// In ko, this message translates to:

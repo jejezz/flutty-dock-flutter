@@ -331,9 +331,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeProjectOpen => 'Open project';
 
   @override
-  String get homeProjectChange => 'Change';
-
-  @override
   String get homeProjectReload => 'Reload this project';
 
   @override

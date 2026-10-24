@@ -70,7 +70,6 @@ class ProjectHeader extends StatelessWidget {
                           style: theme.textTheme.titleSmall,
                         ),
                       ),
-                      _iconButton(Icons.folder_open_rounded, l10n.homeProjectChange, onOpen),
                       _iconButton(Icons.refresh_rounded, l10n.homeProjectReload, () => controller.openProject(p.path)),
                       _iconButton(Icons.code_rounded, l10n.homeOpenVsCode, () => _openInVsCode(context)),
                     ],
