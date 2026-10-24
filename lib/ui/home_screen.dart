@@ -1,11 +1,12 @@
+import 'dart:io' show Platform;
+
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
-import '../app_identity.dart';
 import '../core/command_log.dart';
-import '../core/vscode.dart';
+import '../core/window_bounds.dart';
 import '../devices/mobile_device.dart';
 import '../install/install_controller.dart';
 import '../install/install_plan.dart';
@@ -22,25 +23,40 @@ import 'devices_tab.dart';
 import 'doctor_tab.dart';
 import 'git_section.dart';
 import 'log_tab.dart';
+import 'project_header.dart';
+import 'project_menu.dart';
 import 'output_viewer.dart';
 import 'signing_tab.dart';
 import 'widgets.dart';
 import '../window/focus_tint.dart';
 
-/// VS Code 옆에 세워 두는 화면: 프로젝트 → 기기 → 빌드 → 실행할 명령과 진행.
+/// VS Code 옆에 세워 두는 화면: 위에 프로젝트 카드, 아래에 탭(실행 · Git · 기기 · 서명 · 점검 · 기록).
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.controller, required this.log, required this.onAbout});
+  const HomeScreen({
+    super.key,
+    required this.controller,
+    required this.log,
+    required this.onAbout,
+    this.onDock = dockWindow,
+    this.pickFolder = getDirectoryPath,
+  });
 
   final InstallController controller;
   final CommandLog log;
   final VoidCallback onAbout;
+
+  /// 창을 화면 가장자리에 붙인다. 테스트에서 바꾼다.
+  final Future<void> Function(DockSide side) onDock;
+
+  /// 폴더 고르기 창. 테스트에서 바꾼다.
+  final Future<String?> Function() pickFolder;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
-  late final TabController _tabs = TabController(length: 5, vsync: this, initialIndex: widget.controller.tabIndex);
+  late final TabController _tabs = TabController(length: InstallController.tabIds.length, vsync: this, initialIndex: widget.controller.tabIndex);
 
   InstallController get controller => widget.controller;
   CommandLog get log => widget.log;
@@ -72,19 +88,28 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     super.dispose();
   }
 
+  Tab _tab(IconData icon, String text) =>
+      Tab(height: 54, iconMargin: const EdgeInsets.only(bottom: 2), icon: Icon(icon, size: 20), text: text);
+
   Future<void> _open() async {
-    final dir = await getDirectoryPath();
+    final dir = await widget.pickFolder();
     if (dir != null) await controller.openProject(dir);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Builder(
+    final mac = Platform.isMacOS;
+    return CallbackShortcuts(
+      bindings: {SingleActivator(LogicalKeyboardKey.keyO, control: !mac, meta: mac): _open},
+      child: Focus(
+        autofocus: true,
+        child: Builder(
       builder: (context) => Scaffold(
         appBar: AppBar(
           flexibleSpace: const FocusTint(),
-          title: const Text(AppIdentity.displayName),
+          // 프로젝트 이름을 누르면 최근 프로젝트 · 폴더 열기 · 창 붙이기 메뉴가 열린다.
+          title: ProjectMenuButton(controller: controller, onOpenFolder: _open, onDock: widget.onDock),
           actions: [
             // macOS 릴리스 서명용 시크릿 — Windows 릴리스는 시크릿이 필요 없어 숨긴다.
             if (SecretsScreen.available)
@@ -108,17 +133,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             listenable: controller,
             builder: (context, _) => Column(
               children: [
+                // 프로젝트는 모든 탭의 기준이라 탭 위에 고정해 둔다.
+                ProjectHeader(controller: controller, onOpen: _open),
                 NextStepBanner(controller: controller),
                 TabBar(
                   controller: _tabs,
-                  // 도킹 폭(380~440)에서 다섯 탭이 한 줄에 균등하게 들어간다.
+                  // 도킹 폭(380~440)에서 여섯 탭이 한 줄에 균등하게 들어간다. 아이콘 위에 글자를 얹어 폭을 아낀다.
                   labelPadding: EdgeInsets.zero,
+                  labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  unselectedLabelStyle: const TextStyle(fontSize: 12),
                   tabs: [
-                    Tab(text: l10n.tabInstall),
-                    Tab(text: l10n.tabDevices),
-                    Tab(text: l10n.tabSigning),
-                    Tab(text: l10n.tabDoctor),
-                    Tab(text: l10n.tabLog),
+                    _tab(Icons.play_circle_outline_rounded, l10n.tabInstall),
+                    _tab(Icons.account_tree_outlined, l10n.tabGit),
+                    _tab(Icons.smartphone_rounded, l10n.tabDevices),
+                    _tab(Icons.verified_outlined, l10n.tabSigning),
+                    _tab(Icons.health_and_safety_outlined, l10n.tabDoctor),
+                    _tab(Icons.history_rounded, l10n.tabLog),
                   ],
                 ),
                 Expanded(
@@ -128,13 +158,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       ListView(
                         padding: const EdgeInsets.all(AppSpacing.lg),
                         children: [
-                          _ProjectSection(controller: controller, onOpen: _open),
-                          GitSection(controller: controller),
-                          const SizedBox(height: AppSpacing.lg),
                           _BuildSection(controller: controller),
                           const SizedBox(height: AppSpacing.lg),
                           _OutputSection(log: log),
                         ],
+                      ),
+                      ListView(
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        children: [GitSection(controller: controller)],
                       ),
                       DevicesTab(controller: controller),
                       SigningTab(controller: controller),
@@ -148,110 +179,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
         ),
       ),
-    );
-  }
-}
-
-class _ProjectSection extends StatelessWidget {
-  const _ProjectSection({required this.controller, required this.onOpen});
-
-  final InstallController controller;
-  final VoidCallback onOpen;
-
-  Future<void> _openInVsCode(BuildContext context) async {
-    final l10n = AppLocalizations.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-    final result = await controller.openInVsCode();
-    if (result == VsCodeResult.opened) return;
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(result == VsCodeResult.notFound ? l10n.vscodeNotFound : l10n.vscodeOpenFailed),
-        action: result == VsCodeResult.notFound
-            ? SnackBarAction(label: l10n.vscodeDownload, onPressed: () => launchUrl(vscodeDownloadUrl))
-            : null,
+    ),
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    final p = controller.project;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SectionTitle(l10n.homeProjectTitle),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            child: p == null
-                ? Column(
-                    children: [
-                      Text(l10n.homeProjectDrop, textAlign: TextAlign.center, style: theme.textTheme.bodyMedium),
-                      const SizedBox(height: AppSpacing.md),
-                      FilledButton(onPressed: onOpen, child: Text(l10n.homeProjectOpen)),
-                    ],
-                  )
-                : Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              p.version == null ? p.name : '${p.name}  ${p.version}',
-                              style: theme.textTheme.titleSmall,
-                            ),
-                            Text(
-                              p.path,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppFonts.userContent.copyWith(fontSize: 12, color: theme.hintColor),
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            Wrap(
-                              spacing: AppSpacing.xs,
-                              children: [
-                                if (p.hasIos) InfoChip(l10n.homePlatformIos),
-                                if (p.hasAndroid) InfoChip(l10n.homePlatformAndroid),
-                                if (p.hasMacos) InfoChip(l10n.homePlatformMacos),
-                                if (p.hasWindows) InfoChip(l10n.homePlatformWindows),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextButton(onPressed: onOpen, child: Text(l10n.homeProjectChange)),
-                              IconButton(
-                                tooltip: l10n.homeProjectReload,
-                                visualDensity: VisualDensity.compact,
-                                icon: const Icon(Icons.refresh_rounded, size: 20),
-                                onPressed: () => controller.openProject(p.path),
-                              ),
-                            ],
-                          ),
-                          TextButton(onPressed: () => _openInVsCode(context), child: Text(l10n.homeOpenVsCode)),
-                        ],
-                      ),
-                    ],
-                  ),
-          ),
-        ),
-        if (controller.projectError != null)
-          Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.xs),
-            child: Text(
-              l10n.homeProjectNotFlutter(controller.projectError!),
-              style: TextStyle(color: theme.colorScheme.error, fontSize: 12),
-            ),
-          ),
-      ],
     );
   }
 }

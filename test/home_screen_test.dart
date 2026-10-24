@@ -15,6 +15,7 @@ import 'package:flutty_dock/l10n/app_localizations.dart';
 import 'package:flutty_dock/settings/app_settings.dart';
 import 'package:flutty_dock/ui/build_options_section.dart' show flavorDocsUrlFor;
 import 'package:flutty_dock/ui/home_screen.dart';
+import 'package:flutty_dock/ui/project_header.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _Devices implements DeviceService {
@@ -57,8 +58,13 @@ Diagnostics _diag({List<SigningCert> certs = const []}) => Diagnostics(
   collectedAt: DateTime(2026, 10, 10, 9, 30),
 );
 
-Future<void> _pump(WidgetTester tester, InstallController c) async {
-  tester.view.physicalSize = const Size(440, 960);
+Future<void> _pump(
+  WidgetTester tester,
+  InstallController c, {
+  Locale locale = const Locale('en'),
+  Size size = const Size(440, 960),
+}) async {
+  tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   SharedPreferences.setMockInitialValues({});
@@ -67,7 +73,7 @@ Future<void> _pump(WidgetTester tester, InstallController c) async {
     AppSettingsScope(
       settings: settings,
       child: MaterialApp(
-        locale: const Locale('en'),
+        locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: HomeScreen(controller: c, log: CommandLog(), onAbout: () {}),
@@ -111,6 +117,12 @@ class _FakeGit extends GitClient {
 
 const _galaxy = MobileDevice(id: 'R3CY', name: 'SM S931N', platform: DevicePlatform.android, link: DeviceLink.usb);
 
+/// Git는 이제 전용 탭에 있다.
+Future<void> _openGitTab(WidgetTester tester) async {
+  await tester.tap(find.widgetWithText(Tab, 'Git'));
+  await tester.pumpAndSettle();
+}
+
 InstallController _controller({List<MobileDevice> devices = const [], Diagnostics? diag}) {
   final runner = CommandRunner(CommandLog());
   return InstallController(
@@ -126,10 +138,10 @@ void main() {
     await _pump(tester, c);
     await tester.tap(find.widgetWithText(Tab, 'Doctor'));
     await tester.pumpAndSettle();
-    expect(c.tabIndex, 3);
+    expect(c.tabIndex, 4);
     // 저장된 탭이 나중에 도착하면 그 탭으로 옮긴다.
     c
-      ..tabIndex = 1
+      ..tabIndex = 2
       ..tabLoaded = true;
     // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     c.notifyListeners();
@@ -137,10 +149,10 @@ void main() {
     expect(find.textContaining('No device is connected over USB'), findsOneWidget);
   });
 
-  testWidgets('without a project the banner asks to open one and the five tabs exist', (tester) async {
+  testWidgets('without a project the banner asks to open one and the six tabs exist', (tester) async {
     await _pump(tester, _controller());
     expect(find.text('Open a Flutter project first'), findsOneWidget);
-    for (final t in ['Run', 'Devices', 'Signing', 'Doctor', 'Log']) {
+    for (final t in ['Run', 'Git', 'Devices', 'Signing', 'Doctor', 'Log']) {
       expect(find.widgetWithText(Tab, t), findsOneWidget);
     }
   });
@@ -200,7 +212,11 @@ void main() {
     )..project = _project;
     await c.refreshGit();
     await _pump(tester, c);
+    // 프로젝트 카드(모든 탭에 보임)에 브랜치와 상태가 글자로 보인다.
     expect(find.text('main'), findsOneWidget);
+    expect(find.text('↓ 2 to pull'), findsOneWidget);
+    await _openGitTab(tester);
+    expect(find.text('main'), findsNWidgets(2), reason: 'the header pill and the Git tab card');
     expect(find.text('github.com/o/r'), findsOneWidget);
     expect(find.text('2 behind the remote'), findsOneWidget);
 
@@ -228,6 +244,8 @@ void main() {
     )..project = _project;
     await c.refreshGit();
     await _pump(tester, c);
+    expect(find.text('● Changes'), findsOneWidget, reason: 'visible in the header without opening the Git tab');
+    await _openGitTab(tester);
     expect(find.text('Not pulling: there are uncommitted changes'), findsWidgets);
     await tester.ensureVisible(find.text('Pull'));
     await tester.tap(find.text('Pull'), warnIfMissed: false);
@@ -235,7 +253,89 @@ void main() {
     expect(git.calls, isEmpty);
   });
 
-  testWidgets('no Git section when the folder is not a repository', (tester) async {
+  testWidgets('the project banner stays above every tab and shows the git status in words', (tester) async {
+    final git = _FakeGit(const GitState(branch: 'main', upstream: 'origin/main', remoteUrl: 'git@github.com:o/r.git'));
+    final c = InstallController(
+      runner: CommandRunner(CommandLog()),
+      deviceService: _Devices(const []),
+      diagnosticsService: _Diag(_diag()),
+      gitClient: git,
+    )..project = _project;
+    await c.refreshGit();
+    await _pump(tester, c);
+    for (final tab in ['Run', 'Git', 'Devices', 'Signing', 'Doctor', 'Log']) {
+      await tester.tap(find.widgetWithText(Tab, tab));
+      await tester.pumpAndSettle();
+      expect(find.text('app'), findsOneWidget, reason: 'project name in the title on the $tab tab');
+      expect(find.textContaining('1.0.0+1'), findsOneWidget, reason: 'version in the banner on the $tab tab');
+      expect(find.text('✓ Up to date'), findsOneWidget, reason: 'git status on the $tab tab');
+    }
+    // 카드가 아니라 납작한 배너다.
+    expect(find.descendant(of: find.byType(ProjectHeader), matching: find.byType(Card)), findsNothing);
+    // 배너의 버튼은 아이콘이고, 이름은 툴팁으로 남는다. 폴더 바꾸기는 타이틀 바 메뉴로 옮겼으니 배너에는 없다.
+    expect(find.byTooltip('Open in VS Code'), findsOneWidget);
+    expect(find.byTooltip('Reload this project'), findsOneWidget);
+    expect(find.byIcon(Icons.folder_open_rounded), findsNothing);
+  });
+
+  for (final locale in const [Locale('en'), Locale('ko')]) {
+    testWidgets('fits the smallest docked window (380x560) on every tab, ${locale.languageCode}', (tester) async {
+      const project = FlutterProject(
+        path: 'D:/work/a-rather-long-project-folder-name/app',
+        name: 'a_rather_long_project_name',
+        version: '12.34.56+789',
+        hasIos: true,
+        hasAndroid: true,
+        hasMacos: true,
+        hasWindows: true,
+      );
+      final git = _FakeGit(
+        const GitState(
+          branch: 'feature/a-rather-long-branch-name-for-testing',
+          upstream: 'origin/feature/a-rather-long-branch-name-for-testing',
+          ahead: 3,
+          behind: 12,
+          dirty: true,
+          remoteUrl: 'git@github.com:some-organization/some-repository.git',
+        ),
+      )..trees = const [
+          GitWorktree(path: 'D:/work/a-rather-long-project-folder-name/app', branch: 'feature/a-rather-long-branch-name-for-testing'),
+          GitWorktree(path: 'D:/work/other-worktree-with-a-long-name', branch: 'main'),
+        ];
+      final c = InstallController(
+        runner: CommandRunner(CommandLog()),
+        deviceService: _Devices(const [_galaxy]),
+        diagnosticsService: _Diag(_diag()),
+        gitClient: git,
+      )
+        ..project = project
+        ..devices = const [_galaxy]
+        ..selectedId = _galaxy.id
+        ..mode = BuildMode.release;
+      await c.refreshGit();
+      await _pump(tester, c, locale: locale, size: const Size(380, 560));
+      expect(tester.takeException(), isNull, reason: 'run tab');
+      final labels = locale.languageCode == 'ko'
+          ? ['실행', 'Git', '기기', '서명', '점검', '기록']
+          : ['Run', 'Git', 'Devices', 'Signing', 'Doctor', 'Log'];
+      for (final label in labels) {
+        await tester.tap(find.widgetWithText(Tab, label));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull, reason: '$label tab');
+      }
+    });
+  }
+
+  testWidgets('tabs show an icon above the label', (tester) async {
+    await _pump(tester, _controller());
+    final tab = find.widgetWithText(Tab, 'Devices');
+    expect(find.descendant(of: tab, matching: find.byType(Icon)), findsOneWidget);
+    final icon = tester.getCenter(find.descendant(of: tab, matching: find.byType(Icon))).dy;
+    final label = tester.getCenter(find.descendant(of: tab, matching: find.text('Devices'))).dy;
+    expect(icon, lessThan(label));
+  });
+
+  testWidgets('the Git tab says why when the folder is not a repository', (tester) async {
     final c = InstallController(
       runner: CommandRunner(CommandLog()),
       deviceService: _Devices(const []),
@@ -244,8 +344,10 @@ void main() {
     )..project = _project;
     await c.refreshGit();
     await _pump(tester, c);
+    expect(find.text('✓ Up to date'), findsNothing, reason: 'no git chip in the header either');
+    await _openGitTab(tester);
+    expect(find.text('This project folder is not a git repository'), findsOneWidget);
     expect(find.text('Fetch'), findsNothing);
-    expect(find.text('Git'), findsNothing, reason: 'a plain folder gets no Git card at all');
     expect(find.textContaining("wasn't found"), findsNothing);
   });
 
@@ -259,8 +361,9 @@ void main() {
     await c.refreshGit();
     expect(c.gitMissing, isTrue);
     await _pump(tester, c);
-    expect(find.text('Git'), findsOneWidget);
+    await _openGitTab(tester);
     expect(find.text("The git command wasn't found. Install it and make sure it is on PATH"), findsOneWidget);
+    expect(find.text('This project folder is not a git repository'), findsNothing);
     expect(find.text('Fetch'), findsNothing);
   });
 
@@ -277,6 +380,7 @@ void main() {
     final one = make(const [GitWorktree(path: '/p/app', branch: 'main')]);
     await one.refreshGit();
     await _pump(tester, one);
+    await _openGitTab(tester);
     expect(find.text('Worktree'), findsNothing);
 
     final many = make(const [
@@ -285,6 +389,7 @@ void main() {
     ]);
     await many.refreshGit();
     await _pump(tester, many);
+    await _openGitTab(tester);
     expect(find.text('Worktree'), findsOneWidget);
     expect(many.currentWorktree?.branch, 'main');
     // 현재 항목이 칸에 보인다.

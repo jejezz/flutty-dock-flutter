@@ -644,12 +644,6 @@ abstract class AppLocalizations {
   /// **'프로젝트 열기'**
   String get homeProjectOpen;
 
-  /// No description provided for @homeProjectChange.
-  ///
-  /// In ko, this message translates to:
-  /// **'변경'**
-  String get homeProjectChange;
-
   /// No description provided for @homeProjectReload.
   ///
   /// In ko, this message translates to:
@@ -1741,6 +1735,84 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'Git'**
   String get gitTitle;
+
+  /// No description provided for @tabGit.
+  ///
+  /// In ko, this message translates to:
+  /// **'Git'**
+  String get tabGit;
+
+  /// No description provided for @titleMenuTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 프로젝트 · 폴더 열기 · 창 붙이기'**
+  String get titleMenuTooltip;
+
+  /// No description provided for @menuRecent.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 프로젝트'**
+  String get menuRecent;
+
+  /// No description provided for @menuRecentEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 연 프로젝트가 없습니다'**
+  String get menuRecentEmpty;
+
+  /// No description provided for @menuOpenFolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 폴더 열기…'**
+  String get menuOpenFolder;
+
+  /// No description provided for @menuDockRight.
+  ///
+  /// In ko, this message translates to:
+  /// **'화면 오른쪽에 붙이기'**
+  String get menuDockRight;
+
+  /// No description provided for @menuDockLeft.
+  ///
+  /// In ko, this message translates to:
+  /// **'화면 왼쪽에 붙이기'**
+  String get menuDockLeft;
+
+  /// No description provided for @gitNotRepo.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 프로젝트 폴더는 git 저장소가 아닙니다'**
+  String get gitNotRepo;
+
+  /// No description provided for @gitChipUpToDate.
+  ///
+  /// In ko, this message translates to:
+  /// **'✓ 최신'**
+  String get gitChipUpToDate;
+
+  /// No description provided for @gitChipBehind.
+  ///
+  /// In ko, this message translates to:
+  /// **'↓ {count}개 받을 수 있음'**
+  String gitChipBehind(int count);
+
+  /// No description provided for @gitChipAhead.
+  ///
+  /// In ko, this message translates to:
+  /// **'↑ {count}개 앞섬'**
+  String gitChipAhead(int count);
+
+  /// No description provided for @gitChipNoUpstream.
+  ///
+  /// In ko, this message translates to:
+  /// **'추적 브랜치 없음'**
+  String get gitChipNoUpstream;
+
+  /// No description provided for @gitChipDirty.
+  ///
+  /// In ko, this message translates to:
+  /// **'● 변경 있음'**
+  String get gitChipDirty;
 
   /// No description provided for @gitWorktree.
   ///

@@ -8,7 +8,7 @@ import '../theme/app_theme.dart';
 import 'widgets.dart';
 
 /// 프로젝트 폴더의 git 상태(브랜치·원격과의 차이·변경)와 원격 주소, fetch·pull 단추.
-/// git 저장소가 아니면 아무것도 그리지 않는다. push는 일부러 두지 않았다.
+/// Git 탭의 내용. 저장소가 아니거나 git이 없으면 그 이유를 보여 준다. push는 일부러 두지 않았다.
 class GitSection extends StatelessWidget {
   const GitSection({super.key, required this.controller});
 
@@ -21,47 +21,47 @@ class GitSection extends StatelessWidget {
     GitPullBlock.upToDate => l10n.gitPullBlockedUpToDate,
   };
 
+  /// 카드를 못 그릴 때 이유를 한 줄로 알려 주는 카드.
+  Widget _note(ThemeData theme, AppLocalizations l10n, String text) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SectionTitle(l10n.gitTitle),
+      Card(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 2),
+                child: Icon(Icons.lightbulb_outline_rounded, size: 16, color: AppColors.warning),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(child: Text(text, style: theme.textTheme.bodyMedium)),
+            ],
+          ),
+        ),
+      ),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
     final g = controller.gitState;
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    if (controller.project != null && g == null && controller.gitMissing) {
-      // git 저장소가 아닌 폴더는 카드를 숨기지만, git이 없는 PC는 이유를 알려 준다.
-      return Padding(
-        padding: const EdgeInsets.only(top: AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SectionTitle(l10n.gitTitle),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 2),
-                      child: Icon(Icons.lightbulb_outline_rounded, size: 16, color: AppColors.warning),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(child: Text(l10n.hintMissingCommand('git'), style: theme.textTheme.bodyMedium)),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
+    // 전용 탭이라 카드가 없는 이유를 늘 알려 준다: 프로젝트 없음 / git이 없음 / git 저장소가 아님.
+    if (controller.project == null) return _note(theme, l10n, l10n.blockerNoProject);
+    if (g == null) {
+      return _note(theme, l10n, controller.gitMissing ? l10n.hintMissingCommand('git') : l10n.gitNotRepo);
     }
-    if (controller.project == null || g == null) return const SizedBox.shrink();
     final busy = controller.gitBusy;
     final locked = busy || controller.running || controller.cleaning;
     final web = g.remoteWebUrl;
     final remote = g.remoteUrl;
 
     return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.lg),
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

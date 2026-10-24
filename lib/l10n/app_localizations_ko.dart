@@ -322,9 +322,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeProjectOpen => '프로젝트 열기';
 
   @override
-  String get homeProjectChange => '변경';
-
-  @override
   String get homeProjectReload => '이 프로젝트 다시 읽기';
 
   @override
@@ -954,6 +951,49 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get gitTitle => 'Git';
+
+  @override
+  String get tabGit => 'Git';
+
+  @override
+  String get titleMenuTooltip => '최근 프로젝트 · 폴더 열기 · 창 붙이기';
+
+  @override
+  String get menuRecent => '최근 프로젝트';
+
+  @override
+  String get menuRecentEmpty => '아직 연 프로젝트가 없습니다';
+
+  @override
+  String get menuOpenFolder => '다른 폴더 열기…';
+
+  @override
+  String get menuDockRight => '화면 오른쪽에 붙이기';
+
+  @override
+  String get menuDockLeft => '화면 왼쪽에 붙이기';
+
+  @override
+  String get gitNotRepo => '이 프로젝트 폴더는 git 저장소가 아닙니다';
+
+  @override
+  String get gitChipUpToDate => '✓ 최신';
+
+  @override
+  String gitChipBehind(int count) {
+    return '↓ $count개 받을 수 있음';
+  }
+
+  @override
+  String gitChipAhead(int count) {
+    return '↑ $count개 앞섬';
+  }
+
+  @override
+  String get gitChipNoUpstream => '추적 브랜치 없음';
+
+  @override
+  String get gitChipDirty => '● 변경 있음';
 
   @override
   String get gitWorktree => 'Worktree';

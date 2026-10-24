@@ -331,9 +331,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeProjectOpen => 'Open project';
 
   @override
-  String get homeProjectChange => 'Change';
-
-  @override
   String get homeProjectReload => 'Reload this project';
 
   @override
@@ -976,6 +973,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gitTitle => 'Git';
+
+  @override
+  String get tabGit => 'Git';
+
+  @override
+  String get titleMenuTooltip =>
+      'Recent projects, open a folder, dock the window';
+
+  @override
+  String get menuRecent => 'Recent projects';
+
+  @override
+  String get menuRecentEmpty => 'No project opened yet';
+
+  @override
+  String get menuOpenFolder => 'Open another folder…';
+
+  @override
+  String get menuDockRight => 'Dock to the right edge';
+
+  @override
+  String get menuDockLeft => 'Dock to the left edge';
+
+  @override
+  String get gitNotRepo => 'This project folder is not a git repository';
+
+  @override
+  String get gitChipUpToDate => '✓ Up to date';
+
+  @override
+  String gitChipBehind(int count) {
+    return '↓ $count to pull';
+  }
+
+  @override
+  String gitChipAhead(int count) {
+    return '↑ $count ahead';
+  }
+
+  @override
+  String get gitChipNoUpstream => 'No upstream';
+
+  @override
+  String get gitChipDirty => '● Changes';
 
   @override
   String get gitWorktree => 'Worktree';

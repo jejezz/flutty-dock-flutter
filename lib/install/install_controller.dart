@@ -16,6 +16,14 @@ import 'install_plan.dart';
 
 enum VsCodeResult { opened, notFound, failed }
 
+/// 같은 폴더인지: `\`와 `/`, 끝의 구분자, (Windows·macOS의) 대소문자 차이는 무시한다.
+bool samePath(String a, String b) => _pathKey(a) == _pathKey(b);
+
+String _pathKey(String p) {
+  final k = p.replaceAll('\\', '/').replaceAll(RegExp(r'/+$'), '');
+  return Platform.isWindows || Platform.isMacOS ? k.toLowerCase() : k;
+}
+
 enum GitAction { fetch, pull }
 
 enum StepStatus { pending, running, done, failed, cancelled }
@@ -39,9 +47,14 @@ class InstallController extends ChangeNotifier {
   final bool hostIsWindows;
 
   static const _projectKey = 'last_project';
+  static const _recentKey = 'recent_projects';
+
+  /// 최근 프로젝트를 몇 개까지 기억할지.
+  static const maxRecent = 8;
   static const _teamKey = 'ios_team_id';
   static const _modeKey = 'build_mode';
-  static const _tabKey = 'last_tab';
+  static const _tabKey = 'last_tab'; // 예전 번호 저장 (읽기만 한다)
+  static const _tabIdKey = 'last_tab_id';
   static const _toolKeyPrefix = 'tool_path_';
   static const _optionsKeyPrefix = 'build_options:';
 
@@ -59,6 +72,9 @@ class InstallController extends ChangeNotifier {
   SharedPreferences? _prefs;
   FlutterProject? project;
   String? projectError;
+
+  /// 최근에 연 프로젝트 폴더 (가장 최근이 앞). 제목 메뉴에서 다시 연다.
+  List<String> recentProjects = const [];
   List<MobileDevice> devices = const [];
   bool loadingDevices = false;
   String? selectedId;
@@ -71,7 +87,13 @@ class InstallController extends ChangeNotifier {
   Diagnostics? diagnostics;
   bool diagnosing = false;
 
-  /// 마지막으로 보던 탭 (0 설치 · 1 기기 · 2 서명 · 3 점검 · 4 기록).
+  /// 화면의 탭 순서. 저장은 번호가 아니라 이름으로 한다 — 탭이 늘어도 저장된 값이 엉뚱한 탭을 가리키지 않는다.
+  static const tabIds = ['run', 'git', 'devices', 'signing', 'doctor', 'log'];
+
+  /// 탭이 5개였을 때(번호로 저장하던 시절)의 순서. 저장된 옛 번호를 한 번 옮겨 읽는 데만 쓴다.
+  static const _legacyTabIds = ['run', 'devices', 'signing', 'doctor', 'log'];
+
+  /// 마지막으로 보던 탭의 번호 ([tabIds] 기준).
   int tabIndex = 0;
 
   /// 저장된 탭을 읽었는지 — 화면이 한 번만 그 탭으로 옮긴다.
@@ -183,7 +205,7 @@ class InstallController extends ChangeNotifier {
       _prefs = await SharedPreferences.getInstance();
       teamId = _prefs!.getString(_teamKey);
       mode = BuildMode.values.asNameMap()[_prefs!.getString(_modeKey)] ?? BuildMode.release;
-      tabIndex = (_prefs!.getInt(_tabKey) ?? 0).clamp(0, 4);
+      tabIndex = _savedTabIndex();
       tabLoaded = true;
       for (final tool in configurableTools) {
         final saved = _prefs!.getString('$_toolKeyPrefix$tool');
@@ -191,6 +213,9 @@ class InstallController extends ChangeNotifier {
       }
       final last = _prefs!.getString(_projectKey);
       if (last != null) project = await FlutterProject.detect(last);
+      recentProjects = _prefs!.getStringList(_recentKey) ?? const [];
+      // 기록이 생기기 전에 열어 둔 프로젝트도 목록에 넣는다.
+      if (last != null && !recentProjects.any((p) => samePath(p, last))) recentProjects = [last, ...recentProjects];
       _loadOptions();
     } on Object {
       // 기억해 둔 값은 편의일 뿐이다.
@@ -208,6 +233,8 @@ class InstallController extends ChangeNotifier {
       statuses = const [];
       hint = null;
       await _prefs?.setString(_projectKey, dir);
+      recentProjects = [dir, ...recentProjects.where((p) => !samePath(p, dir))].take(maxRecent).toList();
+      await _prefs?.setStringList(_recentKey, recentProjects);
       // 새 프로젝트가 지금 고른 대상(예: 이 컴퓨터)을 지원하지 않으면 다시 고른다.
       if (device == null) _pickDefaultDevice();
       // 다른 프로젝트의 git 상태를 새로 읽기 전까지 비워 둔다. (열지 못했으면 지금 프로젝트가 그대로이니 그대로 둔다.)
@@ -251,10 +278,22 @@ class InstallController extends ChangeNotifier {
     await Future.wait([refreshDevices(), runDiagnostics()]);
   }
 
+  /// 저장된 탭의 번호. 이름으로 저장된 것이 없으면 예전 번호 저장을 옮겨 읽고, 모르면 첫 탭.
+  int _savedTabIndex() {
+    final prefs = _prefs!;
+    var id = prefs.getString(_tabIdKey);
+    if (id == null) {
+      final old = prefs.getInt(_tabKey);
+      if (old != null && old >= 0 && old < _legacyTabIds.length) id = _legacyTabIds[old];
+    }
+    final i = tabIds.indexOf(id ?? '');
+    return i < 0 ? 0 : i;
+  }
+
   void setTab(int i) {
-    if (i == tabIndex) return;
+    if (i == tabIndex || i < 0 || i >= tabIds.length) return;
     tabIndex = i;
-    _prefs?.setInt(_tabKey, i);
+    _prefs?.setString(_tabIdKey, tabIds[i]);
   }
 
   void select(MobileDevice d) {
