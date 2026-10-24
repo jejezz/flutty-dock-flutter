@@ -115,6 +115,15 @@ class NextStepBanner extends StatelessWidget {
                     child: Text(l10n.restartAppButton),
                   ),
                 ),
+              // 낡은 빌드 캐시는 정리하면 풀린다 — 실행 탭까지 가지 않고 여기서 바로.
+              if (controller.hint == FailureHint.staleBuildCache && blockers.isEmpty && controller.missingCommand == null)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: FilledButton.tonal(
+                    onPressed: controller.cleaning ? null : controller.cleanProject,
+                    child: Text(l10n.homeActionClean),
+                  ),
+                ),
               if (steps != null)
                 Theme(
                   data: theme.copyWith(dividerColor: Colors.transparent),

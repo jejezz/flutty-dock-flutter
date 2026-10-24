@@ -558,6 +558,8 @@
   "hintCocoapods": "CocoaPods is missing, so the macOS app couldn't be built",
   "hintVisualStudio": "Visual Studio's 'Desktop development with C++' workload is missing, so the Windows app couldn't be built",
   "hintRestartApp": "The build failed because the build environment wasn't ready (plugin links not found). Closing and reopening the app fixes it",
+  "hintStaleBuildCache": "The Windows build failed because a build cache from an older Visual Studio is left over (it happens after switching Visual Studio versions). Cleaning fixes it",
+  "stepsStaleBuildCache": "1. Press 'Clean and re-fetch packages' below (it deletes the build folder and fetches packages again)\n2. Build again",
   "restartAppButton": "Close and reopen",
   "homeActionBuildOnly": "Build only",
   "homeActionRunOnly": "Run only",

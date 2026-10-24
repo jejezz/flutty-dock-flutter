@@ -576,6 +576,8 @@
   "hintCocoapods": "CocoaPods가 없어 macOS 앱을 빌드하지 못했습니다",
   "hintVisualStudio": "Visual Studio의 C++ 데스크톱 개발 구성 요소가 없어 Windows 앱을 빌드하지 못했습니다",
   "hintRestartApp": "빌드 환경이 아직 준비되지 않아 실패했습니다 (플러그인 링크를 찾지 못함). 앱을 종료하고 다시 실행하면 해결됩니다",
+  "hintStaleBuildCache": "이전 버전의 Visual Studio로 만든 빌드 캐시가 남아 있어 Windows 빌드가 실패했습니다 (Visual Studio를 새 버전으로 바꾼 뒤에 생깁니다). 정리하면 해결됩니다",
+  "stepsStaleBuildCache": "1. 아래 '정리 후 패키지 다시 받기'를 누릅니다 (build 폴더를 지우고 패키지를 다시 받습니다)\n2. 다시 빌드합니다",
   "restartAppButton": "종료 후 다시 실행",
   "homeActionBuildOnly": "빌드만",
   "homeActionRunOnly": "실행만",

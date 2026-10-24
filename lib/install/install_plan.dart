@@ -235,7 +235,7 @@ InstallPlan buildInstallPlan({
 }
 
 /// 실패한 출력에서 흔한 원인을 찾는다. 모르면 null (원문 로그를 그대로 보여 준다).
-enum FailureHint { useUsb, unlockDevice, developerMode, signing, trustComputer, noAdb, cocoapods, visualStudio, restartApp }
+enum FailureHint { useUsb, unlockDevice, developerMode, signing, trustComputer, noAdb, cocoapods, visualStudio, restartApp, staleBuildCache }
 
 FailureHint? explainFailure(String output) {
   final o = output.toLowerCase();
@@ -246,6 +246,9 @@ FailureHint? explainFailure(String output) {
   if (RegExp(r'\.plugin_symlinks/[^/\s"]+/windows').hasMatch(flat) && flat.contains('not an existing directory')) {
     return FailureHint.restartApp;
   }
+  // Visual Studio를 새 버전으로 바꾼 뒤(예: 2022 → 2026) 예전 버전으로 만든 빌드 캐시가 남아 있으면 CMake가 거부한다.
+  // 오류 문장에 'Visual Studio'가 들어 있어 아래 Visual Studio 안내로 잘못 분류되기 쉬우므로 먼저 가려낸다.
+  if (flat.contains('does not match the generator used previously')) return FailureHint.staleBuildCache;
   if (o.contains('connection reset by peer') || o.contains('controlchannelconnectionerror')) return FailureHint.useUsb;
   if (o.contains('device is locked') || o.contains('is locked')) return FailureHint.unlockDevice;
   if (o.contains('developer mode')) return FailureHint.developerMode;
@@ -257,7 +260,9 @@ FailureHint? explainFailure(String output) {
   if (o.contains('not trusted') || o.contains('trust this computer')) return FailureHint.trustComputer;
   // 데스크톱 빌드 도구: macOS는 CocoaPods, Windows는 Visual Studio(C++ 데스크톱 개발).
   if (o.contains('cocoapods not installed') || o.contains('cocoapods is not installed')) return FailureHint.cocoapods;
-  if (o.contains('unable to find suitable visual studio') || o.contains('visual studio')) {
+  // 'visual studio'라는 글자만으로는 판단하지 않는다 — CMake 출력 곳곳에 버전 이름으로 나온다.
+  // Flutter가 도구를 못 찾았을 때 쓰는 문장만 본다.
+  if (flat.contains('unable to find suitable visual studio') || flat.contains('visual studio is missing necessary components')) {
     return FailureHint.visualStudio;
   }
   if (o.contains('adb: command not found') || o.contains('adb') && o.contains('no such file')) return FailureHint.noAdb;
