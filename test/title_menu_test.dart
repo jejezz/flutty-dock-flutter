@@ -319,6 +319,64 @@ void main() {
     await tester.pumpAndSettle();
     expect(picked, 1);
   });
+
+  // 실제 시작 순서: 화면을 먼저 그리고, 저장된 기록·프로젝트는 그 뒤에(init) 읽힌다.
+  // 타이틀 바는 화면의 ListenableBuilder 밖에 있어서, 메뉴가 처음 그릴 때의 빈 목록을 붙들던 문제가 있었다.
+  testWidgets('the title menu shows the saved history that is loaded after the first frame', (tester) async {
+    final root = Directory.systemTemp.createTempSync('flutty_startup');
+    addTearDown(() => root.deleteSync(recursive: true));
+    final dirs = [
+      for (final n in ['alpha', 'beta', 'gamma'])
+        Directory('${root.path}/$n')
+          ..createSync()
+          ..let((d) => File('${d.path}/pubspec.yaml').writeAsStringSync('name: $n\ndependencies:\n  flutter:\n    sdk: flutter\n')),
+    ];
+    SharedPreferences.setMockInitialValues({
+      'last_project': dirs[2].path,
+      'recent_projects': [dirs[2].path, dirs[1].path, dirs[0].path],
+    });
+    tester.view.physicalSize = const Size(440, 960);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final c = _controller();
+    final settings = await AppSettings.load();
+    await tester.pumpWidget(
+      AppSettingsScope(
+        settings: settings,
+        child: MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: HomeScreen(controller: c, log: CommandLog(), onAbout: () {}, onDock: (_) async {}),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Flutty Dock'), findsOneWidget, reason: 'nothing is loaded yet');
+
+    // init이 끝나기를 기다린다 (파일 읽기는 실제 시계에서).
+    await tester.runAsync(c.init);
+    for (var i = 0; i < 40 && c.project == null; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 25)));
+      await tester.pump();
+    }
+    await tester.pumpAndSettle();
+    expect(c.recentProjects, hasLength(3));
+
+    // 타이틀이 열린 프로젝트의 이름으로 바뀌어 있다.
+    expect(find.text('gamma'), findsOneWidget);
+    expect(find.text('Flutty Dock'), findsNothing);
+
+    // 메뉴에 저장된 기록이 모두 있다.
+    await tester.tap(find.byType(ProjectMenuButton));
+    await tester.pumpAndSettle();
+    expect(find.text('No project opened yet'), findsNothing);
+    expect(find.text('beta'), findsOneWidget);
+    expect(find.text('alpha'), findsOneWidget);
+    expect(find.text('gamma'), findsNWidgets(2), reason: 'the title and the checked list entry');
+    expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+  });
 }
 
 extension _Let<T> on T {
