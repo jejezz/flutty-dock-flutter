@@ -99,6 +99,7 @@ String failureHintText(AppLocalizations l, FailureHint h) => switch (h) {
   FailureHint.cocoapods => l.hintCocoapods,
   FailureHint.visualStudio => l.hintVisualStudio,
   FailureHint.restartApp => l.hintRestartApp,
+  FailureHint.staleBuildCache => l.hintStaleBuildCache,
 };
 
 String? failureHintSteps(AppLocalizations l, FailureHint h) => switch (h) {
@@ -108,5 +109,6 @@ String? failureHintSteps(AppLocalizations l, FailureHint h) => switch (h) {
   FailureHint.noAdb => l.stepsAdbMissing,
   FailureHint.cocoapods => l.stepsCocoapods,
   FailureHint.visualStudio => l.stepsVisualStudio,
+  FailureHint.staleBuildCache => l.stepsStaleBuildCache,
   _ => null,
 };
