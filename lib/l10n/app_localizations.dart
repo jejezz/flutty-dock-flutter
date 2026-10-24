@@ -62,7 +62,8 @@ import 'app_localizations_ko.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -70,7 +71,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,17 +84,18 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('ko')
+    Locale('ko'),
   ];
 
   /// No description provided for @aboutTooltip.
@@ -1745,6 +1748,42 @@ abstract class AppLocalizations {
   /// **'Git'**
   String get tabGit;
 
+  /// No description provided for @titleMenuTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 프로젝트 · 폴더 열기 · 창 붙이기'**
+  String get titleMenuTooltip;
+
+  /// No description provided for @menuRecent.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 프로젝트'**
+  String get menuRecent;
+
+  /// No description provided for @menuRecentEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 연 프로젝트가 없습니다'**
+  String get menuRecentEmpty;
+
+  /// No description provided for @menuOpenFolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 폴더 열기…'**
+  String get menuOpenFolder;
+
+  /// No description provided for @menuDockRight.
+  ///
+  /// In ko, this message translates to:
+  /// **'화면 오른쪽에 붙이기'**
+  String get menuDockRight;
+
+  /// No description provided for @menuDockLeft.
+  ///
+  /// In ko, this message translates to:
+  /// **'화면 왼쪽에 붙이기'**
+  String get menuDockLeft;
+
   /// No description provided for @gitNotRepo.
   ///
   /// In ko, this message translates to:
@@ -1944,7 +1983,8 @@ abstract class AppLocalizations {
   String get stepsVisualStudio;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1953,25 +1993,26 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'ko'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'ko'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return AppLocalizationsEn();
-    case 'ko': return AppLocalizationsKo();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'ko':
+      return AppLocalizationsKo();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

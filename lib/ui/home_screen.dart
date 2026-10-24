@@ -1,9 +1,12 @@
+import 'dart:io' show Platform;
+
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-import '../app_identity.dart';
 import '../core/command_log.dart';
+import '../core/window_bounds.dart';
 import '../devices/mobile_device.dart';
 import '../install/install_controller.dart';
 import '../install/install_plan.dart';
@@ -21,6 +24,7 @@ import 'doctor_tab.dart';
 import 'git_section.dart';
 import 'log_tab.dart';
 import 'project_header.dart';
+import 'project_menu.dart';
 import 'output_viewer.dart';
 import 'signing_tab.dart';
 import 'widgets.dart';
@@ -28,11 +32,24 @@ import '../window/focus_tint.dart';
 
 /// VS Code 옆에 세워 두는 화면: 위에 프로젝트 카드, 아래에 탭(실행 · Git · 기기 · 서명 · 점검 · 기록).
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.controller, required this.log, required this.onAbout});
+  const HomeScreen({
+    super.key,
+    required this.controller,
+    required this.log,
+    required this.onAbout,
+    this.onDock = dockWindow,
+    this.pickFolder = getDirectoryPath,
+  });
 
   final InstallController controller;
   final CommandLog log;
   final VoidCallback onAbout;
+
+  /// 창을 화면 가장자리에 붙인다. 테스트에서 바꾼다.
+  final Future<void> Function(DockSide side) onDock;
+
+  /// 폴더 고르기 창. 테스트에서 바꾼다.
+  final Future<String?> Function() pickFolder;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -75,18 +92,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       Tab(height: 54, iconMargin: const EdgeInsets.only(bottom: 2), icon: Icon(icon, size: 20), text: text);
 
   Future<void> _open() async {
-    final dir = await getDirectoryPath();
+    final dir = await widget.pickFolder();
     if (dir != null) await controller.openProject(dir);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Builder(
+    final mac = Platform.isMacOS;
+    return CallbackShortcuts(
+      bindings: {SingleActivator(LogicalKeyboardKey.keyO, control: !mac, meta: mac): _open},
+      child: Focus(
+        autofocus: true,
+        child: Builder(
       builder: (context) => Scaffold(
         appBar: AppBar(
           flexibleSpace: const FocusTint(),
-          title: const Text(AppIdentity.displayName),
+          // 프로젝트 이름을 누르면 최근 프로젝트 · 폴더 열기 · 창 붙이기 메뉴가 열린다.
+          title: ProjectMenuButton(controller: controller, onOpenFolder: _open, onDock: widget.onDock),
           actions: [
             // macOS 릴리스 서명용 시크릿 — Windows 릴리스는 시크릿이 필요 없어 숨긴다.
             if (SecretsScreen.available)
@@ -155,6 +178,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
           ),
         ),
+      ),
+    ),
       ),
     );
   }

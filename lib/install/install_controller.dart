@@ -16,6 +16,14 @@ import 'install_plan.dart';
 
 enum VsCodeResult { opened, notFound, failed }
 
+/// 같은 폴더인지: `\`와 `/`, 끝의 구분자, (Windows·macOS의) 대소문자 차이는 무시한다.
+bool samePath(String a, String b) => _pathKey(a) == _pathKey(b);
+
+String _pathKey(String p) {
+  final k = p.replaceAll('\\', '/').replaceAll(RegExp(r'/+$'), '');
+  return Platform.isWindows || Platform.isMacOS ? k.toLowerCase() : k;
+}
+
 enum GitAction { fetch, pull }
 
 enum StepStatus { pending, running, done, failed, cancelled }
@@ -39,6 +47,10 @@ class InstallController extends ChangeNotifier {
   final bool hostIsWindows;
 
   static const _projectKey = 'last_project';
+  static const _recentKey = 'recent_projects';
+
+  /// 최근 프로젝트를 몇 개까지 기억할지.
+  static const maxRecent = 8;
   static const _teamKey = 'ios_team_id';
   static const _modeKey = 'build_mode';
   static const _tabKey = 'last_tab'; // 예전 번호 저장 (읽기만 한다)
@@ -60,6 +72,9 @@ class InstallController extends ChangeNotifier {
   SharedPreferences? _prefs;
   FlutterProject? project;
   String? projectError;
+
+  /// 최근에 연 프로젝트 폴더 (가장 최근이 앞). 제목 메뉴에서 다시 연다.
+  List<String> recentProjects = const [];
   List<MobileDevice> devices = const [];
   bool loadingDevices = false;
   String? selectedId;
@@ -198,6 +213,9 @@ class InstallController extends ChangeNotifier {
       }
       final last = _prefs!.getString(_projectKey);
       if (last != null) project = await FlutterProject.detect(last);
+      recentProjects = _prefs!.getStringList(_recentKey) ?? const [];
+      // 기록이 생기기 전에 열어 둔 프로젝트도 목록에 넣는다.
+      if (last != null && !recentProjects.any((p) => samePath(p, last))) recentProjects = [last, ...recentProjects];
       _loadOptions();
     } on Object {
       // 기억해 둔 값은 편의일 뿐이다.
@@ -215,6 +233,8 @@ class InstallController extends ChangeNotifier {
       statuses = const [];
       hint = null;
       await _prefs?.setString(_projectKey, dir);
+      recentProjects = [dir, ...recentProjects.where((p) => !samePath(p, dir))].take(maxRecent).toList();
+      await _prefs?.setStringList(_recentKey, recentProjects);
       // 새 프로젝트가 지금 고른 대상(예: 이 컴퓨터)을 지원하지 않으면 다시 고른다.
       if (device == null) _pickDefaultDevice();
       // 다른 프로젝트의 git 상태를 새로 읽기 전까지 비워 둔다. (열지 못했으면 지금 프로젝트가 그대로이니 그대로 둔다.)
