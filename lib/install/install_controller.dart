@@ -57,6 +57,8 @@ class InstallController extends ChangeNotifier {
   static const _tabIdKey = 'last_tab_id';
   static const _toolKeyPrefix = 'tool_path_';
   static const _optionsKeyPrefix = 'build_options:';
+  static const _projectModeKeyPrefix = 'project_mode:';
+  static const _projectDeviceKeyPrefix = 'project_device:';
 
   /// 사용자가 위치를 지정할 수 있는 도구.
   static const configurableTools = ['flutter', 'adb'];
@@ -80,6 +82,12 @@ class InstallController extends ChangeNotifier {
   String? selectedId;
   BuildMode mode = BuildMode.release;
   String? teamId;
+
+  /// 이 프로젝트에서 마지막으로 직접 고른 대상. 그 기기가 보이면 기본 선택보다 이것을 쓴다.
+  String? _preferredId;
+
+  /// 이 프로젝트를 연 뒤 대상을 직접 골랐는지 — 골랐다면 기기 목록이 갱신돼도 바꾸지 않는다.
+  bool _userPicked = false;
 
   /// 이 프로젝트의 빌드 옵션 (flavor, 진입 파일, dart-define 파일 …). 프로젝트마다 따로 저장한다.
   BuildOptions options = const BuildOptions();
@@ -217,6 +225,7 @@ class InstallController extends ChangeNotifier {
       // 기록이 생기기 전에 열어 둔 프로젝트도 목록에 넣는다.
       if (last != null && !recentProjects.any((p) => samePath(p, last))) recentProjects = [last, ...recentProjects];
       _loadOptions();
+      _loadSelection();
     } on Object {
       // 기억해 둔 값은 편의일 뿐이다.
     }
@@ -230,6 +239,8 @@ class InstallController extends ChangeNotifier {
     if (found != null) {
       project = found;
       _loadOptions();
+      _loadSelection();
+      _applyPreferredDevice();
       statuses = const [];
       hint = null;
       await _prefs?.setString(_projectKey, dir);
@@ -254,6 +265,8 @@ class InstallController extends ChangeNotifier {
     final found = await deviceService.list();
     devices = found;
     if (device == null) _pickDefaultDevice();
+    // 기기가 늦게 잡혀도(케이블을 나중에 꽂은 경우) 이 프로젝트에서 쓰던 대상으로 돌아간다.
+    _applyPreferredDevice();
     loadingDevices = false;
     notifyListeners();
   }
@@ -298,7 +311,36 @@ class InstallController extends ChangeNotifier {
 
   void select(MobileDevice d) {
     selectedId = d.id;
+    _userPicked = true;
+    _preferredId = d.id;
+    final p = project;
+    if (p != null) _prefs?.setString('$_projectDeviceKeyPrefix${p.path}', d.id);
     notifyListeners();
+  }
+
+  /// 이 프로젝트에서 마지막으로 고른 모드·대상을 읽는다. 저장된 것이 없으면 지금 값을 그대로 둔다.
+  void _loadSelection() {
+    final p = project;
+    final prefs = _prefs;
+    _userPicked = false;
+    if (p == null || prefs == null) {
+      _preferredId = null;
+      return;
+    }
+    mode = BuildMode.values.asNameMap()[prefs.getString('$_projectModeKeyPrefix${p.path}')] ?? mode;
+    _preferredId = prefs.getString('$_projectDeviceKeyPrefix${p.path}');
+  }
+
+  /// 기억해 둔 대상이 지금 보이고 이 프로젝트가 지원하면 그것을 고른다. 사용자가 이미 골랐으면 건드리지 않는다.
+  void _applyPreferredDevice() {
+    final id = _preferredId;
+    if (id == null || _userPicked || selectedId == id) return;
+    for (final d in visibleDevices) {
+      if (d.id == id && _supports(d)) {
+        selectedId = id;
+        return;
+      }
+    }
   }
 
   void _loadOptions() {
@@ -325,6 +367,8 @@ class InstallController extends ChangeNotifier {
   void setMode(BuildMode m) {
     mode = m;
     _prefs?.setString(_modeKey, m.name);
+    final p = project;
+    if (p != null) _prefs?.setString('$_projectModeKeyPrefix${p.path}', m.name);
     notifyListeners();
   }
 

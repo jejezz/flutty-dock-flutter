@@ -251,4 +251,97 @@ void main() {
       expect(c.plan.steps.first.args, containsAllInOrder(['--release', '--flavor', 'dev']));
     });
   });
+
+  group('per-project mode and device', () {
+    late Directory a;
+    late Directory b;
+    var attached = <MobileDevice>[_galaxy, _iphone];
+
+    Directory flutterProject(String name) {
+      final d = Directory.systemTemp.createTempSync('flutty_sel_$name');
+      File('${d.path}/pubspec.yaml').writeAsStringSync('name: $name\ndependencies:\n  flutter:\n    sdk: flutter\n');
+      File('${d.path}/android/app/build.gradle.kts').createSync(recursive: true);
+      File('${d.path}/ios/Runner.xcodeproj/project.pbxproj').createSync(recursive: true);
+      return d;
+    }
+
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+      attached = [_galaxy, _iphone];
+      a = flutterProject('a');
+      b = flutterProject('b');
+    });
+
+    tearDown(() {
+      a.deleteSync(recursive: true);
+      b.deleteSync(recursive: true);
+    });
+
+    InstallController make() => InstallController(
+      runner: CommandRunner(CommandLog()),
+      deviceService: _FakeDevices(() => attached),
+      hostIsMac: false,
+      hostIsWindows: false,
+    );
+
+    test('each project remembers its own mode and device', () async {
+      final c = make();
+      await c.init();
+      await c.openProject(a.path);
+      await c.refreshDevices();
+      c.select(_iphone);
+      c.setMode(BuildMode.debug);
+
+      await c.openProject(b.path);
+      c.select(_galaxy);
+      c.setMode(BuildMode.release);
+
+      await c.openProject(a.path);
+      expect(c.selectedId, _iphone.id);
+      expect(c.mode, BuildMode.debug);
+      await c.openProject(b.path);
+      expect(c.selectedId, _galaxy.id);
+      expect(c.mode, BuildMode.release);
+    });
+
+    test('restored after an app restart, even when the device shows up late', () async {
+      final c = make();
+      await c.init();
+      await c.openProject(a.path);
+      await c.refreshDevices();
+      c.select(_iphone);
+
+      attached = [_galaxy];
+      final again = make();
+      await again.init();
+      expect(again.selectedId, _galaxy.id, reason: 'saved device is not attached: fall back to the default');
+      attached = [_galaxy, _iphone];
+      await again.refreshDevices();
+      expect(again.selectedId, _iphone.id);
+    });
+
+    test('a device picked by hand is not overridden by a refresh', () async {
+      final c = make();
+      await c.init();
+      await c.openProject(a.path);
+      await c.refreshDevices();
+      c.select(_iphone);
+
+      final again = make();
+      await again.init();
+      await again.refreshDevices();
+      again.select(_galaxy);
+      await again.refreshDevices();
+      expect(again.selectedId, _galaxy.id);
+    });
+  });
+}
+
+class _FakeDevices implements DeviceService {
+  _FakeDevices(this._now);
+
+  final List<MobileDevice> Function() _now;
+
+  @override
+  Future<List<MobileDevice>> list() async => _now();
 }
