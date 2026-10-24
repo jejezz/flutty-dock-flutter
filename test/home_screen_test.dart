@@ -15,6 +15,7 @@ import 'package:flutty_dock/l10n/app_localizations.dart';
 import 'package:flutty_dock/settings/app_settings.dart';
 import 'package:flutty_dock/ui/build_options_section.dart' show flavorDocsUrlFor;
 import 'package:flutty_dock/ui/home_screen.dart';
+import 'package:flutty_dock/ui/project_header.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _Devices implements DeviceService {
@@ -252,7 +253,7 @@ void main() {
     expect(git.calls, isEmpty);
   });
 
-  testWidgets('the project card stays above every tab and shows the git status in words', (tester) async {
+  testWidgets('the project banner stays above every tab and shows the git status in words', (tester) async {
     final git = _FakeGit(const GitState(branch: 'main', upstream: 'origin/main', remoteUrl: 'git@github.com:o/r.git'));
     final c = InstallController(
       runner: CommandRunner(CommandLog()),
@@ -265,10 +266,13 @@ void main() {
     for (final tab in ['Run', 'Git', 'Devices', 'Signing', 'Doctor', 'Log']) {
       await tester.tap(find.widgetWithText(Tab, tab));
       await tester.pumpAndSettle();
-      expect(find.text('app  1.0.0+1'), findsOneWidget, reason: 'project name on the $tab tab');
+      expect(find.text('app'), findsOneWidget, reason: 'project name in the title on the $tab tab');
+      expect(find.textContaining('1.0.0+1'), findsOneWidget, reason: 'version in the banner on the $tab tab');
       expect(find.text('✓ Up to date'), findsOneWidget, reason: 'git status on the $tab tab');
     }
-    // 프로젝트 카드의 버튼은 아이콘이고, 이름은 툴팁으로 남는다. 폴더 바꾸기는 타이틀 바 메뉴로 옮겼으니 카드에는 없다.
+    // 카드가 아니라 납작한 배너다.
+    expect(find.descendant(of: find.byType(ProjectHeader), matching: find.byType(Card)), findsNothing);
+    // 배너의 버튼은 아이콘이고, 이름은 툴팁으로 남는다. 폴더 바꾸기는 타이틀 바 메뉴로 옮겼으니 배너에는 없다.
     expect(find.byTooltip('Open in VS Code'), findsOneWidget);
     expect(find.byTooltip('Reload this project'), findsOneWidget);
     expect(find.byIcon(Icons.folder_open_rounded), findsNothing);

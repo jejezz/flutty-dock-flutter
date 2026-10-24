@@ -8,10 +8,10 @@ import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import 'widgets.dart';
 
-/// 탭 위에 늘 보이는 프로젝트 카드. 어느 탭을 보고 있어도 지금 어느 프로젝트인지, 어느 브랜치인지,
+/// 탭 위에 늘 보이는 프로젝트 배너. 어느 탭을 보고 있어도 지금 어느 프로젝트인지, 어느 브랜치인지,
 /// 원격과 같은지를 알 수 있다.
 ///
-/// 이름·버전·버튼 / 브랜치·상태·플랫폼 칩(좁으면 줄바꿈) / 경로. 프로젝트를 아직 안 열었으면 열기 안내를 보여 준다.
+/// 브랜치·상태·플랫폼 칩(좁으면 줄바꿈)과 버튼 / 버전·경로. 프로젝트 이름은 타이틀 바에 있다. 프로젝트를 아직 안 열었으면 열기 안내를 보여 준다.
 class ProjectHeader extends StatelessWidget {
   const ProjectHeader({super.key, required this.controller, required this.onOpen});
 
@@ -40,34 +40,46 @@ class ProjectHeader extends StatelessWidget {
     final p = controller.project;
     final git = controller.gitState;
 
-    return Card(
-      margin: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.xs),
+    // 카드가 아니라 화면 폭을 가득 쓰는 납작한 배너 (Branch Dock처럼). 위의 타이틀 바에 프로젝트 이름이 있으니
+    // 여기서는 되풀이하지 않고, 브랜치·상태·플랫폼 칩과 버전·경로를 보여 준다.
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerLow,
+        border: Border(bottom: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5))),
+      ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.xs, AppSpacing.sm),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.sm, AppSpacing.sm),
         child: p == null
-            ? Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.sm),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(l10n.homeProjectDrop, textAlign: TextAlign.center, style: theme.textTheme.bodyMedium),
-                    const SizedBox(height: AppSpacing.sm),
-                    FilledButton(onPressed: onOpen, child: Text(l10n.homeProjectOpen)),
-                    if (controller.projectError != null) _error(l10n, theme),
-                  ],
-                ),
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(l10n.homeProjectDrop, textAlign: TextAlign.center, style: theme.textTheme.bodyMedium),
+                  const SizedBox(height: AppSpacing.sm),
+                  FilledButton(onPressed: onOpen, child: Text(l10n.homeProjectOpen)),
+                  if (controller.projectError != null) _error(l10n, theme),
+                ],
               )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: Text(
-                          p.version == null ? p.name : '${p.name}  ${p.version}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: Wrap(
+                            spacing: AppSpacing.xs,
+                            runSpacing: AppSpacing.xs,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              if (git != null) ..._gitChips(context, git),
+                              if (p.hasIos) InfoChip(l10n.homePlatformIos),
+                              if (p.hasAndroid) InfoChip(l10n.homePlatformAndroid),
+                              if (p.hasMacos) InfoChip(l10n.homePlatformMacos),
+                              if (p.hasWindows) InfoChip(l10n.homePlatformWindows),
+                            ],
+                          ),
                         ),
                       ),
                       _iconButton(Icons.refresh_rounded, l10n.homeProjectReload, () => controller.openProject(p.path)),
@@ -75,26 +87,11 @@ class ProjectHeader extends StatelessWidget {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: AppSpacing.sm, bottom: AppSpacing.xs),
-                    child: Wrap(
-                      spacing: AppSpacing.xs,
-                      runSpacing: AppSpacing.xs,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        if (git != null) ..._gitChips(context, git),
-                        if (p.hasIos) InfoChip(l10n.homePlatformIos),
-                        if (p.hasAndroid) InfoChip(l10n.homePlatformAndroid),
-                        if (p.hasMacos) InfoChip(l10n.homePlatformMacos),
-                        if (p.hasWindows) InfoChip(l10n.homePlatformWindows),
-                      ],
-                    ),
-                  ),
-                  Padding(
                     padding: const EdgeInsets.only(right: AppSpacing.sm),
                     child: Tooltip(
                       message: p.path,
                       child: Text(
-                        p.path,
+                        p.version == null ? p.path : '${p.version}  ·  ${p.path}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppFonts.userContent.copyWith(fontSize: 12, color: theme.hintColor),
