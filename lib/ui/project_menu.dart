@@ -30,16 +30,18 @@ class ProjectMenuButton extends StatelessWidget {
   static String get openShortcutLabel => Platform.isMacOS ? '⌘O' : 'Ctrl+O';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      ListenableBuilder(listenable: controller, builder: (context, _) => _menu(context));
+
+  /// 지워졌거나 옮겨진 폴더는 뺀 최근 프로젝트. 메뉴를 열 때마다 새로 읽는다.
+  List<String> _recents() => [
+    for (final p in controller.recentProjects)
+      if (Directory(p).existsSync()) p,
+  ];
+
+  Widget _menu(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final current = controller.project?.path;
-    // 지워졌거나 옮겨진 폴더는 목록에서 뺀다.
-    final recents = [
-      for (final p in controller.recentProjects)
-        if (Directory(p).existsSync()) p,
-    ];
-
     return PopupMenuButton<Object>(
       tooltip: l10n.titleMenuTooltip,
       position: PopupMenuPosition.under,
@@ -60,10 +62,10 @@ class ProjectMenuButton extends StatelessWidget {
           height: 28,
           child: Text(l10n.menuRecent, style: theme.textTheme.labelSmall?.copyWith(color: theme.hintColor)),
         ),
-        if (recents.isEmpty)
+        if (_recents().isEmpty)
           PopupMenuItem<Object>(enabled: false, child: Text(l10n.menuRecentEmpty, style: theme.textTheme.bodySmall))
         else
-          for (final p in recents)
+          for (final p in _recents())
             PopupMenuItem<Object>(
               value: p,
               height: 48,
@@ -71,7 +73,7 @@ class ProjectMenuButton extends StatelessWidget {
                 children: [
                   SizedBox(
                     width: 24,
-                    child: current != null && samePath(p, current) ? const Icon(Icons.check_rounded, size: 18) : null,
+                    child: _isCurrent(p) ? const Icon(Icons.check_rounded, size: 18) : null,
                   ),
                   Expanded(
                     child: Column(
@@ -145,6 +147,11 @@ class ProjectMenuButton extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool _isCurrent(String p) {
+    final current = controller.project?.path;
+    return current != null && samePath(p, current);
   }
 
   static const _openFolder = Object();
